@@ -1,0 +1,100 @@
+# Xuất app cho Android và iOS. Chạy tay: tab Actions → "Build apps" → Run workflow.
+#  - android-apk     : file .apk cài thẳng lên máy Android để thử (không cần tài khoản Expo/Google)
+#  - ios-simulator   : bản chạy trên iOS Simulator (không cần tài khoản Apple)
+#  - eas-store       : .aab cho Google Play + .ipa cho App Store/TestFlight — cần secret EXPO_TOKEN
+#                      và tài khoản Apple Developer, Google Play Console (EAS hỏi chứng chỉ lần đầu).
+# Secrets cần đặt (Settings → Secrets → Actions): EXPO_PUBLIC_SUPABASE_URL, EXPO_PUBLIC_SUPABASE_ANON_KEY,
+#   EXPO_PUBLIC_SUPPORT_PHONE, EXPO_PUBLIC_POLICY_URL, EXPO_PUBLIC_EAS_PROJECT_ID, (tùy chọn) EXPO_TOKEN.
+name: Build apps
+
+permissions:
+  contents: write
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+    inputs:
+      store:
+        description: "Build bản lên store qua EAS (cần EXPO_TOKEN)"
+        type: boolean
+        default: false
+
+env:
+  EXPO_PUBLIC_SUPABASE_URL: ${{ secrets.EXPO_PUBLIC_SUPABASE_URL }}
+  EXPO_PUBLIC_SUPABASE_ANON_KEY: ${{ secrets.EXPO_PUBLIC_SUPABASE_ANON_KEY }}
+  EXPO_PUBLIC_SUPPORT_PHONE: ${{ secrets.EXPO_PUBLIC_SUPPORT_PHONE }}
+  EXPO_PUBLIC_POLICY_URL: ${{ secrets.EXPO_PUBLIC_POLICY_URL }}
+  EXPO_PUBLIC_EAS_PROJECT_ID: ${{ secrets.EXPO_PUBLIC_EAS_PROJECT_ID }}
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: 22 }
+      - run: bash scripts/setup.sh
+      - run: npx tsc --noEmit
+      - run: npm test
+
+  android-apk:
+    needs: check
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: 22 }
+      - uses: actions/setup-java@v4
+        with: { distribution: temurin, java-version: 17 }
+      - run: bash scripts/setup.sh
+      - run: npx expo prebuild --platform android --clean
+      # Bản thử: ký bằng khóa debug của template Expo — cài được, KHÔNG dùng để lên Google Play
+      - run: ./gradlew assembleRelease --no-daemon
+        working-directory: android
+      - uses: actions/upload-artifact@v4
+        with:
+          name: QuickPOS-android-apk
+          path: android/app/build/outputs/apk/release/app-release.apk
+      # Đăng lên mục Releases: có link tải .apk trực tiếp, mở được trên điện thoại
+      - run: cp android/app/build/outputs/apk/release/app-release.apk QuickPOS.apk
+      - uses: softprops/action-gh-release@v2
+        with:
+          tag_name: apk-${{ github.run_number }}
+          name: QuickPOS Android (bản thử ${{ github.run_number }})
+          prerelease: true
+          files: QuickPOS.apk
+
+  ios-simulator:
+    needs: check
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: 22 }
+      - run: bash scripts/setup.sh
+      - run: npx expo prebuild --platform ios --clean
+      - run: |
+          xcodebuild -workspace ios/QuickPOS.xcworkspace -scheme QuickPOS -configuration Release \
+            -sdk iphonesimulator -derivedDataPath build CODE_SIGNING_ALLOWED=NO
+          cd build/Build/Products/Release-iphonesimulator && zip -qr "$GITHUB_WORKSPACE/QuickPOS-simulator.zip" QuickPOS.app
+      - uses: actions/upload-artifact@v4
+        with:
+          name: QuickPOS-ios-simulator
+          path: QuickPOS-simulator.zip
+
+  eas-store:
+    needs: check
+    if: ${{ inputs.store }}
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: 22 }
+      - uses: expo/expo-github-action@v8
+        with:
+          eas-version: latest
+          token: ${{ secrets.EXPO_TOKEN }}
+      - run: bash scripts/setup.sh
+      # Build trên máy của Expo; kết quả (.aab, .ipa) tải ở expo.dev → Builds
+      - run: eas build --platform all --profile production --non-interactive --no-wait
