@@ -27,10 +27,10 @@ appId: vn.quickpos.app
       - assertVisible: "MB Bank.*"
       - assertVisible: "Đang chờ tiền về.*"
       - takeScreenshot: "11-cho-tien-qr"
-      # Bản thử: khách "chuyển tiền" sau 12 giây (bản kiểm thử tự động: 30 giây)
+      # Bản thử: khách "chuyển tiền" sau 12 giây (bản kiểm thử tự động: 90 giây)
       - extendedWaitUntil:
           visible: "Đơn mới"
-          timeout: 60000
+          timeout: 150000
       - takeScreenshot: "12-da-nhan"
       # Màn hình xanh toàn phần: chạm để đóng sớm (nếu đã tự tắt thì bỏ qua)
       - tapOn:

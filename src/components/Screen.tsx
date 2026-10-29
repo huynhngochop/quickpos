@@ -1,5 +1,5 @@
 import type { ReactNode } from 'react';
-import { Pressable, ScrollView, View, type ViewStyle } from 'react-native';
+import { KeyboardAvoidingView, Pressable, ScrollView, View, type ViewStyle } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { router } from 'expo-router';
 import { colors, space } from '../theme/tokens';
@@ -9,6 +9,8 @@ import { vi } from '../i18n/vi';
 /**
  * Khung màn hình: nền, vùng an toàn (vẽ tràn viền là mặc định), cuộn khi chữ lớn.
  * `footer` dính đáy, đã cộng phần dưới vùng an toàn để nút không nằm dưới thanh cử chỉ.
+ * Bàn phím mở thì đẩy nội dung lên: vẽ tràn viền làm Android bỏ qua "resize" của cửa sổ,
+ * nên ô nhập ở nửa dưới (máy tính bảng nằm ngang) bị bàn phím che nếu không có KeyboardAvoidingView.
  */
 export function Screen({
   children,
@@ -44,7 +46,10 @@ export function Screen({
     </>
   );
   return (
-    <View style={{ flex: 1, backgroundColor: bg, paddingTop: insets.top, paddingLeft: insets.left, paddingRight: insets.right }}>
+    <KeyboardAvoidingView
+      behavior="padding"
+      style={{ flex: 1, backgroundColor: bg, paddingTop: insets.top, paddingLeft: insets.left, paddingRight: insets.right }}
+    >
       {scroll ? (
         <ScrollView
           contentContainerStyle={[inner, { paddingBottom: space.xl, flexGrow: 1 }]}
@@ -73,7 +78,7 @@ export function Screen({
       ) : (
         <View style={{ height: insets.bottom }} />
       )}
-    </View>
+    </KeyboardAvoidingView>
   );
 }
 
