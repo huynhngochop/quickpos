@@ -7,6 +7,8 @@ const anonKey = process.env.EXPO_PUBLIC_SUPABASE_ANON_KEY ?? '';
 export const ENV = {
   /** Bản build thiếu máy chủ (APK xem thử): app mở được, cổng vào báo chưa cấu hình thay vì văng */
   configured: url.length > 0 && anonKey.length > 0,
+  /** Không có máy chủ → chạy chế độ dùng thử (src/lib/demoClient.ts) */
+  demo: !(url.length > 0 && anonKey.length > 0),
   supabaseUrl: url || 'https://not-configured.invalid',
   supabaseAnonKey: anonKey || 'not-configured',
   supportPhone: process.env.EXPO_PUBLIC_SUPPORT_PHONE ?? '',

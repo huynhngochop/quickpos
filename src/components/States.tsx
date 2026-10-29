@@ -60,6 +60,21 @@ export function OfflineBanner({ queued = 0 }: { queued?: number }) {
   );
 }
 
+/** Dải báo bản dùng thử (chỉ hiện khi chưa nối máy chủ thật). */
+export function DemoBanner({ login }: { login?: boolean }) {
+  if (!ENV.demo) return null;
+  return (
+    <Card tone="info" style={{ padding: 12 }}>
+      <Txt variant="bodyStrong" tone="primary">
+        {vi.common.demoTitle}
+      </Txt>
+      <Txt variant="small" tone="primary">
+        {login ? vi.common.demoLogin : vi.common.demoBody}
+      </Txt>
+    </Card>
+  );
+}
+
 export function callSupport(): void {
   if (ENV.supportPhone) void Linking.openURL(`tel:${ENV.supportPhone.replace(/\s/g, '')}`);
 }

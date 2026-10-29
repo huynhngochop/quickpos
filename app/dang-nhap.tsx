@@ -4,7 +4,7 @@ import { router, useLocalSearchParams } from 'expo-router';
 import { Screen, Card } from '../src/components/Screen';
 import { Txt } from '../src/components/Txt';
 import { Button } from '../src/components/Button';
-import { ErrorView, callSupport } from '../src/components/States';
+import { DemoBanner, ErrorView, callSupport } from '../src/components/States';
 import { sendOtp } from '../src/features/session/api';
 import { useSession } from '../src/features/session/store';
 import { toE164VN } from '../src/lib/money';
@@ -52,6 +52,7 @@ export default function DangNhap() {
       <Txt variant="title" tone="primary" style={{ marginTop: space.lg }}>
         {vi.appName}
       </Txt>
+      <DemoBanner login />
       <Txt variant="heading">{vi.login.title}</Txt>
       <Txt tone="secondary">{vi.login.body}</Txt>
       <View style={{ gap: space.sm, marginTop: space.md }}>

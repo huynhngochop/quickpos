@@ -3,7 +3,7 @@ import { router } from 'expo-router';
 import { Screen, Card } from '../src/components/Screen';
 import { Amount, Txt } from '../src/components/Txt';
 import { Button } from '../src/components/Button';
-import { OfflineBanner, callSupport } from '../src/components/States';
+import { DemoBanner, OfflineBanner, callSupport } from '../src/components/States';
 import { useSession, useBusinessId } from '../src/features/session/store';
 import { openOwnerScreen, useCanReview, useMainAccount } from '../src/features/session/hooks';
 import { useDayTotals } from '../src/features/journal/hooks';
@@ -47,6 +47,7 @@ export default function TrangChinh() {
         <Button kind="link" label={vi.main.settings} onPress={() => openOwnerScreen('/cai-dat')} />
       </View>
 
+      <DemoBanner />
       <OfflineBanner queued={queue.length} />
 
       <Pressable accessibilityRole="button" accessibilityHint={vi.main.journal} onPress={() => router.push('/so')}>

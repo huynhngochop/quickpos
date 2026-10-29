@@ -17,8 +17,9 @@ export const vi = {
     deleteDigit: 'Xóa số vừa nhập',
     tripleZero: 'Ba số không',
     currency: 'đ',
-    notConfiguredTitle: 'Bản xem thử chưa nối máy chủ',
-    notConfiguredBody: 'Bản cài này chưa có địa chỉ máy chủ của QuickPOS nên chưa đăng nhập được. Cần build lại với thông tin máy chủ.',
+    demoTitle: 'Bản dùng thử — dữ liệu mẫu',
+    demoBody: 'Không phải tiền thật. Bấm “Hiện mã QR”, sau 8 giây máy giả lập khách đã chuyển tiền.',
+    demoLogin: 'Bản dùng thử: nhập số điện thoại bất kỳ, rồi mã 6 số bất kỳ.',
   },
 
   version: {
