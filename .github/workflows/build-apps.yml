@@ -34,9 +34,9 @@ jobs:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with: { node-version: 22 }
-      - run: bash scripts/setup.sh
-      - run: npx tsc --noEmit
-      - run: npm test
+      - run: bash scripts/ci-run.sh setup bash scripts/setup.sh
+      - run: bash scripts/ci-run.sh tsc npx tsc --noEmit
+      - run: bash scripts/ci-run.sh test npm test
 
   android-apk:
     runs-on: ubuntu-latest
@@ -46,10 +46,10 @@ jobs:
         with: { node-version: 22 }
       - uses: actions/setup-java@v4
         with: { distribution: temurin, java-version: 17 }
-      - run: bash scripts/setup.sh
-      - run: npx expo prebuild --platform android --clean
+      - run: bash scripts/ci-run.sh setup bash scripts/setup.sh
+      - run: bash scripts/ci-run.sh prebuild npx expo prebuild --platform android --clean
       # Bản thử: ký bằng khóa debug của template Expo — cài được, KHÔNG dùng để lên Google Play
-      - run: ./gradlew assembleRelease --no-daemon
+      - run: bash ../scripts/ci-run.sh gradle ./gradlew assembleRelease --no-daemon
         working-directory: android
       - uses: actions/upload-artifact@v4
         with:
@@ -70,8 +70,8 @@ jobs:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with: { node-version: 22 }
-      - run: bash scripts/setup.sh
-      - run: npx expo prebuild --platform ios --clean
+      - run: bash scripts/ci-run.sh setup bash scripts/setup.sh
+      - run: bash scripts/ci-run.sh prebuild-ios npx expo prebuild --platform ios --clean
       - run: |
           xcodebuild -workspace ios/QuickPOS.xcworkspace -scheme QuickPOS -configuration Release \
             -sdk iphonesimulator -derivedDataPath build CODE_SIGNING_ALLOWED=NO
@@ -93,6 +93,6 @@ jobs:
         with:
           eas-version: latest
           token: ${{ secrets.EXPO_TOKEN }}
-      - run: bash scripts/setup.sh
+      - run: bash scripts/ci-run.sh setup bash scripts/setup.sh
       # Build trên máy của Expo; kết quả (.aab, .ipa) tải ở expo.dev → Builds
       - run: eas build --platform all --profile production --non-interactive --no-wait
