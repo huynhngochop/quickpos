@@ -26,7 +26,7 @@ export async function eventsNeedingReview(businessId: string): Promise<ReviewEve
 
 export async function getEvent(eventId: string): Promise<ReviewEvent> {
   return callWithRetry(async (signal) =>
-    unwrap(await supabase.from('payment_events').select(EVENT_COLS).eq('id', eventId).single().abortSignal(signal)) as unknown as ReviewEvent,
+    unwrap(await supabase.from('payment_events').select(EVENT_COLS).eq('id', eventId).abortSignal(signal).single()) as unknown as ReviewEvent,
   );
 }
 

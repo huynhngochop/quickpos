@@ -31,7 +31,7 @@ export async function createOrder(args: {
 
 export async function getOrder(orderId: string): Promise<Order> {
   return callWithRetry(async (signal) =>
-    unwrap(await supabase.from('orders').select(ORDER_COLS).eq('id', orderId).single().abortSignal(signal)) as Order,
+    unwrap(await supabase.from('orders').select(ORDER_COLS).eq('id', orderId).abortSignal(signal).single()) as Order,
   );
 }
 
