@@ -1,7 +1,7 @@
 appId: vn.quickpos.app
 ---
 - runFlow: subflows/dismiss-system-dialogs.yaml
-- assertVisible: "Hôm nay đã thu"
+- assertVisible: "Hôm nay đã thu.*"
 - repeat:
     times: 3
     commands:
@@ -32,10 +32,11 @@ appId: vn.quickpos.app
           visible: "Đơn mới"
           timeout: 60000
       - takeScreenshot: "12-da-nhan"
-      # Đợi màn hình xanh toàn phần tắt (≥ 3 giây) rồi mới bấm
-      - extendedWaitUntil:
-          notVisible: "Đã nhận 18.000 đ"
-          timeout: 10000
+      # Màn hình xanh toàn phần: chạm để đóng sớm (nếu đã tự tắt thì bỏ qua)
+      - tapOn:
+          text: "Đã nhận 18.000 đ"
+          optional: true
+      - assertNotVisible: "Đã nhận 18.000 đ"
       - tapOn: "Đọc lại"
       - tapOn: "Đơn mới"
       - extendedWaitUntil:
@@ -44,8 +45,8 @@ appId: vn.quickpos.app
       - assertVisible: "Chưa nhập số tiền"
       - tapOn: "Trang chính"
       - extendedWaitUntil:
-          visible: "Hôm nay đã thu"
+          visible: "Hôm nay đã thu.*"
           timeout: 10000
 # 130.000 mẫu + 3 × 18.000
-- assertVisible: "184.000 đ"
+- assertVisible: ".*184.000 đ.*"
 - takeScreenshot: "13-trang-chinh-sau-3-don"

@@ -1,7 +1,7 @@
 appId: vn.quickpos.app
 ---
 - runFlow: subflows/dismiss-system-dialogs.yaml
-- assertVisible: "Hôm nay đã thu"
+- assertVisible: "Hôm nay đã thu.*"
 - repeat:
     times: 2
     commands:
@@ -33,5 +33,5 @@ appId: vn.quickpos.app
           timeout: 10000
       - tapOn: "Trang chính"
       - extendedWaitUntil:
-          visible: "Hôm nay đã thu"
+          visible: "Hôm nay đã thu.*"
           timeout: 10000

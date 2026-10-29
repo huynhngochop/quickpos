@@ -171,6 +171,7 @@ function LinkRow({ label, sub, subTone = 'secondary', onPress, last }: { label: 
   return (
     <Pressable
       accessibilityRole="button"
+      accessibilityLabel={sub ? `${label}, ${sub}` : label}
       onPress={onPress}
       style={{ minHeight: 64, padding: 16, flexDirection: 'row', alignItems: 'center', borderBottomWidth: last ? 0 : 1, borderBottomColor: colors.divider }}
     >

@@ -9,12 +9,14 @@ appId: vn.quickpos.app
 - takeScreenshot: "01-dang-nhap"
 # Số sai → báo lỗi bằng chữ
 - tapOn: { id: "phone-input" }
+- waitForAnimationToEnd
 - inputText: "12345"
 - tapOn: "Nhập số điện thoại của quán"
 - tapOn: "Gửi mã xác nhận"
 - assertVisible: "Số điện thoại chưa đúng.*"
 - takeScreenshot: "02-dang-nhap-so-sai"
 - tapOn: { id: "phone-input" }
+- waitForAnimationToEnd
 - eraseText: 10
 - inputText: "0903456789"
 - tapOn: "Nhập số điện thoại của quán"

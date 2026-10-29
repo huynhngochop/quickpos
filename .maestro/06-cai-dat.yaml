@@ -1,7 +1,7 @@
 appId: vn.quickpos.app
 ---
 - runFlow: subflows/dismiss-system-dialogs.yaml
-- assertVisible: "Hôm nay đã thu"
+- assertVisible: "Hôm nay đã thu.*"
 - tapOn: "Cài đặt"
 # Vừa mở khóa PIN ở luồng trước (5 phút) nên vào thẳng; nếu hỏi PIN thì nhập
 - runFlow:
@@ -26,7 +26,7 @@ appId: vn.quickpos.app
 - takeScreenshot: "51-chu-rat-lon"
 - tapOn: "Trang chính"
 - extendedWaitUntil:
-    visible: "Hôm nay đã thu"
+    visible: "Hôm nay đã thu.*"
     timeout: 10000
 - takeScreenshot: "52-trang-chinh-chu-rat-lon"
 - tapOn: "Thu tiền"
@@ -51,7 +51,7 @@ appId: vn.quickpos.app
 - tapOn: "Lớn"
 
 # Nhân viên
-- tapOn: "Nhân viên"
+- tapOn: "Nhân viên.*"
 - extendedWaitUntil:
     visible: "Chủ quán"
     timeout: 10000
@@ -61,8 +61,8 @@ appId: vn.quickpos.app
 
 # Báo tiền khi tắt màn hình
 - scrollUntilVisible:
-    element: "Báo tiền khi tắt màn hình"
-- tapOn: "Báo tiền khi tắt màn hình"
+    element: "Báo tiền khi tắt màn hình.*"
+- tapOn: "Báo tiền khi tắt màn hình.*"
 - extendedWaitUntil:
     visible: "Để máy báo tiền cả khi tắt màn hình"
     timeout: 10000
@@ -87,7 +87,7 @@ appId: vn.quickpos.app
 - tapOn: "Đăng xuất khỏi máy này"
 - runFlow: subflows/login.yaml
 - extendedWaitUntil:
-    visible: "Hôm nay đã thu"
+    visible: "Hôm nay đã thu.*"
     timeout: 20000
 - assertVisible: "Quan Co Ba"
 - takeScreenshot: "57-dang-nhap-lai"

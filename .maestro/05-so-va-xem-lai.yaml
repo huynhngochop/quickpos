@@ -1,7 +1,7 @@
 appId: vn.quickpos.app
 ---
 - runFlow: subflows/dismiss-system-dialogs.yaml
-- assertVisible: "Hôm nay đã thu"
+- assertVisible: "Hôm nay đã thu.*"
 - tapOn: "Sổ hôm nay"
 - extendedWaitUntil:
     visible: "Tổng đã thu"
@@ -27,9 +27,9 @@ appId: vn.quickpos.app
 
 # 3.2 Tiền cần xem lại (sau mã PIN) → 3.3 Gán đơn
 - extendedWaitUntil:
-    visible: "1 khoản tiền cần xem lại"
+    visible: "1 khoản tiền cần xem lại.*"
     timeout: 10000
-- tapOn: "1 khoản tiền cần xem lại"
+- tapOn: "1 khoản tiền cần xem lại.*"
 - extendedWaitUntil:
     visible: "Mã PIN chủ quán"
     timeout: 10000
@@ -51,7 +51,7 @@ appId: vn.quickpos.app
     visible: "18.000 đ lúc .* là của đơn nào?"
     timeout: 10000
 - assertVisible: "Chọn một đơn ở trên"
-- tapOn: "Đơn [A-Z0-9]{8}"
+- tapOn: "Đơn [A-Z0-9]{8}.*"
 - takeScreenshot: "44-chon-don"
 - tapOn: "Gán vào đơn [A-Z0-9]{8}"
 - extendedWaitUntil:
@@ -60,6 +60,6 @@ appId: vn.quickpos.app
 - takeScreenshot: "45-da-gan"
 - tapOn: "Trang chính"
 - extendedWaitUntil:
-    visible: "Hôm nay đã thu"
+    visible: "Hôm nay đã thu.*"
     timeout: 10000
-- assertNotVisible: "1 khoản tiền cần xem lại"
+- assertNotVisible: "1 khoản tiền cần xem lại.*"

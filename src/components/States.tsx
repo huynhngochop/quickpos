@@ -139,6 +139,7 @@ export function Checkbox({ label, value, onChange, tone = 'primary' }: { label: 
   return (
     <Pressable
       accessibilityRole="checkbox"
+      accessibilityLabel={label}
       accessibilityState={{ checked: value }}
       onPress={() => onChange(!value)}
       style={{

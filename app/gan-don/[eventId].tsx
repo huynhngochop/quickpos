@@ -81,7 +81,13 @@ export default function GanDon() {
       {list.map((o) => {
         const on = picked?.id === o.id;
         return (
-          <Pressable key={o.id} accessibilityRole="radio" accessibilityState={{ checked: on }} onPress={() => setPicked(o)}>
+          <Pressable
+            key={o.id}
+            accessibilityRole="radio"
+            accessibilityState={{ checked: on }}
+            accessibilityLabel={`${vi.review.orderLabel(o.order_code)}, ${formatVND(o.total_amount)}, ${formatTimeVN(o.sold_at)}`}
+            onPress={() => setPicked(o)}
+          >
             <Card style={{ borderWidth: on ? 3 : 2, borderColor: on ? colors.primary : colors.border, backgroundColor: on ? colors.primarySoft : colors.surface }}>
               <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
                 <Txt variant="title">{formatVND(o.total_amount)}</Txt>

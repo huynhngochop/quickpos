@@ -50,7 +50,11 @@ export default function TrangChinh() {
       <DemoBanner />
       <OfflineBanner queued={queue.length} />
 
-      <Pressable accessibilityRole="button" accessibilityHint={vi.main.journal} onPress={() => router.push('/so')}>
+      <Pressable
+        accessibilityRole="button"
+        accessibilityLabel={`${vi.main.todayCollected} ${formatVND(totals.total)}, ${vi.main.ordersTap(totals.count)}`}
+        onPress={() => router.push('/so')}
+      >
         <Card style={{ alignItems: 'center', paddingVertical: space.xl }}>
           <Txt tone="secondary" variant="bodyStrong">
             {vi.main.todayCollected}
@@ -76,7 +80,7 @@ export default function TrangChinh() {
       ) : null}
 
       {canReview && review.count > 0 ? (
-        <Pressable accessibilityRole="button" onPress={() => openOwnerScreen('/xem-lai')}>
+        <Pressable accessibilityRole="button" accessibilityLabel={vi.main.needReview(review.count)} onPress={() => openOwnerScreen('/xem-lai')}>
           <Card tone="warn" style={{ flexDirection: 'row', alignItems: 'center' }}>
             <Txt tone="warn" variant="bodyStrong" style={{ flex: 1 }}>
               {vi.main.needReview(review.count)}

@@ -31,7 +31,7 @@ echo "::endgroup::"
 step "Tạo AVD ($PROFILE)"
 echo no | "$BIN/avdmanager" create avd -n qa -k "$IMAGE" -d "$PROFILE" --force || fail "avdmanager lỗi"
 # RAM/ổ đủ cho máy tính bảng
-printf 'hw.ramSize=4096\ndisk.dataPartition.size=6G\nhw.keyboard=yes\n' >> "$ANDROID_AVD_HOME/qa.avd/config.ini"
+printf 'hw.ramSize=4096\ndisk.dataPartition.size=6G\nhw.keyboard=no\n' >> "$ANDROID_AVD_HOME/qa.avd/config.ini"
 "$BIN/avdmanager" list avd
 ls -la "$ANDROID_AVD_HOME"
 echo "::endgroup::"

@@ -1,7 +1,7 @@
 appId: vn.quickpos.app
 ---
 - runFlow: subflows/dismiss-system-dialogs.yaml
-- assertVisible: "Hôm nay đã thu"
+- assertVisible: "Hôm nay đã thu.*"
 
 # Xác nhận tay: hỏi lại → bấm "Chưa thấy" → bấm lại → "Đúng, tiền đã về"
 - tapOn: "Thu tiền"
@@ -54,5 +54,5 @@ appId: vn.quickpos.app
 - takeScreenshot: "23-sau-khi-huy"
 - tapOn: "Trang chính"
 - extendedWaitUntil:
-    visible: "Hôm nay đã thu"
+    visible: "Hôm nay đã thu.*"
     timeout: 10000
