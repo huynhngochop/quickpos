@@ -1,0 +1,64 @@
+appId: vn.quickpos.app
+---
+- assertVisible: "Hôm nay đã thu"
+- tapOn: "Sổ hôm nay"
+- extendedWaitUntil:
+    visible: "Tổng đã thu"
+    timeout: 10000
+- assertVisible: "Chuyển khoản"
+- assertVisible: "Tiền mặt"
+- assertVisible: "Đơn gần nhất"
+- assertVisible: "Chưa trả"
+- takeScreenshot: "40-so-hom-nay"
+- scrollUntilVisible:
+    element: "Đã hủy"
+    timeout: 10000
+- tapOn: "‹ Ngày trước"
+- extendedWaitUntil:
+    visible: "Chưa có đơn nào trong ngày này."
+    timeout: 10000
+- takeScreenshot: "41-so-hom-qua"
+- tapOn: "‹ Ngày trước"
+- tapOn: "Ngày sau ›"
+- tapOn: "Ngày sau ›"
+- assertVisible: "Hôm nay"
+- tapOn: "Trang chính"
+
+# 3.2 Tiền cần xem lại (sau mã PIN) → 3.3 Gán đơn
+- extendedWaitUntil:
+    visible: "1 khoản tiền cần xem lại"
+    timeout: 10000
+- tapOn: "1 khoản tiền cần xem lại"
+- extendedWaitUntil:
+    visible: "Mã PIN chủ quán"
+    timeout: 10000
+# PIN sai một lần → báo còn số lần thử
+- tapOn: { id: "key-1" }
+- tapOn: { id: "key-1" }
+- tapOn: { id: "key-1" }
+- tapOn: { id: "key-1" }
+- assertVisible: "Mã PIN chưa đúng. Còn 4 lần thử."
+- takeScreenshot: "42-pin-sai"
+- runFlow: subflows/enter-pin.yaml
+- extendedWaitUntil:
+    visible: "Tiền cần xem lại"
+    timeout: 10000
+- assertVisible: "Tiền về, chưa biết của đơn nào · 1"
+- takeScreenshot: "43-tien-can-xem-lai"
+- tapOn: "Gán vào đơn"
+- extendedWaitUntil:
+    visible: "18.000 đ lúc .* là của đơn nào?"
+    timeout: 10000
+- assertVisible: "Chọn một đơn ở trên"
+- tapOn: "Đơn [A-Z0-9]{8}"
+- takeScreenshot: "44-chon-don"
+- tapOn: "Gán vào đơn [A-Z0-9]{8}"
+- extendedWaitUntil:
+    visible: "Không có khoản nào cần xem lại."
+    timeout: 15000
+- takeScreenshot: "45-da-gan"
+- tapOn: "Trang chính"
+- extendedWaitUntil:
+    visible: "Hôm nay đã thu"
+    timeout: 10000
+- assertNotVisible: "1 khoản tiền cần xem lại"

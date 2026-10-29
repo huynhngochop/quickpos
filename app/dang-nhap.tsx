@@ -61,6 +61,7 @@ export default function DangNhap() {
         </Txt>
         <TextInput
           accessibilityLabelledBy="phoneLabel"
+          testID="phone-input"
           value={phone}
           onChangeText={(t) => {
             setPhone(t);

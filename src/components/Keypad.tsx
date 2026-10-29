@@ -26,6 +26,7 @@ export function Keypad({ onKey, keyHeight }: { onKey: (k: KeypadKey) => void; ke
               key={k}
               accessibilityRole="button"
               accessibilityLabel={A11Y[k] ?? k}
+              testID={`key-${k}`}
               onPress={() => {
                 void Haptics.selectionAsync();
                 onKey(k);

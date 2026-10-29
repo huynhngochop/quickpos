@@ -98,6 +98,7 @@ export default function MaOTP() {
         autoComplete="sms-otp"
         maxLength={6}
         accessibilityLabel={vi.otp.codeLabel}
+        testID="otp-input"
         style={{ position: 'absolute', opacity: 0, height: 1, width: 1 }}
       />
 

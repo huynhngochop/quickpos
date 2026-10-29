@@ -58,6 +58,7 @@ export default function GanDon() {
         autoCorrect={false}
         maxLength={8}
         accessibilityLabel={vi.review.codeSearch}
+        testID="code-search"
         style={{
           height: 60,
           borderWidth: 2,

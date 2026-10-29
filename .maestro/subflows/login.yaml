@@ -1,0 +1,27 @@
+appId: vn.quickpos.app
+---
+# 1.1 → 1.2: số điện thoại + mã 6 số (bản dùng thử nhận mã bất kỳ)
+- extendedWaitUntil:
+    visible: "Nhập số điện thoại của quán"
+    timeout: 30000
+- assertVisible: "Bản dùng thử — dữ liệu mẫu"
+- takeScreenshot: "01-dang-nhap"
+# Số sai → báo lỗi bằng chữ
+- tapOn: { id: "phone-input" }
+- inputText: "12345"
+- tapOn: "Nhập số điện thoại của quán"
+- tapOn: "Gửi mã xác nhận"
+- assertVisible: "Số điện thoại chưa đúng.*"
+- takeScreenshot: "02-dang-nhap-so-sai"
+- tapOn: { id: "phone-input" }
+- eraseText: 10
+- inputText: "0903456789"
+- tapOn: "Nhập số điện thoại của quán"
+- tapOn: "Gửi mã xác nhận"
+- extendedWaitUntil:
+    visible: "Nhập mã 6 số"
+    timeout: 10000
+- assertVisible: "Mã đã gửi tới 0903 456 789.*"
+- takeScreenshot: "03-ma-otp"
+- tapOn: { id: "otp-input" }
+- inputText: "123456"

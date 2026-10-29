@@ -2,7 +2,7 @@
  * Chế độ DÙNG THỬ: giả lập Supabase trong bộ nhớ máy khi bản build chưa có địa chỉ máy chủ.
  * Chỉ cài đặt đúng những lời gọi app đang dùng (docs/api.md). Không dùng cho bản thật:
  * supabase.ts chỉ chọn client này khi thiếu EXPO_PUBLIC_SUPABASE_URL / ANON_KEY.
- * Có giả lập "khách chuyển khoản" 8 giây sau khi hiện mã QR để xem màn hình báo tiền.
+ * Có giả lập "khách chuyển khoản" 12 giây sau khi hiện mã QR để xem màn hình báo tiền.
  */
 import { buildVietQr } from '../../supabase/functions/_shared/vietqr';
 import { vnDay } from './time';
@@ -12,7 +12,8 @@ type Result = { data: any; error: { message: string } | null; count?: number };
 
 const DEMO_BIN = '970422';
 const DEMO_ACCOUNT = '0903456789';
-const CUSTOMER_PAYS_AFTER_MS = 8000;
+// Bản kiểm thử tự động đặt dài hơn để kịp thử "xác nhận tay" và "hủy đơn" trước khi khách "chuyển"
+const CUSTOMER_PAYS_AFTER_MS = Number(process.env.EXPO_PUBLIC_DEMO_PAY_MS ?? 12000) || 12000;
 
 const uid = () =>
   'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, (c) => {
@@ -74,6 +75,10 @@ function seedBusiness(bizId: string) {
     Object.assign(o, { payment_status: 'PAID', amount_received: amount, paid_at: minutesAgo(ago - 1), created_at: minutesAgo(ago) });
     db.orders!.push(o);
   }
+  // Một đơn 18.000 đ khách chưa trả (để thử "Gán vào đơn")
+  const unpaid = newOrder(bizId, [{ name: 'Bán hàng', quantity: 1, unit_price: 18000 }], 'VIETQR', null, minutesAgo(16));
+  unpaid.created_at = minutesAgo(16);
+  db.orders!.push(unpaid);
   db.payment_events!.push({
     id: uid(), business_id: bizId, order_id: null, provider: 'DEMO', bank_bin: DEMO_BIN, account_no: DEMO_ACCOUNT,
     amount: 18000, transfer_content: 'chuyen tien', match_status: 'UNMATCHED', received_at: minutesAgo(15),

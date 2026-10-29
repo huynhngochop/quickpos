@@ -1,0 +1,75 @@
+appId: vn.quickpos.app
+tags: [smoke]
+---
+- launchApp:
+    clearState: true
+- runFlow: subflows/login.yaml
+
+# 7.1 Đồng ý xử lý dữ liệu: nút khóa đến khi đánh dấu
+- extendedWaitUntil:
+    visible: "QuickPOS dùng thông tin của quán thế nào"
+    timeout: 15000
+- assertVisible: "Đánh dấu “Tôi đồng ý” để tiếp tục"
+- takeScreenshot: "04-dong-y"
+- tapOn: "Tôi đã đọc và đồng ý"
+- tapOn: "Đồng ý và tiếp tục"
+
+# Bước 1/3 Thông tin quán: thử để trống rồi điền đúng
+- extendedWaitUntil:
+    visible: "Thông tin quán"
+    timeout: 15000
+- tapOn: "Tiếp tục"
+- assertVisible: "Nhập tên quán."
+- takeScreenshot: "05-quan-loi"
+- tapOn: { id: "field-name" }
+- inputText: "Quan Co Ba"
+- tapOn: { id: "field-taxCode" }
+- inputText: "123"
+- tapOn: "Thông tin quán"
+- tapOn: "Tiếp tục"
+- assertVisible: "Mã số thuế gồm 10 hoặc 12 số.*"
+- tapOn: { id: "field-taxCode" }
+- eraseText: 5
+- inputText: "0312345678"
+- tapOn: { id: "field-address" }
+- inputText: "12 Le Loi, Quan 1"
+- tapOn: "Thông tin quán"
+- takeScreenshot: "06-quan-dien-xong"
+- tapOn: "Tiếp tục"
+
+# Bước 2/3 Tài khoản nhận tiền (bản thử có sẵn MB Bank)
+- extendedWaitUntil:
+    visible: "Đã tìm thấy tài khoản"
+    timeout: 15000
+- takeScreenshot: "07-tai-khoan"
+- tapOn: "Đúng, dùng tài khoản này"
+
+# Bước 3/3 PIN: mã dễ đoán bị từ chối, nhập lại sai bị từ chối, rồi đúng
+- extendedWaitUntil:
+    visible: "Tạo mã PIN 4 số cho chủ quán"
+    timeout: 10000
+- tapOn: { id: "key-1" }
+- tapOn: { id: "key-2" }
+- tapOn: { id: "key-3" }
+- tapOn: { id: "key-4" }
+- assertVisible: "Mã này dễ đoán quá.*"
+- runFlow: subflows/enter-pin.yaml
+- assertVisible: "Nhập lại mã PIN để chắc chắn"
+- tapOn: { id: "key-9" }
+- tapOn: { id: "key-9" }
+- tapOn: { id: "key-7" }
+- tapOn: { id: "key-1" }
+- assertVisible: "Hai lần nhập chưa giống nhau.*"
+- runFlow: subflows/enter-pin.yaml
+- runFlow: subflows/enter-pin.yaml
+
+# 2.1 Trang chính
+- extendedWaitUntil:
+    visible: "Hôm nay đã thu"
+    timeout: 15000
+- assertVisible: "Quan Co Ba"
+- assertVisible: "130.000 đ"
+- assertVisible: "Thu tiền"
+- assertVisible: "Sổ hôm nay"
+- assertVisible: "Gọi hỗ trợ"
+- takeScreenshot: "08-trang-chinh"

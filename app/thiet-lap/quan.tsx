@@ -101,6 +101,7 @@ function Field({
         render={({ field }) => (
           <TextInput
             accessibilityLabelledBy={`f-${name}`}
+            testID={`field-${name}`}
             value={field.value}
             onChangeText={field.onChange}
             onBlur={field.onBlur}

@@ -1,0 +1,57 @@
+appId: vn.quickpos.app
+---
+- assertVisible: "Hôm nay đã thu"
+
+# Xác nhận tay: hỏi lại → bấm "Chưa thấy" → bấm lại → "Đúng, tiền đã về"
+- tapOn: "Thu tiền"
+- tapOn: { id: "key-2" }
+- tapOn: { id: "key-5" }
+- tapOn: { id: "key-000" }
+- tapOn: "Hiện mã QR"
+- extendedWaitUntil:
+    visible: "Tôi đã thấy tiền về"
+    timeout: 15000
+- tapOn: "Tôi đã thấy tiền về"
+- assertVisible: "Bạn đã thấy tiền vào tài khoản của quán?"
+- takeScreenshot: "20-hoi-xac-nhan-tay"
+- tapOn: "Chưa thấy"
+- assertVisible: "Khách quét mã để trả"
+- tapOn: "Tôi đã thấy tiền về"
+- tapOn: "Đúng, tiền đã về"
+- extendedWaitUntil:
+    visible: "Xác nhận tay.*"
+    timeout: 10000
+- takeScreenshot: "21-da-xac-nhan-tay"
+- tapOn: "Đơn mới"
+
+# Hủy đơn rồi Hoàn tác: đơn vẫn chờ
+- extendedWaitUntil:
+    visible: "Khách cần trả"
+    timeout: 10000
+- tapOn: { id: "key-1" }
+- tapOn: { id: "key-2" }
+- tapOn: { id: "key-000" }
+- tapOn: "Hiện mã QR"
+- extendedWaitUntil:
+    visible: "Hủy đơn này"
+    timeout: 15000
+- tapOn: "Hủy đơn này"
+- assertVisible: "Hủy đơn này?"
+- tapOn: "Không hủy"
+- tapOn: "Hủy đơn này"
+- tapOn: "Hủy đơn"
+- assertVisible: "Đã hủy đơn.*"
+- takeScreenshot: "22-huy-dang-dem-nguoc"
+- tapOn: "Hoàn tác"
+- assertVisible: "Khách quét mã để trả"
+# Hủy thật: chờ hết 5 giây
+- tapOn: "Hủy đơn này"
+- tapOn: "Hủy đơn"
+- extendedWaitUntil:
+    visible: "Chưa nhập số tiền"
+    timeout: 12000
+- takeScreenshot: "23-sau-khi-huy"
+- tapOn: "Trang chính"
+- extendedWaitUntil:
+    visible: "Hôm nay đã thu"
+    timeout: 10000

@@ -1,0 +1,36 @@
+appId: vn.quickpos.app
+---
+- assertVisible: "Hôm nay đã thu"
+- repeat:
+    times: 2
+    commands:
+      - tapOn: "Thu tiền"
+      - extendedWaitUntil:
+          visible: "Khách cần trả"
+          timeout: 10000
+      - tapOn: { id: "key-2" }
+      - tapOn: { id: "key-5" }
+      - tapOn: { id: "key-000" }
+      - tapOn: "Khách trả tiền mặt"
+      - extendedWaitUntil:
+          visible: "Khách đưa bao nhiêu?"
+          timeout: 10000
+      - tapOn: "Đưa đủ"
+      - assertVisible: "Không phải thối"
+      - tapOn: "50.000"
+      - assertVisible: "Thối lại cho khách"
+      - assertVisible: "Hai mươi lăm nghìn đồng"
+      - takeScreenshot: "30-tien-thoi"
+      - tapOn: "Đã thu tiền mặt"
+      - extendedWaitUntil:
+          visible: "Đã ghi đơn tiền mặt"
+          timeout: 15000
+      - takeScreenshot: "31-da-ghi-tien-mat"
+      - tapOn: "Đơn mới"
+      - extendedWaitUntil:
+          visible: "Chưa nhập số tiền"
+          timeout: 10000
+      - tapOn: "Trang chính"
+      - extendedWaitUntil:
+          visible: "Hôm nay đã thu"
+          timeout: 10000

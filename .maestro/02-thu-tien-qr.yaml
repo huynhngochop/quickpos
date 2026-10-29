@@ -1,0 +1,50 @@
+appId: vn.quickpos.app
+---
+- assertVisible: "Hôm nay đã thu"
+- repeat:
+    times: 3
+    commands:
+      - tapOn: "Thu tiền"
+      - extendedWaitUntil:
+          visible: "Khách cần trả"
+          timeout: 10000
+      # Chưa nhập số: nút QR khóa, có chữ giải thích
+      - assertVisible: "Nhập số tiền trước"
+      # Bàn phím: 1 8 000, xóa thử một số rồi nhập lại
+      - tapOn: { id: "key-1" }
+      - tapOn: { id: "key-8" }
+      - tapOn: { id: "key-000" }
+      - tapOn: { id: "key-0" }
+      - tapOn: { id: "key-del" }
+      - assertVisible: "18.000 đ"
+      - assertVisible: "Mười tám nghìn đồng"
+      - takeScreenshot: "10-nhap-so-tien"
+      - tapOn: "Hiện mã QR"
+      - extendedWaitUntil:
+          visible: "Khách quét mã để trả"
+          timeout: 15000
+      - assertVisible: "MB Bank.*"
+      - assertVisible: "Đang chờ tiền về.*"
+      - takeScreenshot: "11-cho-tien-qr"
+      # Bản thử: khách "chuyển tiền" sau 12 giây (bản kiểm thử tự động: 30 giây)
+      - extendedWaitUntil:
+          visible: "Đơn mới"
+          timeout: 60000
+      - takeScreenshot: "12-da-nhan"
+      # Đợi màn hình xanh toàn phần tắt (≥ 3 giây) rồi mới bấm
+      - extendedWaitUntil:
+          notVisible: "Đã nhận 18.000 đ"
+          timeout: 10000
+      - tapOn: "Đọc lại"
+      - tapOn: "Đơn mới"
+      - extendedWaitUntil:
+          visible: "Khách cần trả"
+          timeout: 10000
+      - assertVisible: "Chưa nhập số tiền"
+      - tapOn: "Trang chính"
+      - extendedWaitUntil:
+          visible: "Hôm nay đã thu"
+          timeout: 10000
+# 130.000 mẫu + 3 × 18.000
+- assertVisible: "184.000 đ"
+- takeScreenshot: "13-trang-chinh-sau-3-don"

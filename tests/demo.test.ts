@@ -41,7 +41,7 @@ test('chế độ dùng thử: đăng nhập → tạo quán → bán → khách
   assert.equal(again.data.total_amount, 18000, 'gửi lại cùng mã không tạo đơn mới');
   const qr = await c.functions.invoke('qr-for-order', { body: { order_id: 'o1' } });
   assert.match((qr.data as { qr_payload: string }).qr_payload, /^000201/);
-  await tick(8000);
+  await tick(12000);
   assert.equal(events.at(-1)?.payment_status, 'PAID');
   assert.equal((await rpc('cancel_order_v1', { p_order_id: 'o1' })).error?.message, 'QP_ORDER_NOT_CANCELLABLE');
 
@@ -53,7 +53,9 @@ test('chế độ dùng thử: đăng nhập → tạo quán → bán → khách
   const page1 = await rpc('list_orders', { p_business_id: 'b1', p_from: from, p_to: to, p_limit: 3 });
   const last = page1.data[2];
   const page2 = await rpc('list_orders', { p_business_id: 'b1', p_from: from, p_to: to, p_after_sold_at: last.sold_at, p_after_id: last.id, p_limit: 3 });
-  assert.equal(page1.data.length + page2.data.length, 6);
+  assert.equal(page1.data.length + page2.data.length, 6, 'hai trang đầy');
+  const unpaidSeed = await c.from('orders').select('*').eq('business_id', 'b1').eq('payment_status', 'UNPAID').eq('total_amount', 18000);
+  assert.equal(unpaidSeed.data.length, 1, 'có sẵn một đơn chưa trả để thử gán tiền');
   assert.ok(!page2.data.some((o: { id: string }) => page1.data.some((p: { id: string }) => p.id === o.id)), 'trang sau không lặp');
 
   // Gán khoản tiền chưa rõ đơn

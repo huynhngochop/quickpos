@@ -18,7 +18,7 @@ export const vi = {
     tripleZero: 'Ba số không',
     currency: 'đ',
     demoTitle: 'Bản dùng thử — dữ liệu mẫu',
-    demoBody: 'Không phải tiền thật. Bấm “Hiện mã QR”, sau 8 giây máy giả lập khách đã chuyển tiền.',
+    demoBody: 'Không phải tiền thật. Bấm “Hiện mã QR”, khoảng 12 giây sau máy giả lập khách đã chuyển tiền.',
     demoLogin: 'Bản dùng thử: nhập số điện thoại bất kỳ, rồi mã 6 số bất kỳ.',
   },
 
