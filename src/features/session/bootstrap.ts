@@ -39,7 +39,8 @@ function hydrated(store: { persist: { hasHydrated: () => boolean; onFinishHydrat
 export async function bootstrap(): Promise<Route> {
   await Promise.all([hydrated(useSession), hydrated(usePrefs)]);
   await getDeviceId();
-  await refreshQueue();
+  // Hàng đợi trên máy lỗi (SQLite) không được chặn mở app
+  await refreshQueue().catch((e) => console.error('[bootstrap] refreshQueue', e));
   void ensurePaymentChannel();
 
   // 1. Phiên bản: lỗi mạng thì bỏ qua, không chặn bán tiền mặt

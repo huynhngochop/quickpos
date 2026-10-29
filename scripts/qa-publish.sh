@@ -2,6 +2,7 @@
 # Đẩy thư mục qa-out lên nhánh riêng (ghi đè) để đọc kết quả qua git: qa-<nhãn>
 set -eu
 LABEL="$1"
+mkdir -p "$(dirname "$0")/../qa-out"
 cd "$(dirname "$0")/../qa-out"
 rm -rf .git
 git init -q

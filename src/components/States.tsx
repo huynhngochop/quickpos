@@ -24,6 +24,12 @@ export function ErrorView({ error, onRetry }: { error: unknown; onRetry?: () => 
       <Txt variant="bodyStrong" tone="warn" accessibilityLiveRegion="assertive">
         {e.message}
       </Txt>
+      {/* Bản dùng thử: hiện chi tiết kỹ thuật nhỏ để báo lỗi dễ hơn (bản thật không hiện) */}
+      {ENV.demo && e.detail ? (
+        <Txt variant="caption" tone="secondary" selectable>
+          {e.detail}
+        </Txt>
+      ) : null}
       {onRetry ? <Button kind="secondary" label={vi.common.retry} onPress={onRetry} /> : null}
     </Card>
   );

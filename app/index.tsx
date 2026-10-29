@@ -13,7 +13,10 @@ export default function Gate() {
     setError(null);
     bootstrap()
       .then((r) => router.replace(r.to))
-      .catch(setError);
+      .catch((e) => {
+        console.error('[bootstrap]', e);
+        setError(e);
+      });
   }, []);
 
   useEffect(run, [run]);
