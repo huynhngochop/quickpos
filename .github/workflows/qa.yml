@@ -42,6 +42,16 @@ jobs:
       - run: bash scripts/ci-run.sh prebuild npx expo prebuild --platform android --clean
       - run: bash ../scripts/ci-run.sh gradle ./gradlew assembleRelease --no-daemon
         working-directory: android
+      - name: Dọn ổ đĩa cho máy ảo (APK đã build xong)
+        run: |
+          df -h /
+          cp android/app/build/outputs/apk/release/app-release.apk "$RUNNER_TEMP/app-release.apk"
+          rm -rf android/app/build/intermediates android/build ~/.gradle/caches node_modules/.cache
+          sudo rm -rf /usr/share/dotnet /opt/ghc /usr/local/share/boost /usr/local/lib/node_modules /opt/hostedtoolcache/CodeQL /usr/local/.ghcup /usr/share/swift || true
+          sudo docker image prune --all --force > /dev/null 2>&1 || true
+          mkdir -p android/app/build/outputs/apk/release
+          cp "$RUNNER_TEMP/app-release.apk" android/app/build/outputs/apk/release/app-release.apk
+          df -h /
       - name: Bật KVM cho emulator
         run: |
           echo 'KERNEL=="kvm", GROUP="kvm", MODE="0666", OPTIONS+="static_node=kvm"' | sudo tee /etc/udev/rules.d/99-kvm4all.rules
