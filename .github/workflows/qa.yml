@@ -29,8 +29,8 @@ jobs:
           - label: android-phone
             profile: pixel_6
           - label: android-tablet
-            profile: pixel_tablet
-    runs-on: ubuntu-latest
+            profile: medium_tablet
+    runs-on: ubuntu-24.04
     timeout-minutes: 90
     steps:
       - uses: actions/checkout@v4
@@ -48,21 +48,8 @@ jobs:
           sudo udevadm control --reload-rules
           sudo udevadm trigger --name-match=kvm
       - run: curl -fsSL "https://get.maestro.mobile.dev" | bash
-      - name: Ghi danh sách cấu hình máy ảo (để chẩn đoán)
-        run: |
-          mkdir -p qa-out
-          "$ANDROID_HOME/cmdline-tools/latest/bin/avdmanager" list device -c > qa-out/avd-devices.txt 2>&1 || true
-          echo "::notice title=avd devices::$(tr '\n' ' ' < qa-out/avd-devices.txt | cut -c1-900)"
-      - name: Chạy Maestro trên emulator
-        uses: reactivecircus/android-emulator-runner@v2
-        with:
-          api-level: 34
-          arch: x86_64
-          target: google_apis
-          profile: ${{ matrix.profile }}
-          disable-animations: true
-          emulator-options: -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none
-          script: mkdir -p qa-out && bash scripts/qa-android.sh ${{ matrix.label }} > qa-out/runner.log 2>&1
+      - name: Mở emulator và chạy Maestro
+        run: bash scripts/android-emulator.sh ${{ matrix.label }} ${{ matrix.profile }}
       - name: Đẩy kết quả lên nhánh qa-${{ matrix.label }}
         if: always()
         env:
