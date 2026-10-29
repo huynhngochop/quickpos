@@ -65,6 +65,8 @@ jobs:
           files: QuickPOS.apk
 
   ios-simulator:
+    # Chỉ chạy khi bấm tay: máy macOS của GitHub hay phải xếp hàng, để dành cho job QA iOS
+    if: github.event_name == 'workflow_dispatch'
     runs-on: macos-latest
     steps:
       - uses: actions/checkout@v4
