@@ -5,6 +5,8 @@ LABEL="$1"
 mkdir -p "$(dirname "$0")/../qa-out"
 cd "$(dirname "$0")/../qa-out"
 rm -rf .git
+# Bỏ file quá lớn (GitHub chặn > 100 MB): chỉ giữ 2 MB cuối
+find . -type f -size +20M | while read -r f; do tail -c 2000000 "$f" > "$f.tail" && rm "$f"; done
 git init -q
 git checkout -q -b "qa-$LABEL"
 git add -A

@@ -8,6 +8,10 @@ mkdir -p qa-out
 LOG=qa-out/emulator-setup.log
 exec > >(tee -a "$LOG") 2>&1
 SDK="${ANDROID_HOME:-$ANDROID_SDK_ROOT}"
+# Cố định thư mục AVD cho cả avdmanager và emulator (bản cmdline-tools cũ ghi sang chỗ khác)
+export ANDROID_AVD_HOME="$HOME/.android/avd"
+export ANDROID_SDK_ROOT="$SDK"
+mkdir -p "$ANDROID_AVD_HOME"
 BIN="$SDK/cmdline-tools/latest/bin"
 IMAGE="system-images;android-34;google_apis;x86_64"
 export PATH="$SDK/platform-tools:$SDK/emulator:$PATH"
@@ -27,7 +31,9 @@ echo "::endgroup::"
 step "Tạo AVD ($PROFILE)"
 echo no | "$BIN/avdmanager" create avd -n qa -k "$IMAGE" -d "$PROFILE" --force || fail "avdmanager lỗi"
 # RAM/ổ đủ cho máy tính bảng
-printf 'hw.ramSize=4096\ndisk.dataPartition.size=6G\nhw.keyboard=yes\n' >> "$HOME/.android/avd/qa.avd/config.ini"
+printf 'hw.ramSize=4096\ndisk.dataPartition.size=6G\nhw.keyboard=yes\n' >> "$ANDROID_AVD_HOME/qa.avd/config.ini"
+"$BIN/avdmanager" list avd
+ls -la "$ANDROID_AVD_HOME"
 echo "::endgroup::"
 
 step "Mở emulator"
