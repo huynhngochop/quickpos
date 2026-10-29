@@ -25,19 +25,19 @@ tags: [smoke]
 - tapOn: { id: "field-name" }
 - waitForAnimationToEnd
 - inputText: "Quan Co Ba"
-- hideKeyboard
+- tapOn: "Thông tin quán"
 - tapOn: { id: "field-taxCode" }
 - waitForAnimationToEnd
 - inputText: "123"
 - tapOn: "Thông tin quán"
 - tapOn: "Tiếp tục"
 - assertVisible: "Mã số thuế gồm 10 hoặc 12 số.*"
-- hideKeyboard
+- tapOn: "Thông tin quán"
 - tapOn: { id: "field-taxCode" }
 - waitForAnimationToEnd
 - eraseText: 5
 - inputText: "0312345678"
-- hideKeyboard
+- tapOn: "Thông tin quán"
 - scrollUntilVisible:
     element:
       id: "field-address"
