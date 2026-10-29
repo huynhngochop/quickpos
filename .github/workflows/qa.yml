@@ -3,9 +3,13 @@
 name: QA giao diện
 
 on:
-  push:
-    branches: [main]
+  # Chạy tay (tab Actions → QA giao diện → Run workflow) để tiết kiệm phút miễn phí của repo riêng tư
   workflow_dispatch:
+    inputs:
+      ios:
+        description: "Chạy cả iPhone Simulator (máy Mac tính gấp 10 lần phút)"
+        type: boolean
+        default: false
 
 permissions:
   contents: write
@@ -67,6 +71,7 @@ jobs:
         run: bash scripts/qa-publish.sh ${{ matrix.label }}
 
   ios:
+    if: ${{ inputs.ios }}
     runs-on: macos-latest
     timeout-minutes: 120
     steps:
