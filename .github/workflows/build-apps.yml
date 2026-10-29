@@ -39,7 +39,6 @@ jobs:
       - run: npm test
 
   android-apk:
-    needs: check
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -66,7 +65,6 @@ jobs:
           files: QuickPOS.apk
 
   ios-simulator:
-    needs: check
     runs-on: macos-latest
     steps:
       - uses: actions/checkout@v4
