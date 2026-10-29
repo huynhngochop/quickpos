@@ -1,0 +1,13 @@
+appId: vn.quickpos.app
+---
+# Máy ảo chậm hay hiện "… isn't responding" của ứng dụng hệ thống (không phải của QuickPOS): bấm Wait
+- runFlow:
+    when:
+      visible: ".*isn't responding.*"
+    commands:
+      - tapOn: "Wait"
+- runFlow:
+    when:
+      visible: ".*không phản hồi.*"
+    commands:
+      - tapOn: "Đợi"
