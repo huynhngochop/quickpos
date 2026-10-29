@@ -5,7 +5,7 @@
  * Có giả lập "khách chuyển khoản" 12 giây sau khi hiện mã QR để xem màn hình báo tiền.
  */
 import { buildVietQr } from '../../supabase/functions/_shared/vietqr';
-import { vnDay } from './time';
+import { vnDay, vnDayRange } from './time';
 
 type Row = Record<string, any>;
 type Result = { data: any; error: { message: string } | null; count?: number };
@@ -68,7 +68,10 @@ function updateOrder(o: Row, patch: Row) {
 /** Dữ liệu mẫu cho quán mới tạo: tài khoản nhận tiền, vài đơn hôm nay, một khoản tiền chưa rõ đơn. */
 function seedBusiness(bizId: string) {
   db.payment_accounts!.push({ id: uid(), business_id: bizId, provider: 'DEMO', bank_bin: DEMO_BIN, account_no: DEMO_ACCOUNT, kind: 'MAIN', label: null, is_active: true });
-  const minutesAgo = (m: number) => new Date(Date.now() - m * 60_000).toISOString();
+  // Giờ mẫu "cách đây m phút" nhưng không lùi qua nửa đêm (mở app lúc 0 giờ vẫn ra sổ hôm nay đúng)
+  const dayStart = Date.parse(vnDayRange(vnDay()).from);
+  const span = Math.max(Date.now() - dayStart, 1);
+  const minutesAgo = (m: number) => new Date(Date.now() - Math.min(m * 60_000, (span * m) / 100)).toISOString();
   const samples: [number, string, number][] = [[25000, 'VIETQR', 95], [18000, 'CASH', 80], [45000, 'VIETQR', 62], [12000, 'CASH', 40], [30000, 'VIETQR', 21]];
   for (const [amount, method, ago] of samples) {
     const o = newOrder(bizId, [{ name: 'Bán hàng', quantity: 1, unit_price: amount }], method, null, minutesAgo(ago));

@@ -66,3 +66,22 @@ test('chế độ dùng thử: đăng nhập → tạo quán → bán → khách
   assert.equal((await rpc('assign_payment_event_v1', { p_event_id: ev.data[0].id, p_order_id: 'o3' })).error?.message, 'QP_ALREADY_ASSIGNED');
   mock.timers.reset();
 });
+
+test('dữ liệu mẫu không lùi qua nửa đêm (mở app lúc 00:05 giờ VN)', async () => {
+  // 00:05 ngày 30/10 giờ VN = 17:05 UTC ngày 29/10
+  mock.timers.enable({ apis: ['Date', 'setTimeout'], now: Date.parse('2026-10-29T17:05:00Z') });
+  const c = createDemoClient();
+  const settle = async () => {
+    mock.timers.tick(300);
+    await new Promise((r) => setImmediate(r));
+  };
+  await c.auth.verifyOtp({ phone: '+84903456789', token: '123456' });
+  const p = c.rpc('create_business_v1', { p_business_id: 'night', p_business_name: 'Quán đêm', p_tax_code: '0312345679', p_address: 'HCM' }).then((x) => x);
+  await settle();
+  await p;
+  const q = c.rpc('day_summary', { p_business_id: 'night', p_day: '2026-10-30' }).then((x) => x);
+  await settle();
+  const sum = await q;
+  assert.equal(sum.data.reduce((s: number, r: { amount: number }) => s + r.amount, 0), 130000);
+  mock.timers.reset();
+});
