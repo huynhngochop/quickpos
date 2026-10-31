@@ -27,8 +27,9 @@ export default function XoaTaiKhoan() {
       await clearOwnerPin();
       useSession.getState().set({ everSignedIn: false, lastPhone: null });
       await signOut();
-      useSession.getState().reset();
+      // Rời màn hình trước rồi mới xóa quán khỏi máy
       router.replace('/dang-nhap');
+      setTimeout(() => useSession.getState().reset(), 0);
     } catch (e) {
       setError(e);
     } finally {

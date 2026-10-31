@@ -48,8 +48,9 @@ export default function CaiDat() {
     // Tắt cờ trước khi đăng xuất để không bị chuyển sang màn "Hết phiên"
     useSession.getState().set({ everSignedIn: false });
     await signOut();
-    useSession.getState().reset();
+    // Rời màn hình trước rồi mới xóa quán khỏi máy
     router.replace('/dang-nhap');
+    setTimeout(() => useSession.getState().reset(), 0);
   };
 
   return (

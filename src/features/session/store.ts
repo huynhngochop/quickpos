@@ -2,6 +2,7 @@
  * Quán đang dùng trên máy này. Lưu lại để mở app lúc mất mạng vẫn vào được màn hình thu tiền mặt.
  */
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { useRef } from 'react';
 import { create } from 'zustand';
 import { createJSONStorage, persist } from 'zustand/middleware';
 import type { Business, Role } from '../../types/api';
@@ -35,10 +36,16 @@ export const useSession = create<SessionState>()(
   ),
 );
 
+/**
+ * Quán đang dùng. Khi đăng xuất / xóa tài khoản, các màn hình còn trong ngăn xếp vẫn vẽ lại một lần trước khi
+ * bị gỡ: giữ mã quán cuối cùng thay vì ném lỗi (ném lỗi lúc đó làm app tắt ngang).
+ */
 export function useBusinessId(): string {
   const id = useSession((s) => s.business?.id);
-  if (!id) throw new Error('Chưa chọn quán');
-  return id;
+  const last = useRef(id);
+  if (id) last.current = id;
+  if (!last.current) throw new Error('Chưa chọn quán');
+  return last.current;
 }
 
 export function canManage(role: Role | null): boolean {

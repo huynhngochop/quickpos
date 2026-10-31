@@ -1,5 +1,5 @@
 import { useRef, useState } from 'react';
-import { TextInput, View, type KeyboardTypeOptions } from 'react-native';
+import { Keyboard, TextInput, View, type KeyboardTypeOptions } from 'react-native';
 import { router } from 'expo-router';
 import { Controller, useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -47,7 +47,16 @@ export default function ThietLapQuan() {
   });
 
   return (
-    <Screen footer={<Button big label={vi.setup.next} onPress={onSubmit} busy={formState.isSubmitting} />}>
+    <Screen footer={<Button
+          big
+          label={vi.setup.next}
+          // Ẩn bàn phím để thấy dòng báo lỗi dưới ô (máy tính bảng nằm ngang: bàn phím che gần nửa màn hình)
+          onPress={() => {
+            Keyboard.dismiss();
+            void onSubmit();
+          }}
+          busy={formState.isSubmitting}
+        />}>
       <Txt variant="bodyStrong" tone="secondary">
         {vi.setup.step(1)}
       </Txt>
@@ -100,8 +109,6 @@ function Field({
         name={name}
         render={({ field }) => (
           <TextInput
-            // Cho React Hook Form đặt con trỏ vào ô sai đầu tiên khi bấm "Tiếp tục"
-            ref={field.ref}
             accessibilityLabelledBy={`f-${name}`}
             testID={`field-${name}`}
             value={field.value}
