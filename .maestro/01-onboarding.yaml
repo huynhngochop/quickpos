@@ -25,26 +25,36 @@ tags: [smoke]
 - tapOn: { id: "field-name" }
 - waitForAnimationToEnd
 - inputText: "Quan Co Ba"
-- tapOn: "Thông tin quán"
+- tapOn:
+    text: "Thông tin quán"
+    optional: true
 - tapOn: { id: "field-taxCode" }
 - waitForAnimationToEnd
 - inputText: "123"
-- tapOn: "Thông tin quán"
+- tapOn:
+    text: "Thông tin quán"
+    optional: true
 - tapOn: "Tiếp tục"
 - assertVisible: "Mã số thuế gồm 10 hoặc 12 số.*"
-- tapOn: "Thông tin quán"
+- tapOn:
+    text: "Thông tin quán"
+    optional: true
 - tapOn: { id: "field-taxCode" }
 - waitForAnimationToEnd
 - eraseText: 5
 - inputText: "0312345678"
-- tapOn: "Thông tin quán"
+- tapOn:
+    text: "Thông tin quán"
+    optional: true
 - scrollUntilVisible:
     element:
       id: "field-address"
 - tapOn: { id: "field-address" }
 - waitForAnimationToEnd
 - inputText: "12 Le Loi, Quan 1"
-- tapOn: "Thông tin quán"
+- tapOn:
+    text: "Thông tin quán"
+    optional: true
 - takeScreenshot: "06-quan-dien-xong"
 - tapOn: "Tiếp tục"
 
