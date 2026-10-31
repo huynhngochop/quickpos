@@ -39,11 +39,13 @@ appId: vn.quickpos.app
 - tapOn: { id: "key-2" }
 - tapOn: { id: "key-000" }
 - tapOn: "Hiện mã QR"
+# Máy tính bảng ngang: nút hủy nằm dưới QR, phải cuộn cột phải mới thấy
 - extendedWaitUntil:
-    visible: "Hủy đơn này"
+    visible: "Khách quét mã để trả"
     timeout: 15000
 - scrollUntilVisible:
     element: "Hủy đơn này"
+    timeout: 15000
 - tapOn: "Hủy đơn này"
 - assertVisible: "Hủy đơn này\\?"
 - tapOn: "Không hủy"
