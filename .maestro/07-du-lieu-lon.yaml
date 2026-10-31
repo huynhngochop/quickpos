@@ -41,11 +41,16 @@ appId: vn.quickpos.app
 - takeScreenshot: "72-sau-5-trang"
 # Quay về hôm nay: số liệu hôm nay không lẫn đơn cũ
 # 120 đơn đã tải: cuộn ngược lên đầu cần nhiều lần vuốt
-- scrollUntilVisible:
-    element: "Ngày sau ›"
-    direction: UP
-    speed: 100
-    timeout: 120000
+# (scrollUntilVisible hướng lên không cuộn được danh sách này trên Android: vuốt tay từng lần)
+- repeat:
+    while:
+      notVisible: "Ngày sau ›"
+    times: 40
+    commands:
+      - swipe:
+          start: 50%, 25%
+          end: 50%, 85%
+          duration: 250
 - tapOn: "Ngày sau ›"
 - tapOn: "Ngày sau ›"
 - extendedWaitUntil:

@@ -37,7 +37,8 @@ export function layoutFor(width: number, height: number, fontScale = 1): LayoutM
   const kind: LayoutKind = wide ? 'split' : short ? 'compact' : 'single';
 
   const columnWidth = wide ? Math.floor((width - GUTTER * 3) / 2) : width - GUTTER * 2;
-  const qrLimitByHeight = Math.floor(height * (wide ? 0.6 : 0.42));
+  // Màn ngang (máy tính bảng, máy POS): QR thấp hơn để nút chính dưới QR vẫn nằm trong màn hình
+  const qrLimitByHeight = Math.floor(height * (wide ? (width > height ? 0.36 : 0.6) : 0.42));
   const qrSize = Math.max(200, Math.min(columnWidth - 32, qrLimitByHeight, 360));
 
   return {

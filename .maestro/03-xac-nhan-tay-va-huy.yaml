@@ -12,11 +12,17 @@ appId: vn.quickpos.app
 - extendedWaitUntil:
     visible: "Tôi đã thấy tiền về"
     timeout: 15000
+- scrollUntilVisible:
+    element: "Tôi đã thấy tiền về"
+    visibilityPercentage: 100
 - tapOn: "Tôi đã thấy tiền về"
 - assertVisible: "Bạn đã thấy tiền vào tài khoản của quán\\?"
 - takeScreenshot: "20-hoi-xac-nhan-tay"
 - tapOn: "Chưa thấy"
 - assertVisible: "Khách quét mã để trả"
+- scrollUntilVisible:
+    element: "Tôi đã thấy tiền về"
+    visibilityPercentage: 100
 - tapOn: "Tôi đã thấy tiền về"
 - tapOn: "Đúng, tiền đã về"
 - extendedWaitUntil:

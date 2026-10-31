@@ -101,7 +101,14 @@ appId: vn.quickpos.app
 - scrollUntilVisible:
     element: "Xóa tài khoản"
 - tapOn: "Xóa tài khoản"
+# Ô đánh dấu nằm dưới, có thể bị nút cuối màn hình che: cuộn tới
+- scrollUntilVisible:
+    element: "Tôi hiểu và muốn xóa tài khoản"
+    visibilityPercentage: 100
 - tapOn: "Tôi hiểu và muốn xóa tài khoản"
+- extendedWaitUntil:
+    visible: "Xóa tài khoản của tôi"
+    timeout: 5000
 - tapOn: "Xóa tài khoản của tôi"
 - extendedWaitUntil:
     visible: "Nhập số điện thoại của quán"

@@ -5,10 +5,14 @@ appId: vn.quickpos.app
 - repeat:
     times: 3
     commands:
-      - tapOn: "Thu tiền"
-      - extendedWaitUntil:
-          visible: "Khách cần trả"
-          timeout: 10000
+      # Vừa mở lại app: bấm lại nếu lần đầu chưa sang màn thu tiền
+      - retry:
+          maxRetries: 2
+          commands:
+            - tapOn: "Thu tiền"
+            - extendedWaitUntil:
+                visible: "Khách cần trả"
+                timeout: 10000
       # Chưa nhập số: nút QR khóa, có chữ giải thích
       - assertVisible: "Nhập số tiền trước"
       # Bàn phím: 1 8 000, xóa thử một số rồi nhập lại
