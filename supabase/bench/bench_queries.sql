@@ -92,6 +92,12 @@ insert into results select * from pg_temp.bench('SO SÁNH — khớp mã kiểu 
   $q$ select id from public.orders o where o.business_id = '10000000-0000-0000-0000-000000000001' and o.created_at > now() - interval '3 days' and position(o.order_code in 'MBVCB8812ABCDEFGHCTTUNGUYENVANA') > 0 limit 1 $q$, 5);
 
 -- Các thao tác ghi của app (hàm *_v1) trên hộ 1 triệu đơn: mỗi loại 200 lần, gọi như người dùng thật
+-- 50 khoản tiền chưa rõ đơn mới cho hộ 1 (để đo gán đơn, chạy lại nhiều lần vẫn có)
+insert into public.payment_events (business_id, provider, provider_txn_id, bank_bin, account_no,
+                                   amount, transfer_content, match_status, received_at)
+select '10000000-0000-0000-0000-000000000001', 'SEPAY', 'BA' || gen_random_uuid(), '970422', 'ACC000001',
+       18000, 'chuyen tien', 'UNMATCHED', now() - make_interval(mins => i)
+from generate_series(1, 50) i;
 create temp table wr (k text, ms numeric);
 grant all on wr to authenticated;
 set role authenticated;
@@ -135,6 +141,6 @@ reset role;
 insert into results select k, round(avg(ms), 2), round(max(ms), 2) from wr group by k;
 
 -- Bảng tổng hợp vẫn khớp với đơn sau mọi thao tác ghi (phải 0 dòng)
-insert into results select 'Đối soát daily_sales (số dòng lệch: ' || count(*) || ')', null, null from public.check_daily_sales();
+insert into results select 'Đối soát daily_sales (số dòng lệch: ' || count(*) || ')', null, null from public.check_daily_sales((now() - interval '400 days')::date, (now() + interval '1 day')::date);
 
 select * from results;
