@@ -21,6 +21,8 @@ concurrency:
 env:
   # Bản kiểm thử: khách "chuyển tiền" sau 90 giây (máy ảo CI chậm) để kịp thử xác nhận tay và hủy đơn
   EXPO_PUBLIC_DEMO_PAY_MS: "90000"
+  # Nạp 1 triệu đơn cũ để thử sổ với dữ liệu lớn (luồng 07)
+  EXPO_PUBLIC_DEMO_BULK_ORDERS: "1000000"
   MAESTRO_CLI_NO_ANALYTICS: "1"
   MAESTRO_DRIVER_STARTUP_TIMEOUT: "180000"
 

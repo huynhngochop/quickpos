@@ -5,7 +5,7 @@
  * Có giả lập "khách chuyển khoản" 12 giây sau khi hiện mã QR để xem màn hình báo tiền.
  */
 import { buildVietQr } from '../../supabase/functions/_shared/vietqr';
-import { vnDay, vnDayRange } from './time';
+import { addDays, vnDay, vnDayRange } from './time';
 
 type Row = Record<string, any>;
 type Result = { data: any; error: { message: string } | null; count?: number };
@@ -23,6 +23,103 @@ const uid = () =>
 const CODE_CHARS = 'ABCDEFGHJKMNPQRSTUVWXYZ23456789';
 const orderCode = () => Array.from({ length: 8 }, () => CODE_CHARS[Math.floor(Math.random() * CODE_CHARS.length)]).join('');
 const nowIso = () => new Date().toISOString();
+
+// ---------------- Lịch sử lớn (thử dữ liệu hàng trăm nghìn – hàng triệu đơn) ----------------
+// EXPO_PUBLIC_DEMO_BULK_ORDERS=1000000: quán đầu tiên có thêm chừng ấy đơn cũ, rải đều 365 ngày, từ HÔM KIA trở về
+// trước (hôm nay và hôm qua giữ như bản thử thường). Không giữ cả triệu dòng trong bộ nhớ: mỗi ngày sinh lại
+// từ hạt giống cố định khi cần (giống hệt mỗi lần), tổng theo ngày được nhớ lại sau lần tính đầu.
+export const BULK_ORDERS = Math.max(0, Math.floor(Number(process.env.EXPO_PUBLIC_DEMO_BULK_ORDERS ?? 0) || 0));
+const BULK_DAYS = 365;
+const BULK_FIRST_OFFSET = 2;
+let bulkBiz: string | null = null;
+let bulkToday = '';
+const bulkSums = new Map<string, Row[]>();
+const bulkRows = new Map<string, Row[]>();
+
+function mulberry32(seed: number) {
+  let a = seed >>> 0;
+  return () => {
+    a = (a + 0x6d2b79f5) >>> 0;
+    let t = a;
+    t = Math.imul(t ^ (t >>> 15), t | 1);
+    t ^= t + Math.imul(t ^ (t >>> 7), t | 61);
+    return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+  };
+}
+
+/** Ngày cũ thứ k (0 = hôm kia) và số đơn của ngày đó; tổng các ngày đúng bằng BULK_ORDERS. */
+function bulkDay(k: number): { day: string; count: number } {
+  const count = Math.floor((BULK_ORDERS * (k + 1)) / BULK_DAYS) - Math.floor((BULK_ORDERS * k) / BULK_DAYS);
+  return { day: addDays(bulkToday, -(BULK_FIRST_OFFSET + k)), count };
+}
+
+function generateBulkDay(k: number): Row[] {
+  const { day, count } = bulkDay(k);
+  const rnd = mulberry32(0x9e3779b1 ^ (k * 2654435761));
+  const start = Date.parse(vnDayRange(day).from);
+  const compact = day.replace(/-/g, '');
+  const rows: Row[] = new Array(count);
+  for (let j = 0; j < count; j++) {
+    const soldAt = new Date(start + Math.floor(((j + rnd()) / count) * 86_400_000)).toISOString();
+    const amount = (10 + Math.floor(rnd() * 190)) * 1000;
+    const method = rnd() < 0.75 ? 'VIETQR' : 'CASH';
+    const paid = rnd() < 0.985;
+    let code = '';
+    for (let c = 0; c < 8; c++) code += CODE_CHARS[Math.floor(rnd() * CODE_CHARS.length)];
+    rows[j] = {
+      id: `h${compact}-${String(j).padStart(7, '0')}`, business_id: bulkBiz, order_code: code, total_amount: amount,
+      amount_received: paid ? amount : 0, overpaid_amount: 0, payment_method: method,
+      payment_status: paid ? 'PAID' : 'CANCELLED', paid_at: paid ? soldAt : null, manual_confirmed_by: null,
+      manual_confirmed_at: null, manual_note: null, sold_at: soldAt, client_sold_at: soldAt, clock_suspect: false,
+      created_device_id: null, created_by: null, created_at: soldAt, updated_at: soldAt,
+    };
+  }
+  return rows;
+}
+
+/** Đơn của một ngày cũ: nhớ tối đa 3 ngày gần nhất được xem. */
+function bulkRowsFor(k: number): Row[] {
+  const key = String(k);
+  let rows = bulkRows.get(key);
+  if (!rows) {
+    rows = generateBulkDay(k);
+    bulkRows.set(key, rows);
+    if (bulkRows.size > 3) bulkRows.delete(bulkRows.keys().next().value as string);
+  }
+  return rows;
+}
+
+/** Dòng daily_sales của một ngày cũ (chỉ tính một lần). */
+function bulkSumsFor(k: number): Row[] {
+  const key = bulkDay(k).day;
+  let sums = bulkSums.get(key);
+  if (!sums) {
+    const by = new Map<string, Row>();
+    for (const o of bulkRows.get(String(k)) ?? generateBulkDay(k)) {
+      if (o.payment_status !== 'PAID') continue;
+      const r = by.get(o.payment_method) ?? { business_id: bulkBiz, sale_date: key, method: o.payment_method, orders_count: 0, amount: 0 };
+      r.orders_count += 1;
+      r.amount += o.total_amount;
+      by.set(o.payment_method, r);
+    }
+    sums = [...by.values()];
+    bulkSums.set(key, sums);
+  }
+  return sums;
+}
+
+/** Các ngày cũ (chỉ số k) nằm trong [fromDay, toDay], mới nhất trước. */
+function bulkDaysBetween(fromDay: string, toDay: string): number[] {
+  const out: number[] = [];
+  if (!bulkBiz || BULK_ORDERS === 0) return out;
+  for (let k = 0; k < BULK_DAYS; k++) {
+    const d = bulkDay(k).day;
+    if (d > toDay) continue;
+    if (d < fromDay) break;
+    out.push(k);
+  }
+  return out;
+}
 
 // ---------------- Dữ liệu trong bộ nhớ ----------------
 const db: Record<string, Row[]> = {
@@ -86,6 +183,12 @@ function seedBusiness(bizId: string) {
     id: uid(), business_id: bizId, order_id: null, provider: 'DEMO', bank_bin: DEMO_BIN, account_no: DEMO_ACCOUNT,
     amount: 18000, transfer_content: 'chuyen tien', match_status: 'UNMATCHED', received_at: minutesAgo(15),
   });
+  if (BULK_ORDERS > 0 && !bulkBiz) {
+    bulkBiz = bizId;
+    bulkToday = vnDay();
+    bulkSums.clear();
+    bulkRows.clear();
+  }
 }
 
 function paidRowsFor(bizId: string) {
@@ -106,8 +209,13 @@ function dailySales(): Row[] {
   return [...map.values()];
 }
 
-function tableRows(table: string): Row[] {
-  if (table === 'daily_sales') return dailySales();
+/** daily_sales của ngày cũ trong khoảng ngày (mặc định cả năm). */
+function bulkDailySales(fromDay = '0000-00-00', toDay = '9999-99-99'): Row[] {
+  return bulkDaysBetween(fromDay, toDay).flatMap((k) => bulkSumsFor(k));
+}
+
+function tableRows(table: string, range?: { from?: string; to?: string }): Row[] {
+  if (table === 'daily_sales') return [...dailySales(), ...bulkDailySales(range?.from, range?.to)];
   if (table === 'unreconciled_manual_confirmations') {
     const cutoff = Date.now() - 15 * 60_000;
     return db.orders!.filter((o) => o.manual_confirmed_at && o.amount_received < o.total_amount && Date.parse(o.manual_confirmed_at) < cutoff);
@@ -126,8 +234,17 @@ class Query implements PromiseLike<Result> {
   select(cols = '*') { this.cols = cols; return this; }
   eq(c: string, v: unknown) { this.filters.push((r) => r[c] === v); return this; }
   in(c: string, vs: unknown[]) { this.filters.push((r) => vs.includes(r[c])); return this; }
-  gte(c: string, v: string | number) { this.filters.push((r) => r[c] >= v); return this; }
-  lte(c: string, v: string | number) { this.filters.push((r) => r[c] <= v); return this; }
+  private range: { from?: string; to?: string } = {};
+  gte(c: string, v: string | number) {
+    if (c === 'sale_date') this.range.from = String(v);
+    this.filters.push((r) => r[c] >= v);
+    return this;
+  }
+  lte(c: string, v: string | number) {
+    if (c === 'sale_date') this.range.to = String(v);
+    this.filters.push((r) => r[c] <= v);
+    return this;
+  }
   lt(c: string, v: string | number) { this.filters.push((r) => r[c] < v); return this; }
   order(col: string, o?: { ascending?: boolean }) { this.sort = { col, asc: o?.ascending ?? true }; return this; }
   limit(n: number) { this.max = n; return this; }
@@ -136,7 +253,7 @@ class Query implements PromiseLike<Result> {
   abortSignal() { return this; }
 
   private run(): Result {
-    let rows = tableRows(this.table).filter((r) => this.filters.every((f) => f(r)));
+    let rows = tableRows(this.table, this.range).filter((r) => this.filters.every((f) => f(r)));
     if (this.sort) {
       const { col, asc } = this.sort;
       rows = [...rows].sort((a, b) => (a[col] < b[col] ? -1 : a[col] > b[col] ? 1 : 0) * (asc ? 1 : -1));
@@ -263,17 +380,39 @@ function rpcImpl(name: string, a: Row): Result {
     }
 
     case 'day_summary': {
-      return ok(dailySales().filter((r) => r.business_id === a.p_business_id && r.sale_date === a.p_day));
+      return ok(
+        [...dailySales(), ...(a.p_business_id === bulkBiz ? bulkDailySales(a.p_day, a.p_day) : [])].filter(
+          (r) => r.business_id === a.p_business_id && r.sale_date === a.p_day,
+        ),
+      );
     }
 
     case 'list_orders': {
       const afterSold = a.p_after_sold_at ?? '9999';
-      const afterId = a.p_after_id ?? 'ffffffff';
-      const rows = db.orders!
-        .filter((o) => o.business_id === a.p_business_id && o.sold_at >= a.p_from && o.sold_at < a.p_to)
-        .filter((o) => o.sold_at < afterSold || (o.sold_at === afterSold && o.id < afterId))
+      const afterId = a.p_after_id ?? '~';
+      const limit = Math.min(a.p_limit ?? 20, 100);
+      const before = (o: Row) => o.sold_at < afterSold || (o.sold_at === afterSold && o.id < afterId);
+      const inRange = (o: Row) => o.business_id === a.p_business_id && o.sold_at >= a.p_from && o.sold_at < a.p_to;
+      const candidates = db.orders!.filter((o) => inRange(o) && before(o));
+      // Ngày cũ: lấy từng ngày từ mới về cũ, đủ một trang thì dừng (giống index (business_id, sold_at desc, id desc))
+      if (a.p_business_id === bulkBiz) {
+        let found = 0;
+        for (const k of bulkDaysBetween(vnDay(new Date(a.p_from)), vnDay(new Date(Date.parse(a.p_to) - 1)))) {
+          const rows = bulkRowsFor(k);
+          for (let j = rows.length - 1; j >= 0; j--) {
+            const o = rows[j]!;
+            if (inRange(o) && before(o)) {
+              candidates.push(o);
+              found++;
+            }
+            if (found >= limit) break;
+          }
+          if (found >= limit) break;
+        }
+      }
+      const rows = candidates
         .sort((x, y) => (x.sold_at === y.sold_at ? (x.id < y.id ? 1 : -1) : x.sold_at < y.sold_at ? 1 : -1))
-        .slice(0, Math.min(a.p_limit ?? 20, 100));
+        .slice(0, limit);
       return ok(rows.map((r) => ({ ...r })));
     }
 

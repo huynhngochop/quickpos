@@ -3,6 +3,8 @@
  * Cấm: mã lỗi, tên bảng, tên trạng thái (PARTIAL, HĐĐT, MST, "đồng bộ", "webhook").
  * Chữ có số tiền: truyền chuỗi đã định dạng (formatVND) vào hàm.
  */
+import { groupDigits } from '../../supabase/functions/_shared/vnmoney';
+
 export const vi = {
   appName: 'QuickPOS',
   common: {
@@ -101,7 +103,7 @@ export const vi = {
 
   main: {
     todayCollected: 'Hôm nay đã thu',
-    ordersTap: (n: number) => `${n} đơn · bấm để xem sổ`,
+    ordersTap: (n: number) => `${groupDigits(n)} đơn · bấm để xem sổ`,
     pendingQueue: (n: number) => `${n} đơn tiền mặt chờ gửi`,
     needReview: (n: number) => `${n} khoản tiền cần xem lại`,
     collect: 'Thu tiền',
@@ -190,7 +192,7 @@ export const vi = {
   journal: {
     today: 'Hôm nay',
     total: 'Tổng đã thu',
-    orders: (n: number) => `${n} đơn`,
+    orders: (n: number) => `${groupDigits(n)} đơn`,
     transfer: 'Chuyển khoản',
     cash: 'Tiền mặt',
     card: 'Thẻ',

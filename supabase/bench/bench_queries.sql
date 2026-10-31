@@ -91,4 +91,50 @@ reset role;
 insert into results select * from pg_temp.bench('SO SÁNH — khớp mã kiểu cũ (quét chuỗi)',
   $q$ select id from public.orders o where o.business_id = '10000000-0000-0000-0000-000000000001' and o.created_at > now() - interval '3 days' and position(o.order_code in 'MBVCB8812ABCDEFGHCTTUNGUYENVANA') > 0 limit 1 $q$, 5);
 
+-- Các thao tác ghi của app (hàm *_v1) trên hộ 1 triệu đơn: mỗi loại 200 lần, gọi như người dùng thật
+create temp table wr (k text, ms numeric);
+grant all on wr to authenticated;
+set role authenticated;
+set request.jwt.claim.sub = '00000000-0000-0000-0000-000000000001';
+do $$
+declare
+  b uuid := '10000000-0000-0000-0000-000000000001';
+  i int; t0 timestamptz; o public.orders; ids uuid[] := '{}'; ev uuid; s text;
+begin
+  for i in 1..200 loop
+    t0 := clock_timestamp();
+    o := public.create_order_v1(gen_random_uuid(), b, '[{"name":"Bán hàng","quantity":1,"unit_price":18000}]', 'VIETQR', now(), 'bench');
+    insert into wr values ('Thu tiền: tạo đơn QR (create_order_v1)', extract(epoch from clock_timestamp() - t0) * 1000);
+    ids := ids || o.id;
+  end loop;
+  for i in 1..200 loop
+    t0 := clock_timestamp();
+    perform public.create_cash_sale_v1(gen_random_uuid(), b, '[{"name":"Bán hàng","quantity":1,"unit_price":25000}]', now(), 'bench');
+    insert into wr values ('Tiền mặt: ghi đơn (create_cash_sale_v1)', extract(epoch from clock_timestamp() - t0) * 1000);
+  end loop;
+  for i in 1..100 loop
+    t0 := clock_timestamp();
+    perform public.confirm_transfer_manually_v1(ids[i]);
+    insert into wr values ('Xác nhận tay (confirm_transfer_manually_v1)', extract(epoch from clock_timestamp() - t0) * 1000);
+  end loop;
+  for i in 101..150 loop
+    t0 := clock_timestamp();
+    perform public.cancel_order_v1(ids[i]);
+    insert into wr values ('Hủy đơn (cancel_order_v1)', extract(epoch from clock_timestamp() - t0) * 1000);
+  end loop;
+  for i in 151..200 loop
+    select id into ev from public.payment_events
+     where business_id = b and match_status = 'UNMATCHED' and order_id is null order by received_at desc limit 1;
+    exit when ev is null;
+    t0 := clock_timestamp();
+    s := public.assign_payment_event_v1(ev, ids[i]);
+    insert into wr values ('Gán tiền chưa rõ vào đơn (assign_payment_event_v1)', extract(epoch from clock_timestamp() - t0) * 1000);
+  end loop;
+end $$;
+reset role;
+insert into results select k, round(avg(ms), 2), round(max(ms), 2) from wr group by k;
+
+-- Bảng tổng hợp vẫn khớp với đơn sau mọi thao tác ghi (phải 0 dòng)
+insert into results select 'Đối soát daily_sales (số dòng lệch: ' || count(*) || ')', null, null from public.check_daily_sales();
+
 select * from results;
