@@ -40,10 +40,12 @@ appId: vn.quickpos.app
     timeout: 20000
 - takeScreenshot: "72-sau-5-trang"
 # Quay về hôm nay: số liệu hôm nay không lẫn đơn cũ
+# 120 đơn đã tải: cuộn ngược lên đầu cần nhiều lần vuốt
 - scrollUntilVisible:
     element: "Ngày sau ›"
     direction: UP
-    timeout: 20000
+    speed: 100
+    timeout: 120000
 - tapOn: "Ngày sau ›"
 - tapOn: "Ngày sau ›"
 - extendedWaitUntil:
