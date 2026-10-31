@@ -35,7 +35,10 @@ tags: [smoke]
     text: "Thông tin quán"
     optional: true
 - tapOn: "Tiếp tục"
-- assertVisible: "Mã số thuế gồm 10 hoặc 12 số.*"
+# Máy tính bảng nằm ngang: bàn phím che phần dưới, cuộn tới dòng báo lỗi
+- scrollUntilVisible:
+    element: "Mã số thuế gồm 10 hoặc 12 số.*"
+    timeout: 10000
 - tapOn:
     text: "Thông tin quán"
     optional: true

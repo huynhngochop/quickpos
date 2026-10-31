@@ -100,6 +100,8 @@ function Field({
         name={name}
         render={({ field }) => (
           <TextInput
+            // Cho React Hook Form đặt con trỏ vào ô sai đầu tiên khi bấm "Tiếp tục"
+            ref={field.ref}
             accessibilityLabelledBy={`f-${name}`}
             testID={`field-${name}`}
             value={field.value}
