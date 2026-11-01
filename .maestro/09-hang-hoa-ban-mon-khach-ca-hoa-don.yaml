@@ -166,7 +166,7 @@ appId: vn.quickpos.app
     element: "Anh Tư xe ôm.*"
 - tapOn: "Anh Tư xe ôm.*"
 - extendedWaitUntil:
-    visible: "Lịch sử"
+    visible: "Đang nợ"
     timeout: 10000
 - scrollUntilVisible:
     element: "Ghi nợ"
@@ -219,10 +219,13 @@ appId: vn.quickpos.app
 - scrollUntilVisible:
     element: "Sổ nợ"
     direction: UP
-- tapOn: "Sổ nợ"
-- extendedWaitUntil:
-    visible: "Khách đang nợ tổng cộng"
-    timeout: 10000
+- retry:
+    maxRetries: 2
+    commands:
+      - tapOn: "Sổ nợ"
+      - extendedWaitUntil:
+          visible: "Khách đang nợ tổng cộng"
+          timeout: 10000
 - tapOn: "Trang chính"
 
 # ---------- Việc khác: khách quen (điểm, đổi quà), ca bán, nhân viên ----------

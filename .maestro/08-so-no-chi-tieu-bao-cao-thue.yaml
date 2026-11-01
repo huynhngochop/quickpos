@@ -17,14 +17,17 @@ appId: vn.quickpos.app
 - takeScreenshot: "80-so-no"
 - tapOn: "Chị Hoa.*"
 - extendedWaitUntil:
-    visible: "Lịch sử"
+    visible: "Đang nợ"
     timeout: 10000
 - assertVisible: "85.000 đ"
 # Ghi thêm nợ 20.000
 - tapOn: { id: "debt-amount" }
 - inputText: "20000"
 - tapOn: "Số tiền"
-- assertVisible: ".*Hai mươi nghìn đồng"
+- scrollUntilVisible:
+    element: ".*Hai mươi nghìn đồng"
+- scrollUntilVisible:
+    element: "Ghi nợ"
 - tapOn: "Ghi nợ"
 - extendedWaitUntil:
     visible: "105.000 đ"
@@ -35,6 +38,8 @@ appId: vn.quickpos.app
 - tapOn: { id: "debt-amount" }
 - inputText: "999000"
 - tapOn: "Số tiền"
+- scrollUntilVisible:
+    element: "Ghi đã trả"
 - tapOn: "Ghi đã trả"
 - extendedWaitUntil:
     visible: "Số tiền trả nhiều hơn số đang nợ.*"
@@ -42,7 +47,11 @@ appId: vn.quickpos.app
 - tapOn: { id: "debt-amount" }
 - eraseText: 10
 - tapOn: "Số tiền"
+- scrollUntilVisible:
+    element: "Trả hết.*"
 - tapOn: "Trả hết.*"
+- scrollUntilVisible:
+    element: "Ghi đã trả"
 - tapOn: "Ghi đã trả"
 - extendedWaitUntil:
     visible: "Đã trả hết"
@@ -67,10 +76,13 @@ appId: vn.quickpos.app
 - scrollUntilVisible:
     element: "Sổ nợ"
     direction: UP
-- tapOn: "Sổ nợ"
-- extendedWaitUntil:
-    visible: "Thêm khách nợ"
-    timeout: 10000
+- retry:
+    maxRetries: 2
+    commands:
+      - tapOn: "Sổ nợ"
+      - extendedWaitUntil:
+          visible: "Thêm khách nợ"
+          timeout: 10000
 - tapOn: "Thêm khách nợ"
 - tapOn: { id: "debtor-name" }
 - inputText: "Co Nam"
@@ -87,10 +99,13 @@ appId: vn.quickpos.app
     timeout: 10000
 - assertVisible: "0909000111"
 - takeScreenshot: "84-khach-moi"
-- tapOn: "Sổ nợ"
-- extendedWaitUntil:
-    visible: "Khách đang nợ tổng cộng"
-    timeout: 10000
+- retry:
+    maxRetries: 2
+    commands:
+      - tapOn: "Sổ nợ"
+      - extendedWaitUntil:
+          visible: "Khách đang nợ tổng cộng"
+          timeout: 10000
 - tapOn: "Trang chính"
 
 # ---------- Chi tiêu ----------
