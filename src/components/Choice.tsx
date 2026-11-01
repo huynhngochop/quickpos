@@ -4,7 +4,7 @@ import { Txt } from './Txt';
 
 /**
  * Chọn một trong vài lựa chọn bằng nút to có chữ (không dùng menu thả xuống).
- * Đang chọn: viền xanh dày + nền xanh nhạt + dấu ✓ (không chỉ dựa vào màu).
+ * Đang chọn: nền xanh đậm + chữ trắng, viền và cỡ chữ giữ nguyên để không giật bố cục; trình đọc màn hình nhận trạng thái qua accessibilityState.selected.
  */
 export function ChoiceGrid<K extends string>({
   options,
@@ -36,17 +36,18 @@ export function ChoiceGrid<K extends string>({
               flexGrow: 1,
               minHeight: touch.min,
               borderRadius: radius.md,
-              borderWidth: on ? 3 : 2,
+              // Viền và chữ giữ nguyên kích thước khi chọn → không xô lệch bố cục; ô đang chọn chỉ đổi màu nền.
+              borderWidth: 2,
               borderColor: on ? colors.primary : colors.border,
-              backgroundColor: on ? colors.primarySoft : pressed ? colors.divider : colors.surface,
+              backgroundColor: on ? colors.primary : pressed ? colors.divider : colors.surface,
               alignItems: 'center',
               justifyContent: 'center',
               paddingHorizontal: space.sm,
               paddingVertical: space.sm,
             })}
           >
-            <Txt variant="bodyStrong" tone={on ? 'primary' : 'ink'} center>
-              {on ? `✓ ${o.label}` : o.label}
+            <Txt variant="bodyStrong" tone={on ? 'onColor' : 'ink'} center>
+              {o.label}
             </Txt>
           </Pressable>
         );

@@ -115,8 +115,13 @@ tags: [smoke]
 - assertVisible: ".*130.000 đ.*"
 - assertVisible: "Thu tiền"
 - assertVisible: "Sổ hôm nay"
-- assertVisible: "Cài đặt"
-- assertVisible: "Thoát"
+# Cài đặt, Thoát là nút biểu tượng (Thoát chỉ có trên Android — iOS không cho app tự đóng)
+- assertVisible: { id: "main-settings" }
+- runFlow:
+    when:
+      platform: Android
+    commands:
+      - assertVisible: { id: "main-exit" }
 - takeScreenshot: "08-trang-chinh"
 # Các ô việc: báo cáo, sổ nợ, hàng hóa, chi tiêu, việc khác (cuộn nếu màn hình nhỏ)
 - scrollUntilVisible:
@@ -128,5 +133,6 @@ tags: [smoke]
 - takeScreenshot: "09-trang-chinh-o-viec"
 # Về đầu trang chính cho các luồng sau (nút "Cài đặt", "Thoát" ở trên cùng)
 - scrollUntilVisible:
-    element: "Cài đặt"
+    element:
+      id: "main-settings"
     direction: UP

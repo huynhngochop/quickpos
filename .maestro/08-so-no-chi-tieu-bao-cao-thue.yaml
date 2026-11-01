@@ -23,7 +23,7 @@ appId: vn.quickpos.app
 # Ghi thêm nợ 20.000
 - tapOn: { id: "debt-amount" }
 - inputText: "20000"
-- tapOn: "Số tiền"
+- hideKeyboard
 - scrollUntilVisible:
     element: "Ghi nợ"
 - tapOn: "Ghi nợ"
@@ -38,7 +38,7 @@ appId: vn.quickpos.app
 - tapOn: { id: "debt-kind-PAYMENT" }
 - tapOn: { id: "debt-amount" }
 - inputText: "999000"
-- tapOn: "Số tiền"
+- hideKeyboard
 - scrollUntilVisible:
     element: "Ghi đã trả"
 - tapOn: "Ghi đã trả"
@@ -47,7 +47,7 @@ appId: vn.quickpos.app
     timeout: 10000
 - tapOn: { id: "debt-amount" }
 - eraseText: 10
-- tapOn: "Số tiền"
+- hideKeyboard
 - scrollUntilVisible:
     element: "Trả hết.*"
 - tapOn: "Trả hết.*"
@@ -166,7 +166,7 @@ appId: vn.quickpos.app
 - assertVisible: "Lãi ước tính"
 - takeScreenshot: "86-bao-cao-7-ngay"
 - tapOn: { id: "period-month" }
-- assertVisible: "✓ Tháng này"
+- assertVisible: "Tháng này"
 - takeScreenshot: "87-bao-cao-thang"
 - tapOn: { id: "period-year" }
 - scrollUntilVisible:
@@ -208,7 +208,7 @@ appId: vn.quickpos.app
       id: "industry-PRODUCTION"
 - tapOn: { id: "industry-PRODUCTION" }
 - extendedWaitUntil:
-    visible: "✓ Ăn uống, sản xuất, vận tải"
+    visible: "Ăn uống, sản xuất, vận tải"
     timeout: 10000
 - takeScreenshot: "91-thue-nganh-nghe"
 - scrollUntilVisible:
@@ -216,22 +216,21 @@ appId: vn.quickpos.app
     direction: UP
 - tapOn: "Trang chính"
 
-# ---------- Thoát: hỏi lại; "Ở lại" giữ nguyên; "Đăng xuất" về màn đăng nhập, vào lại vẫn còn quán ----------
+# ---------- Thoát (chỉ Android): hỏi lại; "Ở lại" giữ nguyên. Không bấm thoát thật vì bản dùng thử giữ dữ liệu trong bộ nhớ ----------
 - extendedWaitUntil:
     visible: "Hôm nay đã thu.*"
     timeout: 10000
-- scrollUntilVisible:
-    element: "Thoát"
-    direction: UP
-- tapOn: "Thoát"
-- assertVisible: "Thoát khỏi máy này[?]"
-- takeScreenshot: "92-hoi-thoat"
-- tapOn: "Ở lại"
-- assertVisible: "Hôm nay đã thu.*"
-- tapOn: "Thoát"
-- tapOn: "Đăng xuất"
-- runFlow: subflows/login.yaml
-- extendedWaitUntil:
-    visible: "Hôm nay đã thu.*"
-    timeout: 20000
-- assertVisible: "Quan Co Ba"
+- runFlow:
+    when:
+      platform: Android
+    commands:
+      - scrollUntilVisible:
+          element:
+            id: "main-exit"
+          direction: UP
+      - tapOn: { id: "main-exit" }
+      - assertVisible: "Thoát ứng dụng[?]"
+      - assertVisible: "Thoát app"
+      - takeScreenshot: "92-hoi-thoat"
+      - tapOn: "Ở lại"
+      - assertVisible: "Hôm nay đã thu.*"

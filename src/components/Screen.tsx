@@ -54,6 +54,7 @@ export function Screen({
         <ScrollView
           contentContainerStyle={[inner, { paddingBottom: space.xl, flexGrow: 1 }]}
           keyboardShouldPersistTaps="handled"
+          keyboardDismissMode="on-drag"
         >
           {body}
         </ScrollView>

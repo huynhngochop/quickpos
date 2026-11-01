@@ -1,5 +1,5 @@
 import type { ReactNode } from 'react';
-import { ActivityIndicator, Pressable, View, type ViewStyle } from 'react-native';
+import { ActivityIndicator, Keyboard, Pressable, View, type ViewStyle } from 'react-native';
 import { colors, radius, touch } from '../theme/tokens';
 import { Txt } from './Txt';
 
@@ -40,7 +40,11 @@ export function Button({ label, onPress, kind = 'primary', big, disabled, disabl
       accessibilityHint={hint}
       accessibilityState={{ disabled: !!off, busy: !!busy }}
       disabled={off}
-      onPress={onPress}
+      // Bấm nút nào cũng cất bàn phím: ô nhập không còn che nút/lịch sử bên dưới (nhất là máy tính bảng nằm ngang)
+      onPress={() => {
+        Keyboard.dismiss();
+        onPress();
+      }}
       style={({ pressed }) => [
         {
           minHeight: big ? touch.primary : touch.min,

@@ -144,6 +144,11 @@ export default function CaiDat() {
         <LinkRow label={vi.settings.privacy} onPress={() => ENV.policyUrl && void Linking.openURL(ENV.policyUrl)} last />
       </Card>
 
+      <Button kind="link" label={vi.settings.deleteAccount} onPress={() => router.push('/xoa-tai-khoan')} />
+      <Txt variant="caption" tone="secondary" center>
+        {vi.settings.version(ENV.appVersion)}
+      </Txt>
+      {/* Đăng xuất là nút cuối cùng của Cài đặt (nút Thoát ở trang chính chỉ đóng app) */}
       {logoutMsg ? (
         <Card tone="warn">
           <Txt tone="warn" variant="bodyStrong">
@@ -152,10 +157,6 @@ export default function CaiDat() {
         </Card>
       ) : null}
       <Button kind="dangerOutline" label={vi.settings.logout} onPress={logout} />
-      <Button kind="link" label={vi.settings.deleteAccount} onPress={() => router.push('/xoa-tai-khoan')} />
-      <Txt variant="caption" tone="secondary" center>
-        {vi.settings.version(ENV.appVersion)}
-      </Txt>
     </Screen>
   );
 }

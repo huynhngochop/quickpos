@@ -2,7 +2,7 @@ appId: vn.quickpos.app
 ---
 - runFlow: subflows/dismiss-system-dialogs.yaml
 - assertVisible: "Hôm nay đã thu.*"
-- tapOn: "Cài đặt"
+- tapOn: { id: "main-settings" }
 # Vừa mở khóa PIN ở luồng trước (5 phút) nên vào thẳng; nếu hỏi PIN thì nhập
 - runFlow:
     when:
@@ -40,7 +40,7 @@ appId: vn.quickpos.app
 - tapOn: { id: "key-del" }
 - tapOn: { id: "key-del" }
 - tapOn: "Trang chính"
-- tapOn: "Cài đặt"
+- tapOn: { id: "main-settings" }
 - runFlow:
     when:
       visible: "Mã PIN chủ quán"
@@ -84,9 +84,11 @@ appId: vn.quickpos.app
 - takeScreenshot: "56-xoa-tai-khoan"
 - tapOn: "Không xóa nữa"
 
-# Đăng xuất → đăng nhập lại → vẫn còn quán
+# Đăng xuất (nút cuối cùng của Cài đặt) → đăng nhập lại → vẫn còn quán
 - scrollUntilVisible:
     element: "Đăng xuất khỏi máy này"
+    visibilityPercentage: 100
+- takeScreenshot: "56b-dang-xuat-cuoi-cai-dat"
 - tapOn: "Đăng xuất khỏi máy này"
 - runFlow: subflows/login.yaml
 - extendedWaitUntil:
@@ -96,7 +98,7 @@ appId: vn.quickpos.app
 - takeScreenshot: "57-dang-nhap-lai"
 
 # Xóa tài khoản thật
-- tapOn: "Cài đặt"
+- tapOn: { id: "main-settings" }
 - runFlow:
     when:
       visible: "Mã PIN chủ quán"

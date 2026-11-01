@@ -1,12 +1,12 @@
 import { useState } from 'react';
-import { Pressable, View } from 'react-native';
+import { BackHandler, Platform, Pressable, View } from 'react-native';
 import { router } from 'expo-router';
 import { Screen, Card } from '../src/components/Screen';
 import { Amount, Txt } from '../src/components/Txt';
 import { Button } from '../src/components/Button';
+import { IconButton } from '../src/components/IconButton';
 import { DemoBanner, OfflineBanner } from '../src/components/States';
 import { ConfirmSheet } from '../src/components/ConfirmSheet';
-import { logoutHere } from '../src/features/session/logout';
 import { useDebtors, useExpenses } from '../src/features/books/hooks';
 import { useSession, useBusinessId } from '../src/features/session/store';
 import { openOwnerScreen, useCanReview, useMainAccount } from '../src/features/session/hooks';
@@ -20,7 +20,8 @@ import { vi } from '../src/i18n/vi';
 
 /**
  * 2.1 Trang chính: một nút lớn "Thu tiền" ở đáy + các ô việc có chữ (sổ, báo cáo, sổ nợ, chi tiêu, thuế, hỗ trợ).
- * Báo cáo, Thuế, Cài đặt nằm sau mã PIN chủ quán. "Thoát" hỏi lại trước khi đăng xuất.
+ * Báo cáo, Thuế, Cài đặt nằm sau mã PIN chủ quán. Cài đặt và Thoát là nút biểu tượng ở góc trên;
+ * "Thoát" hỏi lại rồi đóng app (không đăng xuất — đăng xuất ở cuối Cài đặt).
  */
 export default function TrangChinh() {
   const businessId = useBusinessId();
@@ -37,11 +38,11 @@ export default function TrangChinh() {
   const owed = (debtors.data ?? []).reduce((s, d) => s + Math.max(d.balance, 0), 0);
   const spent = (expenses.data ?? []).reduce((s, e) => s + e.amount, 0);
   const [askExit, setAskExit] = useState(false);
-  const [exitMsg, setExitMsg] = useState<string | null>(null);
-  const exit = async () => {
-    const blocked = await logoutHere(queue.length);
+  // Thoát = đóng app, vẫn giữ đăng nhập (đăng xuất nằm cuối Cài đặt). iOS không cho app tự đóng nên không hiện nút.
+  const canExit = Platform.OS === 'android';
+  const exit = () => {
     setAskExit(false);
-    if (blocked > 0) setExitMsg(vi.settings.logoutBlocked(blocked));
+    BackHandler.exitApp();
   };
 
   return (
@@ -56,18 +57,11 @@ export default function TrangChinh() {
           <Txt variant="title">{name}</Txt>
           <Txt tone="secondary">{formatDayLong(today)}</Txt>
         </View>
-        <View style={{ alignItems: 'flex-end' }}>
-          <Button kind="link" label={vi.main.settings} onPress={() => openOwnerScreen('/cai-dat')} />
-          <Button kind="link" label={vi.main.exit} onPress={() => setAskExit(true)} />
+        <View style={{ flexDirection: 'row', gap: space.md }}>
+          <IconButton name="settings" label={vi.main.settings} testID="main-settings" onPress={() => openOwnerScreen('/cai-dat')} />
+          {canExit ? <IconButton name="exit" label={vi.main.exit} testID="main-exit" onPress={() => setAskExit(true)} /> : null}
         </View>
       </View>
-      {exitMsg ? (
-        <Card tone="warn">
-          <Txt tone="warn" variant="bodyStrong">
-            {exitMsg}
-          </Txt>
-        </Card>
-      ) : null}
 
       <OfflineBanner queued={queue.length} />
 
@@ -138,7 +132,7 @@ export default function TrangChinh() {
         body={vi.main.exitBody}
         yes={vi.main.exitYes}
         no={vi.main.exitNo}
-        onYes={() => void exit()}
+        onYes={exit}
         onNo={() => setAskExit(false)}
       />
     </Screen>

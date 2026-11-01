@@ -183,12 +183,15 @@ Tính theo chiều rộng/cao cửa sổ hiện tại (`useWindowDimensions`), k
   Hàng hóa · Chi tiêu · Việc khác — đổi theo góp ý người dùng thử 01/11/2026). "Việc khác" mở danh sách việc ít dùng
   (Khách quen, Ca bán, Thuế, Hóa đơn điện tử, Nhân viên, Cài đặt, Gọi hỗ trợ). Cài đặt, Báo cáo, Thuế, Hóa đơn, Nhân viên
   nằm sau mã PIN chủ hộ. Màn Thu tiền có thêm liên kết chữ: Chọn món · Ghi nợ · Khách quen.
-  Luôn có "Thoát" (hỏi lại trước khi đăng xuất). Hai nút bị khóa không được hiện cùng một chữ.
+  Cài đặt và Thoát là nút biểu tượng ở góc trên (có accessibilityLabel bằng chữ, theo góp ý 01/11/2026). "Thoát" hỏi lại rồi
+  đóng app (Android; iOS không có nút này), không đăng xuất. "Đăng xuất" là nút cuối cùng của Cài đặt.
+  Hai nút bị khóa không được hiện cùng một chữ. Nút lựa chọn (kỳ báo cáo, ngành nghề…) đang chọn chỉ đổi màu nền, không thêm dấu
+  hay đổi độ dày viền để không giật bố cục.
 - **Thu tiền mặc định** = bàn phím số lớn có phím "000" → bấm "Hiện mã QR". Danh mục sản phẩm là tùy chọn, không bắt buộc.
   Luôn hiện số kèm chữ: "18.000 đ — mười tám nghìn đồng".
 - **Báo tiền về** bằng 3 kênh cùng lúc: giọng nói tiếng Việt (`expo-speech`, "Đã nhận mười tám nghìn"), rung, cả màn hình
   chuyển xanh ít nhất 3 giây. Khi app ở nền: thông báo đẩy có âm thanh. Không dùng toast nhỏ tự tắt cho sự kiện tiền.
-- **Một màn hình một việc, một nút chính.** Không dựa vào vuốt, nhấn giữ, biểu tượng không có chữ, menu ba chấm.
+- **Một màn hình một việc, một nút chính.** Không dựa vào vuốt, nhấn giữ, biểu tượng không có chữ (ngoại lệ duy nhất: hai nút Cài đặt/Thoát ở góc trang chính theo yêu cầu người dùng), menu ba chấm.
 - **Chữ**: mọi chuỗi hiển thị nằm trong `src/i18n/vi.ts`; cấm hiện mã lỗi, tên bảng, tên trạng thái (`PARTIAL`, `HĐĐT`,
   `MST`, "đồng bộ", "webhook"). Viết như nói, có việc cần làm: "Mất mạng. Đơn đã lưu, sẽ gửi khi có mạng."
 - **Không có thao tác mất dữ liệu**: hủy đơn có xác nhận + hoàn tác 5 giây; không có nút xóa vĩnh viễn trong app.
