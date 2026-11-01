@@ -25,13 +25,14 @@ appId: vn.quickpos.app
 - inputText: "20000"
 - tapOn: "Số tiền"
 - scrollUntilVisible:
-    element: ".*Hai mươi nghìn đồng"
-- scrollUntilVisible:
     element: "Ghi nợ"
 - tapOn: "Ghi nợ"
 - extendedWaitUntil:
-    visible: "105.000 đ"
+    visible: ".*Lấy nợ 20.000 đ.*"
     timeout: 10000
+- scrollUntilVisible:
+    element: "105.000 đ"
+    direction: UP
 - takeScreenshot: "81-ghi-no"
 # Khách trả: thử trả quá số nợ → báo lỗi, rồi "Trả hết"
 - tapOn: { id: "debt-kind-PAYMENT" }
@@ -54,8 +55,11 @@ appId: vn.quickpos.app
     element: "Ghi đã trả"
 - tapOn: "Ghi đã trả"
 - extendedWaitUntil:
-    visible: "Đã trả hết"
+    visible: ".*Đã trả 105.000 đ.*"
     timeout: 10000
+- scrollUntilVisible:
+    element: "Đã trả hết"
+    direction: UP
 - takeScreenshot: "82-tra-het"
 # Ghi nhầm dòng trả mới nhất → nợ quay lại 105.000
 - scrollUntilVisible:

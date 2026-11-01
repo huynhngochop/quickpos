@@ -65,7 +65,7 @@ appId: vn.quickpos.app
 - extendedWaitUntil:
     visible: "Hôm nay đã thu.*"
     timeout: 10000
-- tapOn: "Thu tiền"
+- runFlow: subflows/open-thu-tien.yaml
 - extendedWaitUntil:
     visible: "Khách cần trả"
     timeout: 10000

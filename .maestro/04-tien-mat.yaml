@@ -5,7 +5,7 @@ appId: vn.quickpos.app
 - repeat:
     times: 2
     commands:
-      - tapOn: "Thu tiền"
+      - runFlow: subflows/open-thu-tien.yaml
       - extendedWaitUntil:
           visible: "Khách cần trả"
           timeout: 10000

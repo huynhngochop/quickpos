@@ -1,0 +1,10 @@
+appId: vn.quickpos.app
+---
+# Từ trang chính mở màn Thu tiền. iOS đôi khi bỏ lần bấm đầu khi màn hình vừa chuyển xong: bấm lại tối đa 2 lần.
+- retry:
+    maxRetries: 2
+    commands:
+      - tapOn: "Thu tiền"
+      - extendedWaitUntil:
+          visible: "Khách cần trả"
+          timeout: 8000

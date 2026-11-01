@@ -29,7 +29,7 @@ appId: vn.quickpos.app
     visible: "Hôm nay đã thu.*"
     timeout: 10000
 - takeScreenshot: "52-trang-chinh-chu-rat-lon"
-- tapOn: "Thu tiền"
+- runFlow: subflows/open-thu-tien.yaml
 - tapOn: { id: "key-9" }
 - tapOn: { id: "key-000" }
 - assertVisible: "9.000 đ"
