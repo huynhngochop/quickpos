@@ -1,0 +1,214 @@
+appId: vn.quickpos.app
+---
+# Chức năng thêm sau góp ý người dùng thử: sổ nợ, chi tiêu, báo cáo, thuế, nút thoát.
+# Dữ liệu mẫu: Chị Hoa nợ 85.000 đ, Anh Tư xe ôm nợ 40.000 đ; đã chi 485.000 đ.
+- runFlow: subflows/dismiss-system-dialogs.yaml
+- assertVisible: "Hôm nay đã thu.*"
+
+# ---------- Sổ nợ ----------
+- scrollUntilVisible:
+    element: "Sổ nợ.*"
+- tapOn: "Sổ nợ.*"
+- extendedWaitUntil:
+    visible: "Khách đang nợ tổng cộng"
+    timeout: 10000
+- assertVisible: "125.000 đ"
+- assertVisible: "2 khách"
+- takeScreenshot: "80-so-no"
+- tapOn: "Chị Hoa.*"
+- extendedWaitUntil:
+    visible: "Lịch sử"
+    timeout: 10000
+- assertVisible: "85.000 đ"
+# Ghi thêm nợ 20.000
+- tapOn: { id: "debt-amount" }
+- inputText: "20000"
+- tapOn: "Số tiền"
+- assertVisible: ".*Hai mươi nghìn đồng"
+- tapOn: "Ghi nợ"
+- extendedWaitUntil:
+    visible: "105.000 đ"
+    timeout: 10000
+- takeScreenshot: "81-ghi-no"
+# Khách trả: thử trả quá số nợ → báo lỗi, rồi "Trả hết"
+- tapOn: { id: "debt-kind-PAYMENT" }
+- tapOn: { id: "debt-amount" }
+- inputText: "999000"
+- tapOn: "Số tiền"
+- tapOn: "Ghi đã trả"
+- extendedWaitUntil:
+    visible: "Số tiền trả nhiều hơn số đang nợ.*"
+    timeout: 10000
+- tapOn: { id: "debt-amount" }
+- eraseText: 10
+- tapOn: "Số tiền"
+- tapOn: "Trả hết.*"
+- tapOn: "Ghi đã trả"
+- extendedWaitUntil:
+    visible: "Đã trả hết"
+    timeout: 10000
+- takeScreenshot: "82-tra-het"
+# Ghi nhầm dòng trả mới nhất → nợ quay lại 105.000
+- scrollUntilVisible:
+    element: "Ghi nhầm"
+- tapOn:
+    text: "Ghi nhầm"
+    index: 0
+- tapOn: "Hủy dòng này"
+- extendedWaitUntil:
+    visible: ".*Đã hủy [(]ghi nhầm[)]"
+    timeout: 10000
+- scrollUntilVisible:
+    element: "Đang nợ"
+    direction: UP
+- assertVisible: "105.000 đ"
+- takeScreenshot: "83-huy-dong-ghi-nham"
+# Thêm khách mới có số điện thoại: phải đánh dấu khách đồng ý
+- scrollUntilVisible:
+    element: "Sổ nợ"
+    direction: UP
+- tapOn: "Sổ nợ"
+- extendedWaitUntil:
+    visible: "Thêm khách nợ"
+    timeout: 10000
+- tapOn: "Thêm khách nợ"
+- tapOn: { id: "debtor-name" }
+- inputText: "Co Nam"
+- tapOn: "Tên khách"
+- tapOn: { id: "debtor-phone" }
+- inputText: "0909000111"
+- tapOn: "Tên khách"
+- tapOn: "Lưu khách"
+- assertVisible: "Hỏi khách trước khi lưu số điện thoại"
+- tapOn: "Khách đồng ý cho quán lưu số điện thoại"
+- tapOn: "Lưu khách"
+- extendedWaitUntil:
+    visible: "Co Nam"
+    timeout: 10000
+- assertVisible: "0909000111"
+- takeScreenshot: "84-khach-moi"
+- tapOn: "Sổ nợ"
+- extendedWaitUntil:
+    visible: "Khách đang nợ tổng cộng"
+    timeout: 10000
+- tapOn: "Trang chính"
+
+# ---------- Chi tiêu ----------
+- extendedWaitUntil:
+    visible: "Hôm nay đã thu.*"
+    timeout: 10000
+- scrollUntilVisible:
+    element: "Chi tiêu.*"
+- tapOn: "Chi tiêu.*"
+- extendedWaitUntil:
+    visible: "Chi tháng này"
+    timeout: 10000
+- scrollUntilVisible:
+    element: "Lưu khoản chi"
+- tapOn: "Lưu khoản chi"
+- assertVisible: "Nhập số tiền chi"
+- scrollUntilVisible:
+    element:
+      id: "expense-amount"
+    direction: UP
+- tapOn: { id: "expense-amount" }
+- inputText: "120000"
+- tapOn: "Số tiền chi"
+- tapOn: { id: "cat-Điện nước" }
+- scrollUntilVisible:
+    element: "Lưu khoản chi"
+- tapOn: "Lưu khoản chi"
+- extendedWaitUntil:
+    visible: "✓ Đã lưu khoản chi"
+    timeout: 10000
+- scrollUntilVisible:
+    element: "120.000 đ · Điện nước"
+- takeScreenshot: "85-chi-tieu"
+- scrollUntilVisible:
+    element: "Trang chính"
+    direction: UP
+- tapOn: "Trang chính"
+
+# ---------- Báo cáo (sau mã PIN) ----------
+- extendedWaitUntil:
+    visible: "Hôm nay đã thu.*"
+    timeout: 10000
+- scrollUntilVisible:
+    element: "Báo cáo"
+- tapOn: "Báo cáo"
+- runFlow:
+    when:
+      visible: "Mã PIN chủ quán"
+    file: subflows/enter-pin.yaml
+- extendedWaitUntil:
+    visible: "Báo cáo bán hàng"
+    timeout: 10000
+- assertVisible: "Doanh thu"
+- assertVisible: "Lãi ước tính"
+- takeScreenshot: "86-bao-cao-7-ngay"
+- tapOn: { id: "period-month" }
+- assertVisible: "✓ Tháng này"
+- takeScreenshot: "87-bao-cao-thang"
+- tapOn: { id: "period-year" }
+- scrollUntilVisible:
+    element: "Doanh thu theo (ngày|tháng)"
+- takeScreenshot: "88-bao-cao-nam"
+- scrollUntilVisible:
+    element: "Gửi sổ doanh thu.*"
+- scrollUntilVisible:
+    element: "Trang chính"
+    direction: UP
+- tapOn: "Trang chính"
+
+# ---------- Thuế (sau mã PIN) ----------
+- extendedWaitUntil:
+    visible: "Hôm nay đã thu.*"
+    timeout: 10000
+- scrollUntilVisible:
+    element: "Thuế"
+- tapOn: "Thuế"
+- runFlow:
+    when:
+      visible: "Mã PIN chủ quán"
+    file: subflows/enter-pin.yaml
+- extendedWaitUntil:
+    visible: "Thuế của quán"
+    timeout: 10000
+- assertVisible: "Số liệu tham khảo.*"
+- assertVisible: "Ngưỡng không phải nộp thuế: 1 tỷ đồng/năm"
+- takeScreenshot: "89-thue"
+- scrollUntilVisible:
+    element: "Việc cần làm sắp tới"
+- takeScreenshot: "90-thue-han-nop"
+- scrollUntilVisible:
+    element:
+      id: "industry-PRODUCTION"
+- tapOn: { id: "industry-PRODUCTION" }
+- extendedWaitUntil:
+    visible: "✓ Ăn uống, sản xuất, vận tải"
+    timeout: 10000
+- takeScreenshot: "91-thue-nganh-nghe"
+- scrollUntilVisible:
+    element: "Trang chính"
+    direction: UP
+- tapOn: "Trang chính"
+
+# ---------- Thoát: hỏi lại; "Ở lại" giữ nguyên; "Đăng xuất" về màn đăng nhập, vào lại vẫn còn quán ----------
+- extendedWaitUntil:
+    visible: "Hôm nay đã thu.*"
+    timeout: 10000
+- scrollUntilVisible:
+    element: "Thoát"
+    direction: UP
+- tapOn: "Thoát"
+- assertVisible: "Thoát khỏi máy này[?]"
+- takeScreenshot: "92-hoi-thoat"
+- tapOn: "Ở lại"
+- assertVisible: "Hôm nay đã thu.*"
+- tapOn: "Thoát"
+- tapOn: "Đăng xuất"
+- runFlow: subflows/login.yaml
+- extendedWaitUntil:
+    visible: "Hôm nay đã thu.*"
+    timeout: 20000
+- assertVisible: "Quan Co Ba"

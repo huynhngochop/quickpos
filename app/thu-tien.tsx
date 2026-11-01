@@ -43,7 +43,8 @@ export default function ThuTien() {
 
   const hasAccount = !!account.data;
   const canQr = amount > 0 && online && hasAccount;
-  const qrDisabledLabel = amount <= 0 ? vi.sale.enterFirst : !online ? vi.sale.qrNeedsNetwork : vi.sale.qrNeedsAccount;
+  // Chưa nhập số: hai nút giữ đúng tên của mình (bị làm mờ) và một dòng hướng dẫn chung — không lặp chữ trên cả hai nút
+  const qrDisabledLabel = amount <= 0 ? undefined : !online ? vi.sale.qrNeedsNetwork : vi.sale.qrNeedsAccount;
 
   const showQr = async () => {
     setError(null);
@@ -90,12 +91,16 @@ export default function ThuTien() {
   const actions = (
     <View style={{ gap: space.md }}>
       {error ? <ErrorView error={error} /> : null}
+      {amount <= 0 ? (
+        <Txt tone="secondary" center testID="enter-first-hint">
+          {vi.sale.enterFirstHint}
+        </Txt>
+      ) : null}
       <Button big label={vi.sale.showQr} onPress={showQr} busy={busy} disabled={!canQr} disabledLabel={qrDisabledLabel} />
       <Button
         kind={L.secondaryAsLink ? 'link' : 'secondary'}
         label={vi.sale.payCash}
         disabled={amount <= 0}
-        disabledLabel={vi.sale.enterFirst}
         onPress={() => router.push('/tien-mat')}
       />
     </View>

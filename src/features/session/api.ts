@@ -50,7 +50,7 @@ export async function recordConsent(): Promise<void> {
   );
 }
 
-const BUSINESS_COLS = 'id, business_name, tax_code, address, allow_cashier_manual_confirm';
+const BUSINESS_COLS = 'id, business_name, tax_code, address, allow_cashier_manual_confirm, tax_industry';
 
 export async function myMemberships(userId: string): Promise<Membership[]> {
   return callWithRetry(async (signal) => {

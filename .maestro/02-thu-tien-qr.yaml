@@ -13,8 +13,12 @@ appId: vn.quickpos.app
             - extendedWaitUntil:
                 visible: "Khách cần trả"
                 timeout: 10000
-      # Chưa nhập số: nút QR khóa, có chữ giải thích
-      - assertVisible: "Nhập số tiền trước"
+      # Chưa nhập số: hai nút giữ tên riêng (bị khóa), một dòng hướng dẫn chung — không lặp chữ
+      - assertVisible: "Bấm số tiền ở bàn phím.*"
+      - assertVisible:
+          text: "Hiện mã QR"
+          enabled: false
+      - assertNotVisible: "Nhập số tiền trước"
       # Bàn phím: 1 8 000, xóa thử một số rồi nhập lại
       - tapOn: { id: "key-1" }
       - tapOn: { id: "key-8" }

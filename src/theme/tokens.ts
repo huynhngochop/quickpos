@@ -13,6 +13,7 @@ export const colors = {
   primary: '#1D4ED8',
   primaryPressed: '#1E3A8A',
   primarySoft: '#EEF3FF',
+  primaryMuted: '#93B4F5',
   success: '#0B6B35',
   successText: '#0B5A2C',
   successSoft: '#EAF7EE',

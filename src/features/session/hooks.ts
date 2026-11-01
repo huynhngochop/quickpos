@@ -13,9 +13,11 @@ export function useMainAccount(businessId: string) {
 }
 
 /**
- * Mở màn hình của chủ quán (Cài đặt, Tiền cần xem lại): qua mã PIN nếu chưa mở khóa trong 5 phút.
+ * Mở màn hình của chủ quán (Cài đặt, Tiền cần xem lại, Báo cáo, Thuế): qua mã PIN nếu chưa mở khóa trong 5 phút.
  */
-export function openOwnerScreen(path: '/cai-dat' | '/xem-lai'): void {
+export type OwnerPath = '/cai-dat' | '/xem-lai' | '/bao-cao' | '/thue';
+
+export function openOwnerScreen(path: OwnerPath): void {
   const unlocked = usePrefs.getState().ownerUnlockedUntil > Date.now();
   if (unlocked) router.push(path);
   else router.push({ pathname: '/nhap-pin', params: { next: path } });

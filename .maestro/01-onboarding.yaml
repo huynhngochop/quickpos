@@ -115,5 +115,18 @@ tags: [smoke]
 - assertVisible: ".*130.000 đ.*"
 - assertVisible: "Thu tiền"
 - assertVisible: "Sổ hôm nay"
-- assertVisible: "Gọi hỗ trợ"
+- assertVisible: "Cài đặt"
+- assertVisible: "Thoát"
 - takeScreenshot: "08-trang-chinh"
+# Các ô việc mới: báo cáo, sổ nợ, chi tiêu, thuế, hỗ trợ (cuộn nếu màn hình nhỏ)
+- scrollUntilVisible:
+    element: "Gọi hỗ trợ"
+- assertVisible: "Báo cáo"
+- assertVisible: "Sổ nợ.*"
+- assertVisible: "Chi tiêu.*"
+- assertVisible: "Thuế"
+- takeScreenshot: "09-trang-chinh-o-viec"
+# Về đầu trang chính cho các luồng sau (nút "Cài đặt", "Thoát" ở trên cùng)
+- scrollUntilVisible:
+    element: "Cài đặt"
+    direction: UP

@@ -51,6 +51,8 @@ export interface Business {
   tax_code: string;
   address: string;
   allow_cashier_manual_confirm: boolean;
+  /** Ngành nghề tính thuế (migration 6). Bản cũ chưa có cột → coi như GOODS. */
+  tax_industry?: 'GOODS' | 'PRODUCTION' | 'SERVICE' | 'LEASING' | 'OTHER';
 }
 
 export interface Membership {
@@ -124,4 +126,36 @@ export interface QrForOrder {
   uses_order_code: boolean;
   order_code: string;
   expires_at: string | null;
+}
+
+/** Khoản chi ghi tay (journal_entries, entry_type = EXPENSE, source = MANUAL). `source_id` là mã app sinh. */
+export interface ExpenseRow {
+  id: string;
+  source_id: string;
+  amount: number;
+  category: string;
+  description: string | null;
+  entry_date: string;
+  created_at: string;
+}
+
+/** View `debt_balances` */
+export interface DebtBalance {
+  customer_id: string;
+  business_id: string;
+  name: string;
+  phone: string | null;
+  balance: number;
+  last_entry_at: string | null;
+}
+
+export interface DebtEntry {
+  id: string;
+  customer_id: string;
+  kind: 'DEBT' | 'PAYMENT';
+  amount: number;
+  note: string | null;
+  entry_date: string;
+  created_at: string;
+  voided_at: string | null;
 }

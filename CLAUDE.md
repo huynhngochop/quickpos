@@ -179,7 +179,9 @@ Tính theo chiều rộng/cao cửa sổ hiện tại (`useWindowDimensions`), k
 - Vẽ tràn viền là mặc định: mọi màn hình bọc trong vùng an toàn (`react-native-safe-area-context`), nút ở đáy
   cộng thêm phần dưới của vùng an toàn để không nằm dưới thanh cử chỉ.
 - Khóa giao diện sáng (`userInterfaceStyle: "light"`) ở bản đầu.
-- **Màn hình chính** tối đa 3 nút lớn có chữ: Thu tiền · Sổ hôm nay · Gọi hỗ trợ. Cài đặt nằm sau mã PIN chủ hộ.
+- **Màn hình chính**: một nút lớn "Thu tiền" ở đáy + tối đa 6 ô việc có chữ, hai ô một hàng (Sổ hôm nay · Báo cáo · Sổ nợ ·
+  Chi tiêu · Thuế · Gọi hỗ trợ — đổi theo góp ý người dùng thử 01/11/2026). Cài đặt, Báo cáo, Thuế nằm sau mã PIN chủ hộ.
+  Luôn có "Thoát" (hỏi lại trước khi đăng xuất). Hai nút bị khóa không được hiện cùng một chữ.
 - **Thu tiền mặc định** = bàn phím số lớn có phím "000" → bấm "Hiện mã QR". Danh mục sản phẩm là tùy chọn, không bắt buộc.
   Luôn hiện số kèm chữ: "18.000 đ — mười tám nghìn đồng".
 - **Báo tiền về** bằng 3 kênh cùng lúc: giọng nói tiếng Việt (`expo-speech`, "Đã nhận mười tám nghìn"), rung, cả màn hình

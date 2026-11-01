@@ -8,7 +8,8 @@ import { Button } from '../src/components/Button';
 import { ErrorView, Toggle, callSupport } from '../src/components/States';
 import { canManage, useBusinessId, useSession } from '../src/features/session/store';
 import { useMainAccount } from '../src/features/session/hooks';
-import { listMembers, registerDevice, signOut, updateBusinessSettings } from '../src/features/session/api';
+import { listMembers, registerDevice, updateBusinessSettings } from '../src/features/session/api';
+import { logoutHere } from '../src/features/session/logout';
 import { usePrefs } from '../src/features/settings/prefs';
 import { notificationsGranted, getPushToken } from '../src/features/notifications/setup';
 import { speakVi } from '../src/features/sale/announce';
@@ -44,13 +45,8 @@ export default function CaiDat() {
   });
 
   const logout = async () => {
-    if (queued > 0) return setLogoutMsg(vi.settings.logoutBlocked(queued));
-    // Tắt cờ trước khi đăng xuất để không bị chuyển sang màn "Hết phiên"
-    useSession.getState().set({ everSignedIn: false });
-    await signOut();
-    // Rời màn hình trước rồi mới xóa quán khỏi máy
-    router.replace('/dang-nhap');
-    setTimeout(() => useSession.getState().reset(), 0);
+    const blocked = await logoutHere(queued);
+    if (blocked > 0) setLogoutMsg(vi.settings.logoutBlocked(blocked));
   };
 
   return (

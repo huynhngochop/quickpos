@@ -129,6 +129,9 @@ const db: Record<string, Row[]> = {
   orders: [],
   payment_events: [],
   user_consents: [],
+  debt_customers: [],
+  debt_entries: [],
+  journal_entries: [],
 };
 let user: { id: string; phone: string } | null = null;
 const authListeners = new Set<(event: string, session: unknown) => void>();
@@ -220,7 +223,37 @@ function tableRows(table: string, range?: { from?: string; to?: string }): Row[]
     const cutoff = Date.now() - 15 * 60_000;
     return db.orders!.filter((o) => o.manual_confirmed_at && o.amount_received < o.total_amount && Date.parse(o.manual_confirmed_at) < cutoff);
   }
+  if (table === 'debt_balances') return debtBalances();
   return db[table] ?? [];
+}
+
+/** View debt_balances: số dư nợ từng khách (bỏ dòng đã hủy). */
+function debtBalances(): Row[] {
+  return db.debt_customers!.map((c) => {
+    const rows = db.debt_entries!.filter((e) => e.customer_id === c.id && !e.voided_at);
+    const balance = rows.reduce((s, e) => s + (e.kind === 'DEBT' ? e.amount : -e.amount), 0);
+    const last = rows.reduce<string | null>((m, e) => (!m || e.created_at > m ? e.created_at : m), null);
+    return { customer_id: c.id, business_id: c.business_id, name: c.name, phone: c.phone, balance, last_entry_at: last };
+  });
+}
+
+/** Dữ liệu mẫu cho sổ nợ và chi tiêu (để màn hình báo cáo có lãi/chi ngay khi dùng thử). */
+function seedBooks(bizId: string) {
+  const today = vnDay();
+  const iso = (d: string, h: number) => new Date(Date.parse(vnDayRange(d).from) + h * 3_600_000).toISOString();
+  const hoa = { id: uid(), business_id: bizId, name: 'Chị Hoa', phone: '0903111222', consent_at: nowIso(), consent_source: 'app_so_no', created_at: nowIso() };
+  const tu = { id: uid(), business_id: bizId, name: 'Anh Tư xe ôm', phone: null, consent_at: null, consent_source: null, created_at: nowIso() };
+  db.debt_customers!.push(hoa, tu);
+  const entry = (c: Row, kind: string, amount: number, note: string | null, day: string, h: number) =>
+    db.debt_entries!.push({ id: uid(), business_id: bizId, customer_id: c.id, kind, amount, note, entry_date: day, created_at: iso(day, h), voided_at: null });
+  entry(hoa, 'DEBT', 120000, 'Gạo, nước mắm', addDays(today, -3), 9);
+  entry(hoa, 'PAYMENT', 35000, null, addDays(today, -1), 17);
+  entry(tu, 'DEBT', 40000, 'Thuốc lá', addDays(today, -2), 7);
+  const expense = (amount: number, category: string, description: string | null, day: string) =>
+    db.journal_entries!.push({ id: uid(), business_id: bizId, entry_type: 'EXPENSE', amount, category, description, source: 'MANUAL',
+      source_id: uid(), entry_date: day, created_at: iso(day, 8), voided_at: null });
+  expense(450000, 'Nhập hàng', 'Bia, nước ngọt', addDays(today, -2));
+  expense(35000, 'Khác', 'Đá, ly nhựa', today);
 }
 
 // ---------------- Truy vấn bảng (chuỗi .eq().in().order()… như supabase-js) ----------------
@@ -233,6 +266,7 @@ class Query implements PromiseLike<Result> {
   constructor(private table: string) {}
   select(cols = '*') { this.cols = cols; return this; }
   eq(c: string, v: unknown) { this.filters.push((r) => r[c] === v); return this; }
+  is(c: string, v: null) { this.filters.push((r) => (r[c] ?? null) === v); return this; }
   in(c: string, vs: unknown[]) { this.filters.push((r) => vs.includes(r[c])); return this; }
   private range: { from?: string; to?: string } = {};
   gte(c: string, v: string | number) {
@@ -303,11 +337,12 @@ function rpcImpl(name: string, a: Row): Result {
       if (!/^[0-9]{10}([0-9]{2}|-[0-9]{3})?$/.test(a.p_tax_code ?? '')) return fail('QP_INVALID_INPUT');
       const b = {
         id: a.p_business_id, owner_id: user!.id, business_name: String(a.p_business_name).trim(), tax_code: a.p_tax_code,
-        address: String(a.p_address).trim(), allow_cashier_manual_confirm: true, bank_account_name: 'NGUYEN THI BA',
+        address: String(a.p_address).trim(), allow_cashier_manual_confirm: true, tax_industry: 'GOODS', bank_account_name: 'NGUYEN THI BA',
       };
       db.businesses!.push(b);
       db.business_members!.push({ business_id: b.id, user_id: user!.id, role: 'OWNER', created_at: nowIso() });
       seedBusiness(b.id);
+      seedBooks(b.id);
       return ok(b);
     }
 
@@ -414,6 +449,80 @@ function rpcImpl(name: string, a: Row): Result {
         .sort((x, y) => (x.sold_at === y.sold_at ? (x.id < y.id ? 1 : -1) : x.sold_at < y.sold_at ? 1 : -1))
         .slice(0, limit);
       return ok(rows.map((r) => ({ ...r })));
+    }
+
+    case 'update_tax_settings_v1': {
+      const m = member(a.p_business_id);
+      if (!m || !['OWNER', 'MANAGER'].includes(m.role)) return fail('QP_FORBIDDEN');
+      if (!['GOODS', 'PRODUCTION', 'SERVICE', 'LEASING', 'OTHER'].includes(a.p_tax_industry)) return fail('QP_INVALID_INPUT');
+      const b = db.businesses!.find((x) => x.id === a.p_business_id)!;
+      b.tax_industry = a.p_tax_industry;
+      return ok({ ...b });
+    }
+
+    case 'add_expense_v1': {
+      const e = needUser();
+      if (e) return e;
+      if (!member(a.p_business_id)) return fail('QP_FORBIDDEN');
+      const day = a.p_entry_date ?? vnDay();
+      if (!(a.p_amount > 0) || !String(a.p_category ?? '').trim() || day > vnDay()) return fail('QP_INVALID_INPUT');
+      const existing = db.journal_entries!.find((x) => x.source_id === a.p_entry_id);
+      if (existing) return ok({ ...existing });
+      const row = { id: uid(), business_id: a.p_business_id, entry_type: 'EXPENSE', amount: a.p_amount, category: String(a.p_category).trim(),
+        description: a.p_note ? String(a.p_note).trim() || null : null, source: 'MANUAL', source_id: a.p_entry_id, entry_date: day,
+        created_at: nowIso(), voided_at: null };
+      db.journal_entries!.push(row);
+      return ok({ ...row });
+    }
+
+    case 'void_expense_v1': {
+      const m = member(a.p_business_id);
+      const row = db.journal_entries!.find((x) => x.source_id === a.p_entry_id && x.business_id === a.p_business_id);
+      if (!row || !m) return fail('QP_NOT_FOUND');
+      if (!['OWNER', 'MANAGER'].includes(m.role)) return fail('QP_FORBIDDEN');
+      row.voided_at = row.voided_at ?? nowIso();
+      return ok({ ...row });
+    }
+
+    case 'add_debt_customer_v1': {
+      const e = needUser();
+      if (e) return e;
+      if (!member(a.p_business_id)) return fail('QP_FORBIDDEN');
+      const phone = a.p_phone ? String(a.p_phone).replace(/\s/g, '') : null;
+      const name = String(a.p_name ?? '').trim();
+      if (!name || name.length > 100 || (phone && !/^0[0-9]{9}$/.test(phone))) return fail('QP_INVALID_INPUT');
+      if (phone && !a.p_phone_consent) return fail('QP_CONSENT_REQUIRED');
+      const existing = db.debt_customers!.find((x) => x.id === a.p_customer_id);
+      if (existing) return ok({ ...existing });
+      const row = { id: a.p_customer_id, business_id: a.p_business_id, name, phone, consent_at: phone ? nowIso() : null,
+        consent_source: phone ? 'app_so_no' : null, created_at: nowIso() };
+      db.debt_customers!.push(row);
+      return ok({ ...row });
+    }
+
+    case 'record_debt_v1': {
+      const c = db.debt_customers!.find((x) => x.id === a.p_customer_id);
+      if (!c || !member(c.business_id)) return fail('QP_NOT_FOUND');
+      if (!['DEBT', 'PAYMENT'].includes(a.p_kind) || !(a.p_amount > 0)) return fail('QP_INVALID_INPUT');
+      const existing = db.debt_entries!.find((x) => x.id === a.p_entry_id);
+      if (existing) return ok({ ...existing });
+      if (a.p_kind === 'PAYMENT') {
+        const bal = debtBalances().find((x) => x.customer_id === c.id)?.balance ?? 0;
+        if (a.p_amount > bal) return fail('QP_PAYMENT_EXCEEDS_DEBT');
+      }
+      const row = { id: a.p_entry_id, business_id: c.business_id, customer_id: c.id, kind: a.p_kind, amount: a.p_amount,
+        note: a.p_note ? String(a.p_note).trim() || null : null, entry_date: vnDay(), created_at: nowIso(), voided_at: null };
+      db.debt_entries!.push(row);
+      return ok({ ...row });
+    }
+
+    case 'void_debt_entry_v1': {
+      const row = db.debt_entries!.find((x) => x.id === a.p_entry_id);
+      const m = row ? member(row.business_id) : undefined;
+      if (!row || !m) return fail('QP_NOT_FOUND');
+      if (!['OWNER', 'MANAGER'].includes(m.role)) return fail('QP_FORBIDDEN');
+      row.voided_at = row.voided_at ?? nowIso();
+      return ok({ ...row });
     }
 
     default:

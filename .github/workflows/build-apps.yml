@@ -47,7 +47,8 @@ jobs:
       - run: bash scripts/ci-run.sh setup bash scripts/setup.sh
       - run: bash scripts/ci-run.sh prebuild npx expo prebuild --platform android --clean
       # Bản thử: ký bằng khóa debug của template Expo — cài được, KHÔNG dùng để lên Google Play
-      - run: bash ../scripts/ci-run.sh gradle ./gradlew assembleRelease --no-daemon
+      # Chỉ đóng gói cho máy ARM 64-bit (gần như mọi điện thoại Android từ 2019): APK nhẹ ~1/3, cài nhanh hơn
+      - run: bash ../scripts/ci-run.sh gradle ./gradlew assembleRelease --no-daemon -PreactNativeArchitectures=arm64-v8a
         working-directory: android
       - uses: actions/upload-artifact@v4
         with:

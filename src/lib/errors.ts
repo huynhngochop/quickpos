@@ -19,6 +19,8 @@ const ACTIONS: Record<ErrorCode, ErrorAction> = {
   QP_TAX_CODE_TAKEN: 'none',
   QP_NO_PAYMENT_ACCOUNT: 'none',
   QP_ORDER_NOT_PAYABLE: 'reload',
+  QP_CONSENT_REQUIRED: 'none',
+  QP_PAYMENT_EXCEEDS_DEBT: 'none',
   NETWORK: 'queue',
   UNKNOWN: 'retry_later',
 };
