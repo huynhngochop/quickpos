@@ -43,14 +43,29 @@ appId: vn.quickpos.app
 - extendedWaitUntil:
     visible: "Khách quét mã để trả"
     timeout: 15000
-- scrollUntilVisible:
-    element: "Hủy đơn này"
-    timeout: 15000
+# Vuốt ở phía phải (máy tính bảng: cột QR; điện thoại: giữa nội dung)
+- repeat:
+    while:
+      notVisible: "Hủy đơn này"
+    times: 6
+    commands:
+      - swipe:
+          start: 75%, 80%
+          end: 75%, 35%
+          duration: 400
 - tapOn: "Hủy đơn này"
 - assertVisible: "Hủy đơn này\\?"
 - tapOn: "Không hủy"
-- scrollUntilVisible:
-    element: "Hủy đơn này"
+# Vuốt ở phía phải (máy tính bảng: cột QR; điện thoại: giữa nội dung)
+- repeat:
+    while:
+      notVisible: "Hủy đơn này"
+    times: 6
+    commands:
+      - swipe:
+          start: 75%, 80%
+          end: 75%, 35%
+          duration: 400
 - tapOn: "Hủy đơn này"
 - tapOn: "Hủy đơn"
 - assertVisible: "Đã hủy đơn.*"
@@ -58,8 +73,16 @@ appId: vn.quickpos.app
 - tapOn: "Hoàn tác"
 - assertVisible: "Khách quét mã để trả"
 # Hủy thật: chờ hết 5 giây
-- scrollUntilVisible:
-    element: "Hủy đơn này"
+# Vuốt ở phía phải (máy tính bảng: cột QR; điện thoại: giữa nội dung)
+- repeat:
+    while:
+      notVisible: "Hủy đơn này"
+    times: 6
+    commands:
+      - swipe:
+          start: 75%, 80%
+          end: 75%, 35%
+          duration: 400
 - tapOn: "Hủy đơn này"
 - tapOn: "Hủy đơn"
 - extendedWaitUntil:
