@@ -97,8 +97,13 @@ appId: vn.quickpos.app
 - takeScreenshot: "102-chon-mon"
 - tapOn: "Tính tiền"
 - extendedWaitUntil:
-    visible: "Đã chọn 3 món.*"
+    visible: "Khách cần trả"
     timeout: 10000
+- runFlow:
+    file: subflows/cuon-thu-tien.yaml
+    env:
+      TEXT: "Đã chọn 3 món.*"
+- assertVisible: "Đã chọn 3 món.*"
 - assertVisible: "50.000 đ"
 - runFlow:
     file: subflows/cuon-thu-tien.yaml

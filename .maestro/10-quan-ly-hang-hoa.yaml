@@ -149,10 +149,10 @@ appId: vn.quickpos.app
 - inputText: "mon thu"
 - runFlow: subflows/an-ban-phim.yaml
 - scrollUntilVisible:
-    element: "Mon thu.*"
+    element: "Mon thu, .*"
 - assertVisible: "1 món"
 - takeScreenshot: "116-tim-kiem"
-- tapOn: "Mon thu.*"
+- tapOn: "Mon thu, .*"
 - extendedWaitUntil:
     visible: "Tồn kho"
     timeout: 10000

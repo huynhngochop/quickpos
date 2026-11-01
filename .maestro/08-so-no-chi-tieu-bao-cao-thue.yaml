@@ -8,10 +8,14 @@ appId: vn.quickpos.app
 # ---------- Sổ nợ ----------
 - scrollUntilVisible:
     element: "Sổ nợ.*"
-- tapOn: "Sổ nợ.*"
-- extendedWaitUntil:
-    visible: "Khách đang nợ tổng cộng"
-    timeout: 10000
+# iOS đôi khi bỏ lần bấm đầu ngay sau khi chuyển màn: bấm lại tối đa 2 lần
+- retry:
+    maxRetries: 2
+    commands:
+      - tapOn: "Sổ nợ.*"
+      - extendedWaitUntil:
+          visible: "Khách đang nợ tổng cộng"
+          timeout: 8000
 - assertVisible: "125.000 đ"
 - assertVisible: "2 khách"
 - takeScreenshot: "80-so-no"
