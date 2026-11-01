@@ -184,14 +184,17 @@ appId: vn.quickpos.app
 - tapOn: { id: "key-3" }
 - tapOn: { id: "key-0" }
 - tapOn: { id: "key-000" }
-- runFlow:
-    file: subflows/cuon-thu-tien.yaml
-    env:
-      TEXT: "Ghi nợ"
-- tapOn: "Ghi nợ"
-- extendedWaitUntil:
-    visible: "Chọn khách để ghi nợ 30.000 đ.*"
-    timeout: 10000
+- retry:
+    maxRetries: 2
+    commands:
+      - runFlow:
+          file: subflows/cuon-thu-tien.yaml
+          env:
+            TEXT: "Ghi nợ"
+      - tapOn: "Ghi nợ"
+      - extendedWaitUntil:
+          visible: "Chọn khách để ghi nợ 30.000 đ.*"
+          timeout: 8000
 - scrollUntilVisible:
     element: "Anh Tư xe ôm.*"
 - tapOn: "Anh Tư xe ôm.*"
@@ -291,10 +294,12 @@ appId: vn.quickpos.app
     element: "30 điểm"
     direction: UP
 - takeScreenshot: "110-doi-diem"
-- scrollUntilVisible:
-    element: "Khách quen"
-    direction: UP
-    visibilityPercentage: 100
+# Về đầu trang (iOS: liên kết quay lại có thể nằm nửa dưới thanh trạng thái)
+- repeat:
+    times: 3
+    commands:
+      - swipe:
+          direction: DOWN
 - retry:
     maxRetries: 2
     commands:
