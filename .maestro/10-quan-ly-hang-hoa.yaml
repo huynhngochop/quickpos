@@ -18,7 +18,7 @@ appId: vn.quickpos.app
 - scrollUntilVisible:
     element: "Còn 2 ngày hết hạn.*"
 - takeScreenshot: "111-loc-sap-het-han"
-- tapOn: "Sữa tươi hộp"
+- tapOn: ".*Sữa tươi hộp.*"
 
 # ---------- Bỏ lô sắp hết hạn ----------
 - extendedWaitUntil:
@@ -149,10 +149,10 @@ appId: vn.quickpos.app
 - inputText: "mon thu"
 - runFlow: subflows/an-ban-phim.yaml
 - scrollUntilVisible:
-    element: "Mon thu"
+    element: "Mon thu.*"
 - assertVisible: "1 món"
 - takeScreenshot: "116-tim-kiem"
-- tapOn: "Mon thu"
+- tapOn: "Mon thu.*"
 - extendedWaitUntil:
     visible: "Tồn kho"
     timeout: 10000
@@ -197,6 +197,8 @@ appId: vn.quickpos.app
     visible: "Hôm nay đã thu.*"
     timeout: 10000
 - runFlow: subflows/open-thu-tien.yaml
+- scrollUntilVisible:
+    element: "Chọn món"
 - tapOn: "Chọn món"
 - extendedWaitUntil:
     visible: "Tìm theo tên hoặc mã vạch"

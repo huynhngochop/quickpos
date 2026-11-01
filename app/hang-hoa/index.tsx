@@ -98,7 +98,15 @@ export default function HangHoa() {
           <Pressable
             key={p.id}
             accessibilityRole="button"
-            accessibilityLabel={`${p.name}, ${formatVND(p.price)}`}
+            accessibilityLabel={[
+              p.name,
+              formatVND(p.price),
+              p.track_stock ? vi.catalog.stockLeft(formatQty(p.stock_qty), p.unit) : null,
+              lot ? vi.catalog.expiresIn(lot.days_left) : null,
+              !p.is_active ? vi.catalog.inactive : null,
+            ]
+              .filter(Boolean)
+              .join(', ')}
             onPress={() => router.push({ pathname: '/hang-hoa/[id]', params: { id: p.id } })}
           >
             <Card style={{ flexDirection: 'row', alignItems: 'center', gap: space.md, opacity: p.is_active ? 1 : 0.6 }}>

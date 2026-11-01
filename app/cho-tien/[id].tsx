@@ -17,13 +17,15 @@ export default function ChoTien() {
     if (id) useSale.getState().setActive(id);
   }, [id]);
 
+  // Về màn Thu tiền (không chỉ "quay lại"): mở từ Sổ nợ → Thu nợ bằng mã QR thì màn trước là sổ nợ, không phải Thu tiền.
+  // dismissTo: có Thu tiền trong ngăn thì lùi về đó, chưa có thì thay màn này bằng Thu tiền.
   useEffect(() => {
-    if (L.kind === 'split') router.back();
+    if (L.kind === 'split') router.dismissTo('/thu-tien');
   }, [L.kind]);
 
   const newSale = () => {
     useSale.getState().newSale();
-    router.back();
+    router.dismissTo('/thu-tien');
   };
 
   return (
