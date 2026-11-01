@@ -28,10 +28,10 @@ appId: vn.quickpos.app
     timeout: 10000
 - tapOn: { id: "product-name" }
 - inputText: "Sua chua"
-- hideKeyboard
+- runFlow: subflows/an-ban-phim.yaml
 - tapOn: { id: "product-price" }
 - inputText: "12000"
-- hideKeyboard
+- runFlow: subflows/an-ban-phim.yaml
 - scrollUntilVisible:
     element: "Lưu món"
 - tapOn: "Lưu món"
@@ -49,11 +49,11 @@ appId: vn.quickpos.app
 - assertVisible: "20 ổ"
 - tapOn: { id: "stock-qty" }
 - inputText: "10"
-- hideKeyboard
+- runFlow: subflows/an-ban-phim.yaml
 - tapOn: { id: "stock-cost" }
 - eraseText: 10
 - inputText: "8000"
-- hideKeyboard
+- runFlow: subflows/an-ban-phim.yaml
 - assertVisible: "Thành tiền nhập: 80.000 đ"
 - scrollUntilVisible:
     element: "Lưu nhập hàng"
@@ -134,7 +134,7 @@ appId: vn.quickpos.app
       id: "invoice-symbol"
 - tapOn: { id: "invoice-symbol" }
 - inputText: "C26MAA"
-- tapOn: "Ký hiệu hóa đơn (6 ký tự)"
+- runFlow: subflows/an-ban-phim.yaml
 - scrollUntilVisible:
     element: "Lưu cài đặt hóa đơn"
 - tapOn: "Lưu cài đặt hóa đơn"
@@ -263,7 +263,7 @@ appId: vn.quickpos.app
 - assertVisible: "40 điểm"
 - tapOn: { id: "redeem-points" }
 - inputText: "10"
-- tapOn: "Điểm hiện có"
+- runFlow: subflows/an-ban-phim.yaml
 - scrollUntilVisible:
     element: "Trừ điểm"
 - tapOn: "Trừ điểm"
@@ -297,7 +297,7 @@ appId: vn.quickpos.app
     timeout: 10000
 - tapOn: { id: "shift-cash" }
 - inputText: "100000"
-- tapOn: "Tiền mặt có sẵn trong két (đồng)"
+- runFlow: subflows/an-ban-phim.yaml
 - scrollUntilVisible:
     element: "Mở ca"
 - tapOn:
@@ -310,7 +310,7 @@ appId: vn.quickpos.app
 - takeScreenshot: "111-ca-dang-mo"
 - tapOn: { id: "shift-cash" }
 - inputText: "100000"
-- tapOn: "Tiền đếm được thực tế (đồng)"
+- runFlow: subflows/an-ban-phim.yaml
 - scrollUntilVisible:
     element: "Đóng ca"
 - tapOn:
@@ -337,7 +337,7 @@ appId: vn.quickpos.app
     timeout: 10000
 - tapOn: { id: "invite-phone" }
 - inputText: "0903000002"
-- tapOn: "Số điện thoại của nhân viên"
+- runFlow: subflows/an-ban-phim.yaml
 - scrollUntilVisible:
     element: "Gửi lời mời"
 - tapOn: "Gửi lời mời"

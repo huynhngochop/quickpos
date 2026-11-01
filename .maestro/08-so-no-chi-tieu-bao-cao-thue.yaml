@@ -23,7 +23,7 @@ appId: vn.quickpos.app
 # Ghi thêm nợ 20.000
 - tapOn: { id: "debt-amount" }
 - inputText: "20000"
-- hideKeyboard
+- runFlow: subflows/an-ban-phim.yaml
 - scrollUntilVisible:
     element: "Ghi nợ"
 - tapOn: "Ghi nợ"
@@ -38,7 +38,7 @@ appId: vn.quickpos.app
 - tapOn: { id: "debt-kind-PAYMENT" }
 - tapOn: { id: "debt-amount" }
 - inputText: "999000"
-- hideKeyboard
+- runFlow: subflows/an-ban-phim.yaml
 - scrollUntilVisible:
     element: "Ghi đã trả"
 - tapOn: "Ghi đã trả"
@@ -47,7 +47,7 @@ appId: vn.quickpos.app
     timeout: 10000
 - tapOn: { id: "debt-amount" }
 - eraseText: 10
-- hideKeyboard
+- runFlow: subflows/an-ban-phim.yaml
 - scrollUntilVisible:
     element: "Trả hết.*"
 - tapOn: "Trả hết.*"
@@ -68,9 +68,9 @@ appId: vn.quickpos.app
     text: "Ghi nhầm"
     index: 0
 - tapOn: "Hủy dòng này"
-- extendedWaitUntil:
-    visible: ".*Đã hủy [(]ghi nhầm[)]"
-    timeout: 10000
+- scrollUntilVisible:
+    element: ".*Đã hủy [(]ghi nhầm[)]"
+    timeout: 15000
 - scrollUntilVisible:
     element: "Đang nợ"
     direction: UP
@@ -90,10 +90,10 @@ appId: vn.quickpos.app
 - tapOn: "Thêm khách nợ"
 - tapOn: { id: "debtor-name" }
 - inputText: "Co Nam"
-- tapOn: "Tên khách"
+- runFlow: subflows/an-ban-phim.yaml
 - tapOn: { id: "debtor-phone" }
 - inputText: "0909000111"
-- tapOn: "Tên khách"
+- runFlow: subflows/an-ban-phim.yaml
 - tapOn: "Lưu khách"
 - assertVisible: "Hỏi khách trước khi lưu số điện thoại"
 - tapOn: "Khách đồng ý cho quán lưu số điện thoại"
@@ -132,7 +132,7 @@ appId: vn.quickpos.app
     direction: UP
 - tapOn: { id: "expense-amount" }
 - inputText: "120000"
-- tapOn: "Số tiền chi"
+- runFlow: subflows/an-ban-phim.yaml
 - tapOn: { id: "cat-Điện nước" }
 - scrollUntilVisible:
     element: "Lưu khoản chi"

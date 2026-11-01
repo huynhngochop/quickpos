@@ -1,6 +1,8 @@
-import { Pressable, TextInput, View, type KeyboardTypeOptions } from 'react-native';
+import { useId } from 'react';
+import { InputAccessoryView, Keyboard, Platform, Pressable, TextInput, View, type KeyboardTypeOptions } from 'react-native';
 import { colors, font, radius, space, touch } from '../theme/tokens';
 import { Txt } from './Txt';
+import { vi } from '../i18n/vi';
 
 /**
  * Chọn một trong vài lựa chọn bằng nút to có chữ (không dùng menu thả xuống).
@@ -76,12 +78,17 @@ export function Field({
   error?: string | null;
   maxLength?: number;
 }) {
+  // iOS: bàn phím số không có nút đóng → thêm thanh "Xong" phía trên bàn phím. Android: phím ✓ của bàn phím.
+  const accessoryId = `field-${useId()}`;
+  const ios = Platform.OS === 'ios';
   return (
     <View style={{ gap: space.xs }}>
       <Txt variant="bodyStrong">{label}</Txt>
       <TextInput
         testID={testID}
         accessibilityLabel={label}
+        returnKeyType="done"
+        inputAccessoryViewID={ios ? accessoryId : undefined}
         value={value}
         onChangeText={onChangeText}
         keyboardType={keyboardType}
@@ -102,6 +109,23 @@ export function Field({
         }}
       />
       {error ? <Txt tone="danger">{error}</Txt> : null}
+      {ios ? (
+        <InputAccessoryView nativeID={accessoryId}>
+          <View style={{ flexDirection: 'row', justifyContent: 'flex-end', backgroundColor: colors.divider, borderTopWidth: 1, borderTopColor: colors.border }}>
+            <Pressable
+              testID="keyboard-done"
+              accessibilityRole="button"
+              accessibilityLabel={vi.common.done}
+              onPress={() => Keyboard.dismiss()}
+              style={{ minHeight: touch.min, minWidth: 96, paddingHorizontal: space.lg, alignItems: 'center', justifyContent: 'center' }}
+            >
+              <Txt variant="bodyStrong" tone="primary">
+                {vi.common.done}
+              </Txt>
+            </Pressable>
+          </View>
+        </InputAccessoryView>
+      ) : null}
     </View>
   );
 }

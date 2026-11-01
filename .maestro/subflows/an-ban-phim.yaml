@@ -1,0 +1,15 @@
+appId: vn.quickpos.app
+---
+# Cất bàn phím sau khi gõ (chỉ gọi ngay sau inputText/eraseText, lúc bàn phím chắc chắn đang mở).
+# Android: nút quay lại cất bàn phím. iOS: bấm "Xong" trên thanh phía trên bàn phím (ô nhập của app có thanh này).
+- runFlow:
+    when:
+      platform: Android
+    commands:
+      - hideKeyboard
+- runFlow:
+    when:
+      platform: iOS
+    commands:
+      - tapOn:
+          id: "keyboard-done"

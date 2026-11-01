@@ -43,13 +43,13 @@ appId: vn.quickpos.app
       id: "stock-qty"
 - tapOn: { id: "stock-qty" }
 - inputText: "10"
-- hideKeyboard
+- runFlow: subflows/an-ban-phim.yaml
 - scrollUntilVisible:
     element:
       id: "stock-expires"
 - tapOn: { id: "stock-expires" }
 - inputText: "31122030"
-- hideKeyboard
+- runFlow: subflows/an-ban-phim.yaml
 - assertVisible: "31/12/2030"
 - scrollUntilVisible:
     element: "Lưu nhập hàng"
@@ -69,7 +69,7 @@ appId: vn.quickpos.app
 - tapOn: { id: "product-tab-OUT" }
 - tapOn: { id: "stock-qty" }
 - inputText: "2"
-- hideKeyboard
+- runFlow: subflows/an-ban-phim.yaml
 - scrollUntilVisible:
     element:
       id: "out-reason-DAMAGED"
@@ -102,7 +102,7 @@ appId: vn.quickpos.app
 - takeScreenshot: "115-quet-ma"
 - tapOn: { id: "scan-code" }
 - inputText: "8936017366070"
-- hideKeyboard
+- runFlow: subflows/an-ban-phim.yaml
 - tapOn: "Tìm mã"
 - extendedWaitUntil:
     visible: "Nước suối"
@@ -123,7 +123,7 @@ appId: vn.quickpos.app
     timeout: 10000
 - tapOn: { id: "scan-code" }
 - inputText: "TEST-123"
-- hideKeyboard
+- runFlow: subflows/an-ban-phim.yaml
 - tapOn: "Tìm mã"
 - extendedWaitUntil:
     visible: "Chưa có món nào mang mã TEST-123."
@@ -135,10 +135,10 @@ appId: vn.quickpos.app
 - assertVisible: "TEST-123"
 - tapOn: { id: "product-name" }
 - inputText: "Mon thu"
-- hideKeyboard
+- runFlow: subflows/an-ban-phim.yaml
 - tapOn: { id: "product-price" }
 - inputText: "1000"
-- hideKeyboard
+- runFlow: subflows/an-ban-phim.yaml
 - scrollUntilVisible:
     element: "Lưu món"
 - tapOn: "Lưu món"
@@ -147,7 +147,7 @@ appId: vn.quickpos.app
     timeout: 10000
 - tapOn: { id: "product-search" }
 - inputText: "mon thu"
-- hideKeyboard
+- runFlow: subflows/an-ban-phim.yaml
 - scrollUntilVisible:
     element: "Mon thu"
 - assertVisible: "1 món"
@@ -203,7 +203,7 @@ appId: vn.quickpos.app
     timeout: 10000
 - tapOn: { id: "sell-search" }
 - inputText: "sua tuoi"
-- hideKeyboard
+- runFlow: subflows/an-ban-phim.yaml
 - assertVisible:
     id: "sell-Sữa tươi hộp"
 - assertNotVisible:
@@ -215,7 +215,7 @@ appId: vn.quickpos.app
     timeout: 10000
 - tapOn: { id: "scan-code" }
 - inputText: "8934673573189"
-- hideKeyboard
+- runFlow: subflows/an-ban-phim.yaml
 - tapOn: "Tìm mã"
 - extendedWaitUntil:
     visible: ".*Đã thêm Sữa tươi hộp vào giỏ.*"
