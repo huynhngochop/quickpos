@@ -154,7 +154,7 @@ export default function ThuTien() {
     <View style={{ flex: 1, backgroundColor: colors.ground, paddingTop: insets.top, paddingLeft: insets.left, paddingRight: insets.right }}>
       {L.kind === 'split' ? (
         <View style={{ flex: 1, flexDirection: 'row', gap: space.gutter, padding: space.gutter, paddingTop: space.sm }}>
-          <ScrollView style={{ flex: 1 }} contentContainerStyle={{ gap: space.md, paddingBottom: insets.bottom + space.lg }}>
+          <ScrollView testID="pay-scroll" style={{ flex: 1 }} contentContainerStyle={{ gap: space.md, paddingBottom: insets.bottom + space.lg }}>
             <BackLink label={vi.common.home} href="/trang-chinh" />
             {left}
           </ScrollView>
@@ -171,7 +171,10 @@ export default function ThuTien() {
           </ScrollView>
         </View>
       ) : (
-        <ScrollView contentContainerStyle={{ padding: space.gutter, paddingTop: space.sm, gap: space.sm, paddingBottom: insets.bottom + space.lg }}>
+        <ScrollView
+          testID="pay-scroll"
+          contentContainerStyle={{ padding: space.gutter, paddingTop: space.sm, gap: space.sm, paddingBottom: insets.bottom + space.lg }}
+        >
           <BackLink label={vi.common.home} href="/trang-chinh" />
           {left}
         </ScrollView>

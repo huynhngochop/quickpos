@@ -81,7 +81,7 @@ appId: vn.quickpos.app
     visible: ".*Đã xuất kho"
     timeout: 10000
 - scrollUntilVisible:
-    element: "Xuất: Hư hỏng.*"
+    element: ".*Xuất: Hư hỏng.*"
 - takeScreenshot: "114-xuat-huy"
 - scrollUntilVisible:
     element: "20 hộp"
@@ -197,8 +197,10 @@ appId: vn.quickpos.app
     visible: "Hôm nay đã thu.*"
     timeout: 10000
 - runFlow: subflows/open-thu-tien.yaml
-- scrollUntilVisible:
-    element: "Chọn món"
+- runFlow:
+    file: subflows/cuon-thu-tien.yaml
+    env:
+      TEXT: "Chọn món"
 - tapOn: "Chọn món"
 - extendedWaitUntil:
     visible: "Tìm theo tên hoặc mã vạch"

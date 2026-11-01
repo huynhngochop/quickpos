@@ -1,0 +1,13 @@
+appId: vn.quickpos.app
+---
+# Màn Thu tiền: cuộn cột bên trái (bàn phím + nút + liên kết) tới khi thấy chữ ${TEXT}.
+# Máy tính bảng nằm ngang có hai cột; vuốt giữa màn hình sẽ trúng cột mã QR bên phải nên vuốt từ cột trái.
+- repeat:
+    while:
+      notVisible: ${TEXT}
+    times: 5
+    commands:
+      - swipe:
+          from:
+            id: "pay-scroll"
+          direction: UP

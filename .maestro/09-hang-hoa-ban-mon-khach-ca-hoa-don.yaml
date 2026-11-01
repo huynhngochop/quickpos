@@ -82,8 +82,10 @@ appId: vn.quickpos.app
 - extendedWaitUntil:
     visible: "Khách cần trả"
     timeout: 10000
-- scrollUntilVisible:
-    element: "Chọn món"
+- runFlow:
+    file: subflows/cuon-thu-tien.yaml
+    env:
+      TEXT: "Chọn món"
 - tapOn: "Chọn món"
 - extendedWaitUntil:
     visible: "Chọn món"
@@ -98,8 +100,10 @@ appId: vn.quickpos.app
     visible: "Đã chọn 3 món.*"
     timeout: 10000
 - assertVisible: "50.000 đ"
-- scrollUntilVisible:
-    element: "Khách quen"
+- runFlow:
+    file: subflows/cuon-thu-tien.yaml
+    env:
+      TEXT: "Khách quen"
 - tapOn: "Khách quen"
 - extendedWaitUntil:
     visible: "Chọn khách quen"
@@ -175,8 +179,10 @@ appId: vn.quickpos.app
 - tapOn: { id: "key-3" }
 - tapOn: { id: "key-0" }
 - tapOn: { id: "key-000" }
-- scrollUntilVisible:
-    element: "Ghi nợ"
+- runFlow:
+    file: subflows/cuon-thu-tien.yaml
+    env:
+      TEXT: "Ghi nợ"
 - tapOn: "Ghi nợ"
 - extendedWaitUntil:
     visible: "Chọn khách để ghi nợ 30.000 đ.*"
@@ -283,7 +289,14 @@ appId: vn.quickpos.app
 - scrollUntilVisible:
     element: "Khách quen"
     direction: UP
-- tapOn: "Khách quen"
+    visibilityPercentage: 100
+- retry:
+    maxRetries: 2
+    commands:
+      - tapOn: "Khách quen"
+      - extendedWaitUntil:
+          visible: "Thêm khách quen"
+          timeout: 8000
 - extendedWaitUntil:
     visible: "Thêm khách quen"
     timeout: 10000
