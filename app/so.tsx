@@ -1,5 +1,6 @@
 import { useState } from 'react';
-import { FlatList, useWindowDimensions, View } from 'react-native';
+import { FlatList, Pressable, useWindowDimensions, View } from 'react-native';
+import { router } from 'expo-router';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { BackLink, Card } from '../src/components/Screen';
 import { Amount, Txt } from '../src/components/Txt';
@@ -163,7 +164,13 @@ function OrderRow({ o }: { o: Order }) {
   const method = o.payment_method === 'CASH' ? vi.journal.cash : o.payment_method === 'CARD' ? vi.journal.card : vi.journal.transfer;
   const dim = o.payment_status !== 'PAID';
   return (
-    <View style={{ flexDirection: 'row', alignItems: 'center', minHeight: 64, paddingVertical: space.sm, gap: space.md }}>
+    // Bấm vào đơn: xem món, gửi/in biên nhận, xuất hóa đơn điện tử (đơn tiền mặt chưa gửi lên server thì chưa mở được)
+    <Pressable
+      accessibilityRole="button"
+      accessibilityLabel={`${formatTimeVN(o.sold_at)}, ${formatVND(o.total_amount)}, ${method}${note ? `, ${note}` : ''}`}
+      onPress={() => router.push({ pathname: '/don/[id]', params: { id: o.id } })}
+      style={({ pressed }) => ({ flexDirection: 'row', alignItems: 'center', minHeight: 64, paddingVertical: space.sm, gap: space.md, backgroundColor: pressed ? colors.divider : 'transparent' })}
+    >
       <Txt variant="bodyStrong" tone="secondary" style={{ width: 64 }}>
         {formatTimeVN(o.sold_at)}
       </Txt>
@@ -180,6 +187,6 @@ function OrderRow({ o }: { o: Order }) {
       <Txt variant="small" tone="secondary">
         {method}
       </Txt>
-    </View>
+    </Pressable>
   );
 }

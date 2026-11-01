@@ -180,7 +180,9 @@ Tính theo chiều rộng/cao cửa sổ hiện tại (`useWindowDimensions`), k
   cộng thêm phần dưới của vùng an toàn để không nằm dưới thanh cử chỉ.
 - Khóa giao diện sáng (`userInterfaceStyle: "light"`) ở bản đầu.
 - **Màn hình chính**: một nút lớn "Thu tiền" ở đáy + tối đa 6 ô việc có chữ, hai ô một hàng (Sổ hôm nay · Báo cáo · Sổ nợ ·
-  Chi tiêu · Thuế · Gọi hỗ trợ — đổi theo góp ý người dùng thử 01/11/2026). Cài đặt, Báo cáo, Thuế nằm sau mã PIN chủ hộ.
+  Hàng hóa · Chi tiêu · Việc khác — đổi theo góp ý người dùng thử 01/11/2026). "Việc khác" mở danh sách việc ít dùng
+  (Khách quen, Ca bán, Thuế, Hóa đơn điện tử, Nhân viên, Cài đặt, Gọi hỗ trợ). Cài đặt, Báo cáo, Thuế, Hóa đơn, Nhân viên
+  nằm sau mã PIN chủ hộ. Màn Thu tiền có thêm liên kết chữ: Chọn món · Ghi nợ · Khách quen.
   Luôn có "Thoát" (hỏi lại trước khi đăng xuất). Hai nút bị khóa không được hiện cùng một chữ.
 - **Thu tiền mặc định** = bàn phím số lớn có phím "000" → bấm "Hiện mã QR". Danh mục sản phẩm là tùy chọn, không bắt buộc.
   Luôn hiện số kèm chữ: "18.000 đ — mười tám nghìn đồng".

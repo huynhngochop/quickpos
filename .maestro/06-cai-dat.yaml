@@ -57,7 +57,10 @@ appId: vn.quickpos.app
     timeout: 10000
 - assertVisible: "Bạn"
 - takeScreenshot: "54-nhan-vien"
-- tapOn: "Cài đặt"
+- scrollUntilVisible:
+    element: "Quay lại"
+    direction: UP
+- tapOn: "Quay lại"
 
 # Báo tiền khi tắt màn hình
 - scrollUntilVisible:

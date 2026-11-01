@@ -4,7 +4,7 @@ import { router } from 'expo-router';
 import { Screen, Card } from '../src/components/Screen';
 import { Amount, Txt } from '../src/components/Txt';
 import { Button } from '../src/components/Button';
-import { DemoBanner, OfflineBanner, callSupport } from '../src/components/States';
+import { DemoBanner, OfflineBanner } from '../src/components/States';
 import { ConfirmSheet } from '../src/components/ConfirmSheet';
 import { logoutHere } from '../src/features/session/logout';
 import { useDebtors, useExpenses } from '../src/features/books/hooks';
@@ -117,9 +117,9 @@ export default function TrangChinh() {
         <Tile label={vi.main.journal} onPress={() => router.push('/so')} />
         <Tile label={vi.main.reports} onPress={() => openOwnerScreen('/bao-cao')} />
         <Tile label={vi.main.debts} sub={owed > 0 ? vi.debts.owes(formatVND(owed)) : undefined} onPress={() => router.push('/so-no')} />
+        <Tile label={vi.main.products} onPress={() => router.push('/hang-hoa')} />
         <Tile label={vi.main.expenses} sub={spent > 0 ? `${vi.expenses.thisMonth}: ${formatVND(spent)}` : undefined} onPress={() => router.push('/chi-tieu')} />
-        <Tile label={vi.main.tax} onPress={() => openOwnerScreen('/thue')} />
-        <Tile label={vi.main.support} onPress={callSupport} />
+        <Tile label={vi.main.more} sub={vi.main.moreSub} onPress={() => router.push('/viec-khac')} />
       </View>
 
       {account.isSuccess && !account.data ? (

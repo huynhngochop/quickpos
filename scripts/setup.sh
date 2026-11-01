@@ -13,7 +13,8 @@ npx expo install \
   @react-native-async-storage/async-storage @react-native-community/netinfo \
   expo-sqlite expo-secure-store expo-crypto expo-speech expo-haptics \
   expo-notifications expo-device expo-application expo-intent-launcher expo-screen-orientation \
-  react-native-svg @expo-google-fonts/be-vietnam-pro
+  react-native-svg @expo-google-fonts/be-vietnam-pro \
+  expo-print expo-sharing
 
 npm install \
   @supabase/supabase-js@^2 \

@@ -1,6 +1,6 @@
 import { useRef, useState } from 'react';
 import { Pressable, View } from 'react-native';
-import { router } from 'expo-router';
+import { router, useLocalSearchParams } from 'expo-router';
 import { Screen, Card } from '../../src/components/Screen';
 import { Amount, Txt } from '../../src/components/Txt';
 import { Button } from '../../src/components/Button';
@@ -15,6 +15,8 @@ import { vi } from '../../src/i18n/vi';
 
 /** 3.6 Sổ nợ: danh sách khách đang nợ (nợ nhiều ở trên), thêm khách mới. */
 export default function SoNo() {
+  // amount: mở từ màn Thu tiền ("Ghi nợ") → chọn khách để ghi nợ số tiền đang bán
+  const { amount } = useLocalSearchParams<{ amount?: string }>();
   const businessId = useBusinessId();
   const debtors = useDebtors(businessId);
   const add = useAddDebtor(businessId);
@@ -44,7 +46,7 @@ export default function SoNo() {
           setName('');
           setPhone('');
           setConsent(false);
-          router.push({ pathname: '/so-no/[id]', params: { id } });
+          router.push({ pathname: '/so-no/[id]', params: amount ? { id, amount } : { id } });
         },
       },
     );
@@ -54,6 +56,13 @@ export default function SoNo() {
     <Screen back={{ label: vi.common.home, href: '/trang-chinh' }} maxWidth={640}>
       <Txt variant="heading">{vi.debts.title}</Txt>
       <Txt tone="secondary">{vi.debts.subtitle}</Txt>
+      {amount ? (
+        <Card tone="info">
+          <Txt tone="primary" variant="bodyStrong">
+            {vi.debts.pickFor(formatVND(Number(amount)))}
+          </Txt>
+        </Card>
+      ) : null}
 
       <Card style={{ alignItems: 'center' }}>
         <Txt variant="bodyStrong" tone="secondary">
@@ -86,7 +95,7 @@ export default function SoNo() {
           key={r.customer_id}
           accessibilityRole="button"
           accessibilityLabel={`${r.name}, ${r.balance > 0 ? vi.debts.owes(formatVND(r.balance)) : vi.debts.clear}`}
-          onPress={() => router.push({ pathname: '/so-no/[id]', params: { id: r.customer_id } })}
+          onPress={() => router.push({ pathname: '/so-no/[id]', params: amount ? { id: r.customer_id, amount } : { id: r.customer_id } })}
         >
           <Card style={{ flexDirection: 'row', alignItems: 'center', gap: space.md }}>
             <View style={{ flex: 1 }}>

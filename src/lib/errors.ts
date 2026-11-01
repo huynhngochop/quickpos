@@ -21,6 +21,12 @@ const ACTIONS: Record<ErrorCode, ErrorAction> = {
   QP_ORDER_NOT_PAYABLE: 'reload',
   QP_CONSENT_REQUIRED: 'none',
   QP_PAYMENT_EXCEEDS_DEBT: 'none',
+  QP_ALREADY_MEMBER: 'none',
+  QP_PHONE_TAKEN: 'none',
+  QP_NOT_ENOUGH_POINTS: 'none',
+  QP_ORDER_NOT_PAID: 'none',
+  QP_EINVOICE_NOT_SETUP: 'none',
+  QP_EINVOICE_PROVIDER_NOT_READY: 'none',
   NETWORK: 'queue',
   UNKNOWN: 'retry_later',
 };

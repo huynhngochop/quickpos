@@ -132,6 +132,15 @@ const db: Record<string, Row[]> = {
   debt_customers: [],
   debt_entries: [],
   journal_entries: [],
+  products: [],
+  stock_movements: [],
+  order_items: [],
+  cash_shifts: [],
+  business_invites: [],
+  crm_customers: [],
+  loyalty_events: [],
+  invoices: [],
+  invoice_lines: [],
 };
 let user: { id: string; phone: string } | null = null;
 const authListeners = new Set<(event: string, session: unknown) => void>();
@@ -160,9 +169,60 @@ function newOrder(bizId: string, items: Row[], method: string, deviceId: string 
 }
 
 function updateOrder(o: Row, patch: Row) {
+  const wasPaid = o.payment_status === 'PAID';
   Object.assign(o, patch, { updated_at: nowIso() });
   o.overpaid_amount = Math.max(o.amount_received - o.total_amount, 0);
+  if (!wasPaid && o.payment_status === 'PAID') onPaid(o);
   emitOrder(o);
+}
+
+function saveItems(orderId: string, items: Row[]) {
+  for (const i of items) {
+    const quantity = Number(i.quantity);
+    const unit_price = Number(i.unit_price);
+    db.order_items!.push({ id: uid(), order_id: orderId, product_id: i.product_id ?? null, name: String(i.name).trim(), quantity, unit_price, line_amount: Math.round(quantity * unit_price) });
+  }
+}
+
+/** Đơn vừa trả xong: trừ kho món có theo dõi, cộng điểm khách quen, trừ sổ nợ (đơn thu nợ bằng QR). */
+function onPaid(o: Row) {
+  const byProduct = new Map<string, number>();
+  for (const it of db.order_items!.filter((x) => x.order_id === o.id && x.product_id)) byProduct.set(it.product_id, (byProduct.get(it.product_id) ?? 0) + it.quantity);
+  for (const [pid, qty] of byProduct) {
+    const p = db.products!.find((x) => x.id === pid);
+    if (!p?.track_stock || db.stock_movements!.some((m) => m.kind === 'SALE' && m.order_id === o.id && m.product_id === pid)) continue;
+    db.stock_movements!.push({ id: uid(), business_id: o.business_id, product_id: pid, kind: 'SALE', qty: -qty, unit_cost: null, order_id: o.id, note: null, created_at: nowIso() });
+    p.stock_qty = Math.round((p.stock_qty - qty) * 1000) / 1000;
+  }
+  awardPoints(o);
+  if (o.debt_customer_id && !db.debt_entries!.some((e) => e.id === o.id)) {
+    db.debt_entries!.push({ id: o.id, business_id: o.business_id, customer_id: o.debt_customer_id, kind: 'PAYMENT', amount: o.total_amount,
+      note: `Trả nợ qua chuyển khoản · đơn ${o.order_code}`, entry_date: vnDay(), created_at: nowIso(), voided_at: null });
+  }
+}
+
+function awardPoints(o: Row) {
+  if (!o.customer_id || o.payment_status !== 'PAID' || db.loyalty_events!.some((e) => e.kind === 'EARN' && e.order_id === o.id)) return;
+  const b = db.businesses!.find((x) => x.id === o.business_id);
+  const rate = b?.loyalty_vnd_per_point ?? 10000;
+  const pts = rate > 0 ? Math.floor(o.total_amount / rate) : 0;
+  db.loyalty_events!.push({ id: uid(), business_id: o.business_id, customer_id: o.customer_id, order_id: o.id, kind: 'EARN', points: Math.max(pts, 1), note: `Đơn ${o.order_code}`, created_at: nowIso() });
+  const c = db.crm_customers!.find((x) => x.id === o.customer_id);
+  if (c) Object.assign(c, { points: c.points + pts, total_spent: c.total_spent + o.total_amount, visits: c.visits + 1, last_visit_at: o.sold_at });
+}
+
+const debtBalanceOf = (customerId: string) =>
+  db.debt_entries!.filter((e) => e.customer_id === customerId && !e.voided_at).reduce((s, e) => s + (e.kind === 'DEBT' ? e.amount : -e.amount), 0);
+
+/** Đơn đã trả trong khoảng [from, to): đơn thật + đơn cũ sinh sẵn (bản dùng thử dữ liệu lớn). */
+function paidOrdersBetween(bizId: string, from: string, to: string): Row[] {
+  const rows = db.orders!.filter((o) => o.business_id === bizId && o.payment_status === 'PAID' && o.sold_at >= from && o.sold_at < to);
+  if (bizId === bulkBiz) {
+    for (const k of bulkDaysBetween(vnDay(new Date(from)), vnDay(new Date(Date.parse(to) - 1)))) {
+      for (const o of bulkRowsFor(k)) if (o.payment_status === 'PAID' && o.sold_at >= from && o.sold_at < to) rows.push(o);
+    }
+  }
+  return rows;
 }
 
 /** Dữ liệu mẫu cho quán mới tạo: tài khoản nhận tiền, vài đơn hôm nay, một khoản tiền chưa rõ đơn. */
@@ -238,6 +298,18 @@ function debtBalances(): Row[] {
 }
 
 /** Dữ liệu mẫu cho sổ nợ và chi tiêu (để màn hình báo cáo có lãi/chi ngay khi dùng thử). */
+function seedShop(bizId: string) {
+  const product = (name: string, price: number, unit: string, category: string, track: boolean, stock: number, low: number | null) =>
+    db.products!.push({ id: uid(), business_id: bizId, name, unit, price, category, cost_price: null, track_stock: track, stock_qty: stock,
+      low_stock_at: low, is_active: true, sort_order: 0 });
+  product('Cà phê sữa', 20000, 'ly', 'Đồ uống', false, 0, null);
+  product('Trà đá', 5000, 'ly', 'Đồ uống', false, 0, null);
+  product('Bánh mì', 15000, 'ổ', 'Đồ ăn', true, 20, 5);
+  product('Nước suối', 10000, 'chai', 'Đồ uống', true, 24, 6);
+  db.crm_customers!.push({ id: uid(), business_id: bizId, display_name: 'Anh Bảy', phone_number: '0911222333', consent_at: nowIso(),
+    consent_source: 'app_khach_quen', points: 35, total_spent: 380000, visits: 4, last_visit_at: new Date(Date.now() - 2 * 86_400_000).toISOString(), created_at: nowIso() });
+}
+
 function seedBooks(bizId: string) {
   const today = vnDay();
   const iso = (d: string, h: number) => new Date(Date.parse(vnDayRange(d).from) + h * 3_600_000).toISOString();
@@ -251,7 +323,7 @@ function seedBooks(bizId: string) {
   entry(tu, 'DEBT', 40000, 'Thuốc lá', addDays(today, -2), 7);
   const expense = (amount: number, category: string, description: string | null, day: string) =>
     db.journal_entries!.push({ id: uid(), business_id: bizId, entry_type: 'EXPENSE', amount, category, description, source: 'MANUAL',
-      source_id: uid(), entry_date: day, created_at: iso(day, 8), voided_at: null });
+      source_id: uid(), entry_date: day, created_at: new Date(Math.min(Date.parse(iso(day, 8)), Date.now() - 60_000)).toISOString(), voided_at: null });
   expense(450000, 'Nhập hàng', 'Bia, nước ngọt', addDays(today, -2));
   expense(35000, 'Khác', 'Đá, ly nhựa', today);
 }
@@ -337,12 +409,13 @@ function rpcImpl(name: string, a: Row): Result {
       if (!/^[0-9]{10}([0-9]{2}|-[0-9]{3})?$/.test(a.p_tax_code ?? '')) return fail('QP_INVALID_INPUT');
       const b = {
         id: a.p_business_id, owner_id: user!.id, business_name: String(a.p_business_name).trim(), tax_code: a.p_tax_code,
-        address: String(a.p_address).trim(), allow_cashier_manual_confirm: true, tax_industry: 'GOODS', bank_account_name: 'NGUYEN THI BA',
+        address: String(a.p_address).trim(), allow_cashier_manual_confirm: true, tax_industry: 'GOODS', loyalty_vnd_per_point: 10000, einvoice_provider: 'NONE', invoice_form_no: '2', invoice_symbol: null, bank_account_name: 'NGUYEN THI BA',
       };
       db.businesses!.push(b);
       db.business_members!.push({ business_id: b.id, user_id: user!.id, role: 'OWNER', created_at: nowIso() });
       seedBusiness(b.id);
       seedBooks(b.id);
+      seedShop(b.id);
       return ok(b);
     }
 
@@ -373,6 +446,8 @@ function rpcImpl(name: string, a: Row): Result {
       if (cash) Object.assign(o, { payment_status: 'PAID', amount_received: o.total_amount, paid_at: nowIso() });
       else if (o.total_amount <= 0) return fail('QP_INVALID_ITEMS');
       db.orders!.push(o);
+      saveItems(o.id, items);
+      if (cash) onPaid(o);
       if (!cash) {
         // Giả lập khách quét mã và chuyển đủ tiền
         setTimeout(() => {
@@ -525,6 +600,246 @@ function rpcImpl(name: string, a: Row): Result {
       return ok({ ...row });
     }
 
+    // ---------- Migration 7 ----------
+    case 'upsert_product_v1': {
+      const m = member(a.p_business_id);
+      if (!m || !['OWNER', 'MANAGER'].includes(m.role)) return fail('QP_FORBIDDEN');
+      const nm = String(a.p_name ?? '').trim();
+      if (!nm || !(a.p_price >= 0) || !String(a.p_unit ?? '').trim()) return fail('QP_INVALID_INPUT');
+      let p = db.products!.find((x) => x.id === a.p_product_id);
+      const fields = { name: nm, price: a.p_price, unit: String(a.p_unit).trim(), category: a.p_category ? String(a.p_category).trim() || null : null,
+        cost_price: a.p_cost_price ?? null, track_stock: !!a.p_track_stock, low_stock_at: a.p_low_stock_at ?? null, is_active: true };
+      if (p) Object.assign(p, fields);
+      else {
+        p = { id: a.p_product_id, business_id: a.p_business_id, stock_qty: 0, sort_order: 0, ...fields };
+        db.products!.push(p);
+      }
+      return ok({ ...p });
+    }
+
+    case 'set_product_active_v1': {
+      const p = db.products!.find((x) => x.id === a.p_product_id);
+      const m = p ? member(p.business_id) : undefined;
+      if (!p || !m) return fail('QP_NOT_FOUND');
+      if (!['OWNER', 'MANAGER'].includes(m.role)) return fail('QP_FORBIDDEN');
+      p.is_active = a.p_active !== false;
+      return ok({ ...p });
+    }
+
+    case 'stock_in_v1':
+    case 'stock_count_v1': {
+      const p = db.products!.find((x) => x.id === a.p_product_id);
+      const m = p ? member(p.business_id) : undefined;
+      if (!p || !m) return fail('QP_NOT_FOUND');
+      const count = name === 'stock_count_v1';
+      if (count && !['OWNER', 'MANAGER'].includes(m.role)) return fail('QP_FORBIDDEN');
+      const q = Number(count ? a.p_actual_qty : a.p_qty);
+      if (!(count ? q >= 0 : q > 0)) return fail('QP_INVALID_INPUT');
+      if (db.stock_movements!.some((x) => x.id === a.p_movement_id)) return ok({ ...p });
+      const delta = count ? q - p.stock_qty : q;
+      db.stock_movements!.push({ id: a.p_movement_id, business_id: p.business_id, product_id: p.id, kind: count ? 'COUNT' : 'IN', qty: delta,
+        unit_cost: count ? null : a.p_unit_cost ?? null, order_id: null, note: a.p_note ?? null, created_at: nowIso() });
+      p.stock_qty = count ? q : Math.round((p.stock_qty + q) * 1000) / 1000;
+      p.track_stock = true;
+      if (!count && a.p_unit_cost != null) {
+        p.cost_price = a.p_unit_cost;
+        if (a.p_record_expense) {
+          db.journal_entries!.push({ id: uid(), business_id: p.business_id, entry_type: 'EXPENSE', amount: Math.round(q * a.p_unit_cost), category: 'Nhập hàng',
+            description: `Nhập ${q} ${p.unit} ${p.name}`, source: 'MANUAL', source_id: a.p_movement_id, entry_date: vnDay(), created_at: nowIso(), voided_at: null });
+        }
+      }
+      return ok({ ...p });
+    }
+
+    case 'sales_by_hour': {
+      const map = new Map<number, Row>();
+      for (const o of paidOrdersBetween(a.p_business_id, a.p_from, a.p_to)) {
+        const h = new Date(Date.parse(o.sold_at) + 7 * 3_600_000).getUTCHours();
+        const r = map.get(h) ?? { hour: h, orders: 0, amount: 0 };
+        r.orders += 1;
+        r.amount += o.total_amount;
+        map.set(h, r);
+      }
+      return ok([...map.values()].sort((x, y) => x.hour - y.hour));
+    }
+
+    case 'top_products': {
+      const ids = new Set(paidOrdersBetween(a.p_business_id, a.p_from, a.p_to).map((o) => o.id));
+      const map = new Map<string, Row>();
+      for (const it of db.order_items!) {
+        if (!it.product_id || !ids.has(it.order_id)) continue;
+        const r = map.get(it.product_id) ?? { product_id: it.product_id, name: it.name, quantity: 0, amount: 0 };
+        r.quantity += it.quantity;
+        r.amount += it.line_amount;
+        map.set(it.product_id, r);
+      }
+      return ok([...map.values()].sort((x, y) => y.amount - x.amount).slice(0, a.p_limit ?? 10));
+    }
+
+    case 'open_shift_v1': {
+      if (!member(a.p_business_id)) return fail('QP_FORBIDDEN');
+      if (!(a.p_opening_cash >= 0)) return fail('QP_INVALID_INPUT');
+      const open = db.cash_shifts!.find((x) => x.business_id === a.p_business_id && !x.closed_at);
+      if (open) return ok({ ...open });
+      const row = { id: a.p_shift_id, business_id: a.p_business_id, opened_at: nowIso(), opening_cash: a.p_opening_cash, closed_at: null,
+        cash_sales: null, cash_expenses: null, expected_cash: null, counted_cash: null, note: null };
+      db.cash_shifts!.push(row);
+      return ok({ ...row });
+    }
+
+    case 'current_shift_v1':
+    case 'close_shift_v1': {
+      const shift = name === 'current_shift_v1'
+        ? db.cash_shifts!.find((x) => x.business_id === a.p_business_id && !x.closed_at)
+        : db.cash_shifts!.find((x) => x.id === a.p_shift_id);
+      if (!shift) return name === 'current_shift_v1' ? ok([]) : fail('QP_NOT_FOUND');
+      if (shift.closed_at) return ok({ ...shift });
+      const now = nowIso();
+      const cash = db.orders!.filter((o) => o.business_id === shift.business_id && o.payment_method === 'CASH' && o.payment_status === 'PAID' && o.sold_at >= shift.opened_at && o.sold_at <= now);
+      const sales = cash.reduce((t, o) => t + o.total_amount, 0);
+      const spent = db.journal_entries!.filter((j) => j.business_id === shift.business_id && j.entry_type === 'EXPENSE' && !j.voided_at && j.created_at >= shift.opened_at)
+        .reduce((t, j) => t + j.amount, 0);
+      const expected = shift.opening_cash + sales - spent;
+      if (name === 'current_shift_v1') {
+        return ok([{ shift_id: shift.id, opened_at: shift.opened_at, opening_cash: shift.opening_cash, cash_sales: sales, cash_orders: cash.length, cash_expenses: spent, expected_cash: expected }]);
+      }
+      if (!(a.p_counted_cash >= 0)) return fail('QP_INVALID_INPUT');
+      Object.assign(shift, { closed_at: now, cash_sales: sales, cash_expenses: spent, expected_cash: expected, counted_cash: a.p_counted_cash, note: a.p_note ?? null });
+      return ok({ ...shift });
+    }
+
+    case 'invite_member_v1': {
+      const m = member(a.p_business_id);
+      if (!m || m.role !== 'OWNER') return fail('QP_FORBIDDEN');
+      const digits = String(a.p_phone ?? '').replace(/\D/g, '');
+      if (!/^0[0-9]{9}$/.test(digits) || !['MANAGER', 'CASHIER', 'ACCOUNTANT'].includes(a.p_role)) return fail('QP_INVALID_INPUT');
+      const phone = `84${digits.slice(1)}`;
+      if (db.business_members!.some((x) => x.business_id === a.p_business_id && x.member_phone === digits)) return fail('QP_ALREADY_MEMBER');
+      if (user && user.phone.replace(/\D/g, '') === phone) return fail('QP_ALREADY_MEMBER');
+      const open = db.business_invites!.find((x) => x.business_id === a.p_business_id && x.phone === phone && !x.accepted_at && !x.revoked_at);
+      if (open) {
+        open.role = a.p_role;
+        return ok({ ...open });
+      }
+      const row = { id: a.p_invite_id, business_id: a.p_business_id, phone, role: a.p_role, created_at: nowIso(), accepted_at: null, revoked_at: null };
+      db.business_invites!.push(row);
+      return ok({ ...row });
+    }
+
+    case 'revoke_invite_v1': {
+      const iv = db.business_invites!.find((x) => x.id === a.p_invite_id);
+      if (!iv || member(iv.business_id)?.role !== 'OWNER') return fail('QP_NOT_FOUND');
+      if (!iv.accepted_at) iv.revoked_at = iv.revoked_at ?? nowIso();
+      return ok({ ...iv });
+    }
+
+    case 'accept_invites_v1': {
+      if (!user) return fail('QP_UNAUTHENTICATED');
+      const phone = user.phone.replace(/\D/g, '');
+      let n = 0;
+      for (const iv of db.business_invites!.filter((x) => x.phone === phone && !x.accepted_at && !x.revoked_at)) {
+        if (!member(iv.business_id)) db.business_members!.push({ business_id: iv.business_id, user_id: user.id, role: iv.role, member_phone: `0${phone.slice(2)}`, created_at: nowIso() });
+        iv.accepted_at = nowIso();
+        n++;
+      }
+      return ok(n);
+    }
+
+    case 'set_member_role_v1':
+    case 'remove_member_v1': {
+      if (member(a.p_business_id)?.role !== 'OWNER') return fail('QP_FORBIDDEN');
+      const idx = db.business_members!.findIndex((x) => x.business_id === a.p_business_id && x.user_id === a.p_user_id && x.role !== 'OWNER');
+      if (idx < 0) return fail('QP_NOT_FOUND');
+      if (name === 'remove_member_v1') db.business_members!.splice(idx, 1);
+      else db.business_members![idx]!.role = a.p_role;
+      return ok(null);
+    }
+
+    case 'upsert_customer_v1': {
+      if (!member(a.p_business_id)) return fail('QP_FORBIDDEN');
+      const nm = String(a.p_name ?? '').trim();
+      const phone = a.p_phone ? String(a.p_phone).replace(/\D/g, '') : null;
+      if (!nm || (phone && !/^0[0-9]{9}$/.test(phone))) return fail('QP_INVALID_INPUT');
+      if (phone && !a.p_consent) return fail('QP_CONSENT_REQUIRED');
+      if (phone && db.crm_customers!.some((x) => x.business_id === a.p_business_id && x.phone_number === phone && x.id !== a.p_customer_id)) return fail('QP_PHONE_TAKEN');
+      let c = db.crm_customers!.find((x) => x.id === a.p_customer_id);
+      if (c) Object.assign(c, { display_name: nm, phone_number: phone });
+      else {
+        c = { id: a.p_customer_id, business_id: a.p_business_id, display_name: nm, phone_number: phone, consent_at: phone ? nowIso() : null,
+          consent_source: phone ? 'app_khach_quen' : null, points: 0, total_spent: 0, visits: 0, last_visit_at: null, created_at: nowIso() };
+        db.crm_customers!.push(c);
+      }
+      return ok({ ...c });
+    }
+
+    case 'set_order_customer_v1': {
+      const o = db.orders!.find((x) => x.id === a.p_order_id);
+      if (!o || !member(o.business_id) || !db.crm_customers!.some((c) => c.id === a.p_customer_id && c.business_id === o.business_id)) return fail('QP_NOT_FOUND');
+      if (o.customer_id && o.customer_id !== a.p_customer_id) return fail('QP_ALREADY_ASSIGNED');
+      if (!o.customer_id) {
+        o.customer_id = a.p_customer_id;
+        awardPoints(o);
+      }
+      return ok({ ...o });
+    }
+
+    case 'redeem_points_v1': {
+      const c = db.crm_customers!.find((x) => x.id === a.p_customer_id);
+      if (!c || !member(c.business_id)) return fail('QP_NOT_FOUND');
+      if (!(a.p_points > 0)) return fail('QP_INVALID_INPUT');
+      if (db.loyalty_events!.some((e) => e.id === a.p_event_id)) return ok({ ...c });
+      if (a.p_points > c.points) return fail('QP_NOT_ENOUGH_POINTS');
+      db.loyalty_events!.push({ id: a.p_event_id, business_id: c.business_id, customer_id: c.id, order_id: null, kind: 'REDEEM', points: a.p_points, note: a.p_note ?? null, created_at: nowIso() });
+      c.points -= a.p_points;
+      return ok({ ...c });
+    }
+
+    case 'update_loyalty_settings_v1':
+    case 'update_invoice_settings_v1': {
+      const m = member(a.p_business_id);
+      if (!m || !['OWNER', 'MANAGER'].includes(m.role)) return fail('QP_FORBIDDEN');
+      const b = db.businesses!.find((x) => x.id === a.p_business_id)!;
+      if (name === 'update_loyalty_settings_v1') {
+        if (!(a.p_vnd_per_point >= 0)) return fail('QP_INVALID_INPUT');
+        b.loyalty_vnd_per_point = a.p_vnd_per_point;
+      } else {
+        const sym = String(a.p_symbol ?? '').toUpperCase();
+        if (a.p_provider !== 'NONE' && !/^[A-Z0-9]{6}$/.test(sym)) return fail('QP_INVALID_INPUT');
+        Object.assign(b, { einvoice_provider: a.p_provider, invoice_form_no: a.p_form_no, invoice_symbol: sym || null });
+      }
+      return ok({ ...b });
+    }
+
+    case 'create_debt_payment_order_v1': {
+      const c = db.debt_customers!.find((x) => x.id === a.p_customer_id);
+      if (!c || !member(c.business_id)) return fail('QP_NOT_FOUND');
+      const existing = db.orders!.find((x) => x.id === a.p_order_id);
+      if (existing) return ok({ ...existing });
+      if (!(a.p_amount > 0)) return fail('QP_INVALID_INPUT');
+      if (a.p_amount > debtBalanceOf(c.id)) return fail('QP_PAYMENT_EXCEEDS_DEBT');
+      const r = rpcImpl('create_order_v1', { p_order_id: a.p_order_id, p_business_id: c.business_id, p_items: [{ name: 'Trả nợ', quantity: 1, unit_price: a.p_amount }], p_device_id: a.p_device_id });
+      if (r.error) return r;
+      const o = db.orders!.find((x) => x.id === a.p_order_id)!;
+      o.debt_customer_id = c.id;
+      return ok({ ...o });
+    }
+
+    case 'create_invoice_from_order_v1': {
+      const o = db.orders!.find((x) => x.id === a.p_order_id);
+      if (!o || !member(o.business_id)) return fail('QP_NOT_FOUND');
+      if (o.payment_status !== 'PAID') return fail('QP_ORDER_NOT_PAID');
+      const b = db.businesses!.find((x) => x.id === o.business_id)!;
+      if (b.einvoice_provider === 'NONE' || !b.invoice_symbol) return fail('QP_EINVOICE_NOT_SETUP');
+      if (a.p_buyer_tax_code && !/^[0-9]{10}([0-9]{2}|-[0-9]{3})?$/.test(a.p_buyer_tax_code)) return fail('QP_INVALID_INPUT');
+      const existing = db.invoices!.find((x) => x.order_id === o.id);
+      if (existing) return ok({ ...existing });
+      const inv = { id: a.p_invoice_id, business_id: o.business_id, order_id: o.id, form_no: b.invoice_form_no, symbol: b.invoice_symbol, invoice_no: null,
+        status: 'DRAFT', buyer_name: a.p_buyer_name || null, buyer_tax_code: a.p_buyer_tax_code || null, buyer_email: a.p_buyer_email || null,
+        total_amount: 0, issued_at: null, tax_authority_code: null, lookup_url: null, created_at: nowIso() };
+      db.invoices!.push(inv);
+      return ok({ ...inv });
+    }
+
     default:
       return fail(`demo: chưa giả lập ${name}`);
   }
@@ -572,7 +887,21 @@ export function createDemoClient() {
       stopAutoRefresh() {},
     },
     functions: {
-      async invoke(name: string, opts: { body: { order_id: string } }) {
+      async invoke(name: string, opts: { body: Record<string, string> }) {
+        if (name === 'issue-einvoice') {
+          const inv = db.invoices!.find((x) => x.id === opts.body.invoice_id);
+          if (!inv) return { data: null, error: { message: 'QP_NOT_FOUND' } };
+          if (inv.status === 'DRAFT') {
+            const b = db.businesses!.find((x) => x.id === inv.business_id)!;
+            if (b.einvoice_provider !== 'DEMO') return { data: null, error: { message: 'QP_EINVOICE_PROVIDER_NOT_READY' } };
+            const year = Number(vnDay().slice(0, 4));
+            const no = db.invoices!.filter((x) => x.business_id === inv.business_id && x.symbol === inv.symbol && x.invoice_no).length + 1;
+            const total = db.order_items!.filter((i) => i.order_id === inv.order_id).reduce((t, i) => t + i.line_amount, 0);
+            Object.assign(inv, { status: 'ISSUED', invoice_no: no, issued_at: nowIso(), total_amount: total,
+              tax_authority_code: `M1-${String(year % 100).padStart(2, '0')}-DEMO0-${String(no).padStart(11, '0')}` });
+          }
+          return { data: { ...inv }, error: null };
+        }
         if (name !== 'qr-for-order') return { data: null, error: { message: `demo: chưa giả lập ${name}` } };
         const o = db.orders!.find((x) => x.id === opts.body.order_id);
         if (!o) return { data: null, error: { message: 'QP_NOT_FOUND' } };

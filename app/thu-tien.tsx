@@ -7,7 +7,8 @@ import { Amount, Txt } from '../src/components/Txt';
 import { Button } from '../src/components/Button';
 import { Keypad } from '../src/components/Keypad';
 import { ErrorView, OfflineBanner } from '../src/components/States';
-import { useSale, useAmount, quickItems } from '../src/features/sale/store';
+import { useSale, useAmount, saleItems } from '../src/features/sale/store';
+import { setOrderCustomer } from '../src/features/shop/api';
 import { createOrder } from '../src/features/sale/api';
 import { applyOrderUpdate } from '../src/features/sale/realtime';
 import { PaymentPanel } from '../src/features/sale/PaymentPanel';
@@ -35,6 +36,8 @@ export default function ThuTien() {
   const press = useSale((s) => s.press);
   const activeOrderId = useSale((s) => s.activeOrderId);
   const amount = useAmount();
+  const customer = useSale((s) => s.customer);
+  const cartCount = useSale((s) => s.cart.reduce((n, l) => n + l.qty, 0));
   const online = useNet((s) => s.online);
   const account = useMainAccount(businessId);
   const queued = useQueue((s) => s.items.length);
@@ -56,14 +59,15 @@ export default function ThuTien() {
     try {
       let order;
       try {
-        order = await createOrder({ orderId, businessId, items: quickItems(amount), deviceId: deviceIdSync() });
+        order = await createOrder({ orderId, businessId, items: saleItems(amount, sale.cart), deviceId: deviceIdSync() });
       } catch (e) {
         if (toAppError(e).code !== 'QP_ORDER_CONFLICT') throw e;
         orderId = newId();
         sale.setPending(orderId);
-        order = await createOrder({ orderId, businessId, items: quickItems(amount), deviceId: deviceIdSync() });
+        order = await createOrder({ orderId, businessId, items: saleItems(amount, sale.cart), deviceId: deviceIdSync() });
       }
       applyOrderUpdate(order);
+      if (sale.customer) await setOrderCustomer(order.id, sale.customer.id).catch(() => undefined);
       sale.setActive(order.id);
       sale.setPending(null);
       if (L.kind !== 'split') router.push({ pathname: '/cho-tien/[id]', params: { id: order.id } });
@@ -103,6 +107,30 @@ export default function ThuTien() {
         disabled={amount <= 0}
         onPress={() => router.push('/tien-mat')}
       />
+      {/* Việc thêm khi bán: chọn món từ danh mục, ghi nợ cho khách, gắn khách quen để tích điểm */}
+      <View style={{ flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'center', columnGap: space.lg }}>
+        <Button kind="link" label={vi.sale.pickItems} onPress={() => router.push('/ban-hang')} />
+        <Button
+          kind="link"
+          label={vi.sale.onCredit}
+          disabled={amount <= 0}
+          onPress={() => router.push({ pathname: '/so-no', params: { amount: String(amount) } })}
+        />
+        <Button kind="link" label={customer ? vi.sale.changeCustomer : vi.sale.regular} onPress={() => router.push({ pathname: '/khach-quen', params: { pick: '1' } })} />
+      </View>
+      {customer ? (
+        <Card tone="info" style={{ flexDirection: 'row', alignItems: 'center', gap: space.md }}>
+          <Txt tone="primary" variant="bodyStrong" style={{ flex: 1 }}>
+            {vi.sale.customerChip(customer.name, customer.points)}
+          </Txt>
+          <Button kind="link" label={vi.sale.removeCustomer} onPress={() => useSale.getState().setCustomer(null)} />
+        </Card>
+      ) : null}
+      {cartCount > 0 ? (
+        <Txt tone="secondary" center>
+          {vi.sale.cartNote(cartCount)}
+        </Txt>
+      ) : null}
     </View>
   );
 

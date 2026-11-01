@@ -12,7 +12,7 @@
     "typecheck": "tsc --noEmit",
     "typecheck:logic": "tsc -p tsconfig.logic.json",
     "test": "tsx --test tests/*.test.ts",
-    "test:db": "psql \"$SUPABASE_DB_URL\" -v ON_ERROR_STOP=1 -f supabase/tests/rls_and_numbering.sql -f supabase/tests/app_v1_gaps.sql -f supabase/tests/debts_expenses_tax.sql",
+    "test:db": "psql \"$SUPABASE_DB_URL\" -v ON_ERROR_STOP=1 -f supabase/tests/rls_and_numbering.sql -f supabase/tests/app_v1_gaps.sql -f supabase/tests/debts_expenses_tax.sql -f supabase/tests/catalog_stock_staff_loyalty.sql",
     "gen:types": "supabase gen types typescript --local > src/types/database.ts"
   },
   "dependencies": {

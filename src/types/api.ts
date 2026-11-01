@@ -53,6 +53,11 @@ export interface Business {
   allow_cashier_manual_confirm: boolean;
   /** Ngành nghề tính thuế (migration 6). Bản cũ chưa có cột → coi như GOODS. */
   tax_industry?: 'GOODS' | 'PRODUCTION' | 'SERVICE' | 'LEASING' | 'OTHER';
+  /** Migration 7 */
+  loyalty_vnd_per_point?: number;
+  einvoice_provider?: 'NONE' | 'DEMO' | 'MISA' | 'VIETTEL' | 'VNPT' | 'OTHER';
+  invoice_form_no?: '1' | '2';
+  invoice_symbol?: string | null;
 }
 
 export interface Membership {
@@ -158,4 +163,130 @@ export interface DebtEntry {
   entry_date: string;
   created_at: string;
   voided_at: string | null;
+}
+
+// ---------- Migration 7 ----------
+export interface Product {
+  id: string;
+  business_id: string;
+  name: string;
+  unit: string;
+  price: number;
+  category: string | null;
+  cost_price: number | null;
+  track_stock: boolean;
+  stock_qty: number;
+  low_stock_at: number | null;
+  is_active: boolean;
+}
+
+export interface StockMovement {
+  id: string;
+  product_id: string;
+  kind: 'IN' | 'SALE' | 'COUNT';
+  qty: number;
+  unit_cost: number | null;
+  order_id: string | null;
+  note: string | null;
+  created_at: string;
+}
+
+export interface OrderItemRow {
+  id: string;
+  order_id: string;
+  product_id: string | null;
+  name: string;
+  quantity: number;
+  unit_price: number;
+  line_amount: number;
+}
+
+export interface HourRow {
+  hour: number;
+  orders: number;
+  amount: number;
+}
+
+export interface TopProductRow {
+  product_id: string;
+  name: string;
+  quantity: number;
+  amount: number;
+}
+
+export interface CurrentShift {
+  shift_id: string;
+  opened_at: string;
+  opening_cash: number;
+  cash_sales: number;
+  cash_orders: number;
+  cash_expenses: number;
+  expected_cash: number;
+}
+
+export interface ClosedShift {
+  id: string;
+  opened_at: string;
+  closed_at: string | null;
+  opening_cash: number;
+  cash_sales: number | null;
+  cash_expenses: number | null;
+  expected_cash: number | null;
+  counted_cash: number | null;
+  note: string | null;
+}
+
+export interface MemberRow {
+  user_id: string;
+  role: Role;
+  member_phone: string | null;
+}
+
+export interface InviteRow {
+  id: string;
+  phone: string;
+  role: Role;
+  created_at: string;
+  accepted_at: string | null;
+  revoked_at: string | null;
+}
+
+export interface Customer {
+  id: string;
+  business_id: string;
+  display_name: string;
+  phone_number: string | null;
+  points: number;
+  total_spent: number;
+  visits: number;
+  last_visit_at: string | null;
+}
+
+export interface LoyaltyEvent {
+  id: string;
+  customer_id: string;
+  order_id: string | null;
+  kind: 'EARN' | 'REDEEM';
+  points: number;
+  note: string | null;
+  created_at: string;
+}
+
+export type EinvoiceProvider = 'NONE' | 'DEMO' | 'MISA' | 'VIETTEL' | 'VNPT' | 'OTHER';
+
+export interface Invoice {
+  id: string;
+  business_id: string;
+  order_id: string | null;
+  form_no: '1' | '2';
+  symbol: string;
+  invoice_no: number | null;
+  status: string;
+  buyer_name: string | null;
+  buyer_tax_code: string | null;
+  buyer_email: string | null;
+  total_amount: number;
+  issued_at: string | null;
+  tax_authority_code: string | null;
+  lookup_url: string | null;
 }

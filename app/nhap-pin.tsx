@@ -8,7 +8,7 @@ import { hasOwnerPin, verifyOwnerPin } from '../src/features/settings/pinStore';
 import { unlockOwner } from '../src/features/session/hooks';
 import { vi } from '../src/i18n/vi';
 
-const ALLOWED = ['/cai-dat', '/xem-lai', '/bao-cao', '/thue'] as const;
+const ALLOWED = ['/cai-dat', '/xem-lai', '/bao-cao', '/thue', '/hoa-don', '/nhan-vien'] as const;
 
 /** 4.1 Nhập mã PIN chủ quán trước khi mở Cài đặt / Tiền cần xem lại. */
 export default function NhapPin() {

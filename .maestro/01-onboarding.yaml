@@ -118,13 +118,13 @@ tags: [smoke]
 - assertVisible: "Cài đặt"
 - assertVisible: "Thoát"
 - takeScreenshot: "08-trang-chinh"
-# Các ô việc mới: báo cáo, sổ nợ, chi tiêu, thuế, hỗ trợ (cuộn nếu màn hình nhỏ)
+# Các ô việc: báo cáo, sổ nợ, hàng hóa, chi tiêu, việc khác (cuộn nếu màn hình nhỏ)
 - scrollUntilVisible:
-    element: "Gọi hỗ trợ"
+    element: "Việc khác.*"
 - assertVisible: "Báo cáo"
 - assertVisible: "Sổ nợ.*"
+- assertVisible: "Hàng hóa"
 - assertVisible: "Chi tiêu.*"
-- assertVisible: "Thuế"
 - takeScreenshot: "09-trang-chinh-o-viec"
 # Về đầu trang chính cho các luồng sau (nút "Cài đặt", "Thoát" ở trên cùng)
 - scrollUntilVisible:

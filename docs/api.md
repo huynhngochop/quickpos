@@ -45,6 +45,23 @@ Thêm hoặc đổi một lời gọi = sửa tài liệu này trong cùng PR v�
 | `record_debt_v1` | Thành viên hộ | `p_entry_id uuid` (app sinh), `p_customer_id`, `p_kind 'DEBT'\|'PAYMENT'`, `p_amount`, `p_note` | Một dòng `debt_entries` | Có | `QP_NOT_FOUND`, `QP_INVALID_INPUT`, `QP_PAYMENT_EXCEEDS_DEBT` | 3.7 Khách nợ |
 | `void_debt_entry_v1` | OWNER, MANAGER | `p_entry_id` | Dòng đã đánh dấu `voided_at` | Có | `QP_NOT_FOUND`, `QP_FORBIDDEN` | 3.7 → "Ghi nhầm" |
 | `update_tax_settings_v1` | OWNER, MANAGER | `p_business_id`, `p_tax_industry 'GOODS'\|'PRODUCTION'\|'SERVICE'\|'LEASING'\|'OTHER'` | Một dòng `businesses` | Có | `QP_FORBIDDEN`, `QP_INVALID_INPUT` | 5.1 Thuế → "Ngành nghề" |
+| `upsert_product_v1` | OWNER, MANAGER | `p_product_id` (app sinh), `p_business_id`, `p_name`, `p_price`, `p_unit`, `p_category`, `p_cost_price`, `p_track_stock`, `p_low_stock_at` | Một dòng `products` | Có (cùng mã = sửa) | `QP_FORBIDDEN`, `QP_INVALID_INPUT` | 6.1 Hàng hóa, 6.2 Sửa món |
+| `set_product_active_v1` | OWNER, MANAGER | `p_product_id`, `p_active` | Một dòng `products` | Có | `QP_NOT_FOUND`, `QP_FORBIDDEN` | 6.2 Ngừng bán / bán lại |
+| `stock_in_v1` | Thành viên hộ | `p_movement_id` (app sinh), `p_product_id`, `p_qty > 0`, `p_unit_cost`, `p_note`, `p_record_expense` (ghi luôn chi "Nhập hàng") | Một dòng `products` (tồn mới) | Có | `QP_NOT_FOUND`, `QP_INVALID_INPUT` | 6.2 Nhập hàng |
+| `stock_count_v1` | OWNER, MANAGER | `p_movement_id`, `p_product_id`, `p_actual_qty ≥ 0`, `p_note` | Một dòng `products` | Có | `QP_NOT_FOUND`, `QP_FORBIDDEN`, `QP_INVALID_INPUT` | 6.2 Kiểm kho |
+| `open_shift_v1` | Thành viên hộ | `p_shift_id` (app sinh), `p_business_id`, `p_opening_cash` | Một dòng `cash_shifts` (đang có ca mở thì trả ca đó) | Có | `QP_FORBIDDEN`, `QP_INVALID_INPUT` | 7.3 Ca bán |
+| `close_shift_v1` | Thành viên hộ | `p_shift_id`, `p_counted_cash`, `p_note` | Một dòng `cash_shifts` (chốt bán/chi/tiền phải có) | Có | `QP_NOT_FOUND`, `QP_INVALID_INPUT` | 7.3 |
+| `invite_member_v1` | OWNER | `p_invite_id` (app sinh), `p_business_id`, `p_phone` (`0` + 9 số), `p_role 'MANAGER'\|'CASHIER'\|'ACCOUNTANT'` | Một dòng `business_invites` | Có (mời lại = đổi quyền) | `QP_FORBIDDEN`, `QP_INVALID_INPUT`, `QP_ALREADY_MEMBER` | 4.3 Nhân viên |
+| `revoke_invite_v1` | OWNER | `p_invite_id` | Một dòng `business_invites` | Có | `QP_NOT_FOUND` | 4.3 |
+| `accept_invites_v1` | Người đã đăng nhập | — | Số quán vừa vào | Có | `QP_UNAUTHENTICATED` | Mở app (trước khi đọc quán) |
+| `set_member_role_v1` / `remove_member_v1` | OWNER | `p_business_id`, `p_user_id`, (`p_role`) | — | Có | `QP_FORBIDDEN`, `QP_NOT_FOUND` (kể cả khi nhắm vào chủ quán) | 4.3 |
+| `upsert_customer_v1` | Thành viên hộ | `p_customer_id` (app sinh), `p_business_id`, `p_name`, `p_phone`, `p_consent` | Một dòng `crm_customers` | Có | `QP_INVALID_INPUT`, `QP_CONSENT_REQUIRED`, `QP_PHONE_TAKEN` | 7.1 Khách quen |
+| `set_order_customer_v1` | Thành viên hộ | `p_order_id`, `p_customer_id` | Một dòng `orders` (đơn đã trả → cộng điểm ngay) | Có | `QP_NOT_FOUND`, `QP_ALREADY_ASSIGNED` | 2.2 Thu tiền, 2.7, 3.8 |
+| `redeem_points_v1` | Thành viên hộ | `p_event_id` (app sinh), `p_customer_id`, `p_points`, `p_note` | Một dòng `crm_customers` | Có | `QP_NOT_FOUND`, `QP_INVALID_INPUT`, `QP_NOT_ENOUGH_POINTS` | 7.2 |
+| `update_loyalty_settings_v1` | OWNER, MANAGER | `p_business_id`, `p_vnd_per_point` (0 = tắt) | Một dòng `businesses` | Có | `QP_FORBIDDEN`, `QP_INVALID_INPUT` | 7.2 |
+| `create_debt_payment_order_v1` | Thành viên hộ | `p_order_id` (app sinh), `p_customer_id` (khách nợ), `p_amount ≤ số nợ`, `p_device_id` | Một dòng `orders` (VIETQR, "Trả nợ"); tiền về → server ghi dòng trả nợ | Có | `QP_NOT_FOUND`, `QP_INVALID_INPUT`, `QP_PAYMENT_EXCEEDS_DEBT` | 3.7 → "Thu nợ bằng mã QR" |
+| `update_invoice_settings_v1` | OWNER, MANAGER | `p_business_id`, `p_provider 'NONE'\|'DEMO'\|'MISA'\|'VIETTEL'\|'VNPT'\|'OTHER'`, `p_form_no '1'\|'2'`, `p_symbol` (6 ký tự) | Một dòng `businesses` | Có | `QP_FORBIDDEN`, `QP_INVALID_INPUT` | 7.4 Hóa đơn điện tử |
+| `create_invoice_from_order_v1` | Thành viên hộ | `p_invoice_id` (app sinh), `p_order_id` (đã trả), `p_buyer_name`, `p_buyer_tax_code`, `p_buyer_email`, `p_buyer_address` | Một dòng `invoices` (DRAFT, dòng hàng chép từ đơn) | Có (một đơn một hóa đơn) | `QP_NOT_FOUND`, `QP_ORDER_NOT_PAID`, `QP_EINVOICE_NOT_SETUP`, `QP_INVALID_INPUT` | 3.8 Chi tiết đơn |
 | `issue_invoice` | OWNER, MANAGER, CASHIER | `p_invoice_id` | Một dòng `invoices` | Không | Câu tiếng Việt (mục 8) | Giai đoạn 2 |
 
 `p_items` mẫu (màn hình nhập số tiền không có danh mục chỉ gửi một dòng):
@@ -71,7 +88,7 @@ Giờ bán: `p_sold_at` lệch quá 5 phút về tương lai hoặc quá 7 ngày
 | `from('orders').select().eq('id', …).single()` | — | Hỏi lại trạng thái khi nối lại Realtime / mở lại màn hình | 2.3 |
 | `rpc('check_app_version_v1', { p_platform, p_version })` | — | `{ must_update, should_update, latest_version, store_url }` | Mở app |
 | `from('user_consents').select('policy_version').eq('user_id', …).eq('policy_version', …)` | — | Đã đồng ý phiên bản chính sách hiện tại chưa | Mở app |
-| `from('business_members').select('role, business:businesses(id, business_name, tax_code, address, allow_cashier_manual_confirm, tax_industry)').eq('user_id', …)` | — | Quán của người đăng nhập | Mở app |
+| `from('business_members').select('role, business:businesses(id, business_name, tax_code, address, allow_cashier_manual_confirm, tax_industry, loyalty_vnd_per_point, einvoice_provider, invoice_form_no, invoice_symbol)').eq('user_id', …)` | — | Quán của người đăng nhập | Mở app |
 | `from('business_members').select('user_id, role').eq('business_id', …)` | — | Danh sách nhân viên | 4.3 |
 | `from('payment_accounts').select(…).eq('business_id', …).eq('kind','MAIN').eq('is_active', true)` | — | Chỉ đọc; ghi do server sau khi cổng xác minh | Cài đặt ban đầu bước 2, 4.2 |
 | `from('payment_events').select('…, order:orders(order_code)')` | như dòng `payment_events` ở trên | Lấy kèm mã đơn để hiện "Khách chuyển 2 lần cho đơn …" | 3.2 |
@@ -80,6 +97,17 @@ Giờ bán: `p_sold_at` lệch quá 5 phút về tương lai hoặc quá 7 ngày
 | `from('journal_entries').select('id, source_id, amount, category, description, entry_date, created_at').eq('business_id', …).eq('entry_type','EXPENSE').is('voided_at', null).gte('entry_date', …).lte('entry_date', …).order('entry_date', desc).limit(500)` | khoảng ngày | Index `(business_id, entry_date desc)` | 3.5 Chi tiêu, 3.4, 5.1 |
 | `from('debt_balances').select('customer_id, business_id, name, phone, balance, last_entry_at').eq('business_id', …).order('balance', desc).limit(500)` | — | View chạy quyền người gọi (RLS hai bảng nợ) | 3.6 Sổ nợ, 2.1 |
 | `from('debt_entries').select('id, customer_id, kind, amount, note, entry_date, created_at, voided_at').eq('customer_id', …).order('created_at', desc).limit(200)` | — | Gồm cả dòng đã hủy (hiện "Đã hủy") | 3.7 |
+| `from('products').select('id, business_id, name, unit, price, category, cost_price, track_stock, stock_qty, low_stock_at, is_active').eq('business_id', …)[.eq('is_active', true)].order('sort_order').order('name').limit(500)` | — | Index `(business_id, sort_order, name) where is_active` | 2.8 Chọn món, 6.1 |
+| `from('stock_movements').select('id, product_id, kind, qty, unit_cost, order_id, note, created_at').eq('product_id', …).order('created_at', desc).limit(50)` | — | Bán: tự trừ khi đơn đã trả (một lần mỗi đơn) | 6.2 |
+| `from('orders').select('*').eq('id', …).single()` + `from('order_items').select('id, order_id, product_id, name, quantity, unit_price, line_amount').eq('order_id', …)` | — | Chi tiết đơn, biên nhận | 3.8 |
+| `rpc('sales_by_hour', { p_business_id, p_from, p_to })`, `rpc('top_products', { p_business_id, p_from, p_to, p_limit })` | khoảng ≤ 93 ngày (dài hơn báo `QP_INVALID_INPUT`) | Chạy quyền người gọi (RLS); dùng index `(business_id, sold_at)` | 3.4 Báo cáo |
+| `rpc('current_shift_v1', { p_business_id })` | — | 0 hoặc 1 dòng: ca đang mở + tiền mặt bán/chi tới hiện tại | 7.3, 7.0 |
+| `from('cash_shifts').select(…).eq('business_id', …).order('opened_at', desc).limit(10)` | — | Các ca gần đây | 7.3 |
+| `from('business_members').select('user_id, role, member_phone').eq('business_id', …)` | — | `member_phone` có khi vào quán bằng lời mời | 4.3 |
+| `from('business_invites').select('id, phone, role, created_at, accepted_at, revoked_at').eq('business_id', …).is('accepted_at', null).is('revoked_at', null)` | — | Chỉ OWNER, MANAGER đọc được | 4.3 |
+| `from('crm_customers').select('id, business_id, display_name, phone_number, points, total_spent, visits, last_visit_at').eq('business_id', …).order('last_visit_at', desc).limit(500)` | — | Khách quen | 7.1 |
+| `from('loyalty_events').select('id, customer_id, order_id, kind, points, note, created_at').eq('customer_id', …).order('created_at', desc).limit(50)` | — | Lịch sử điểm | 7.2 |
+| `from('invoices').select('id, business_id, order_id, form_no, symbol, invoice_no, status, buyer_name, buyer_tax_code, buyer_email, total_amount, issued_at, tax_authority_code, lookup_url').eq('order_id', …)` hoặc `.eq('business_id', …).limit(30)` | — | Hóa đơn của đơn / đã xuất gần đây | 3.8, 7.4 |
 
 ## 5. Realtime
 
@@ -107,6 +135,12 @@ Giờ bán: `p_sold_at` lệch quá 5 phút về tương lai hoặc quá 7 ngày
 | `QP_ORDER_NOT_PAYABLE` (Edge Function) | Đơn này đã trả hoặc đã hủy. | Tải lại đơn |
 | `QP_CONSENT_REQUIRED` | Cần hỏi khách đồng ý trước khi lưu số điện thoại. | Hiện ô đánh dấu đồng ý |
 | `QP_PAYMENT_EXCEEDS_DEBT` | Số tiền trả nhiều hơn số đang nợ. Kiểm tra lại số tiền. | Giữ màn hình, sửa số |
+| `QP_ALREADY_MEMBER` | Số điện thoại này đã là nhân viên của quán. | Không thử lại |
+| `QP_PHONE_TAKEN` | Số điện thoại này đã có khách khác dùng. | Tìm khách đã có |
+| `QP_NOT_ENOUGH_POINTS` | Khách chưa đủ điểm để đổi. | Sửa số điểm |
+| `QP_ORDER_NOT_PAID` | Đơn chưa trả tiền nên chưa xuất hóa đơn được. | — |
+| `QP_EINVOICE_NOT_SETUP` | Chưa cài hóa đơn điện tử. Vào Việc khác → Hóa đơn điện tử. | Mở 7.4 |
+| `QP_EINVOICE_PROVIDER_NOT_READY` (Edge Function) | Nhà cung cấp hóa đơn này chưa kết nối được. Gọi hỗ trợ để cài đặt. | Không thử lại |
 | Hết thời gian / mất mạng | Mất mạng. Đơn đã lưu, sẽ gửi khi có mạng. | Đưa vào hàng đợi (chỉ đơn tiền mặt) |
 | Lỗi khác | Có lỗi, thử lại sau ít phút. | Ghi log kèm `detail` |
 
@@ -128,6 +162,7 @@ Giờ bán: `p_sold_at` lệch quá 5 phút về tương lai hoặc quá 7 ngày
 | `qr-for-order` | App | `{ order_id }` | `{ qr_payload, bank_name, account_name, amount, uses_order_code, order_code, expires_at }` | `amount` = phần còn thiếu. Bản hiện tại: QR tài khoản chính + mã đơn trong nội dung (`uses_order_code = true`). TODO: tài khoản ảo theo đơn qua API cổng. |
 | `push-payment` | Database webhook khi đơn PAID | dòng `orders` | — | Gửi thông báo đẩy đến máy tạo đơn. |
 | `process-account-deletion` | Lịch chạy hằng ngày | — | — | Xóa người dùng khỏi Auth, ẩn danh dữ liệu cá nhân; giữ chứng từ kế toán của hộ. |
+| `issue-einvoice` | App | `{ invoice_id }` (nháp từ `create_invoice_from_order_v1`) | Dòng `invoices` đã phát hành | DEMO: cấp số bằng `issue_invoice()` + mã cơ quan thuế bản thử. MISA/Viettel/VNPT/khác: nhà cung cấp tự cấp số → `record_einvoice_result()` (service_role), KHÔNG gọi `issue_invoice()`. Adapter còn TODO (cần tài liệu sandbox + tài khoản kết nối) → `501 QP_EINVOICE_PROVIDER_NOT_READY`. |
 | Send SMS Hook (tùy chọn) | Supabase Auth | `{ user, sms: { otp } }` | — | Chỉ khi gửi OTP qua kênh không có sẵn trong Supabase. |
 
 Đã có bản `_v1` báo lỗi bằng mã cho xác nhận tay và gán tiền (migration 5). App không gọi bản cũ nữa. Còn lại: `issue_invoice` (giai đoạn 2).

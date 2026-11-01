@@ -4,7 +4,7 @@ import { supabase } from '../../lib/supabase';
 import { callWithRetry, unwrap } from '../../lib/retry';
 import { toAppError } from '../../lib/errors';
 import { ENV } from '../../lib/env';
-import type { AppVersionCheck, Business, Membership, PaymentAccount, Role } from '../../types/api';
+import type { AppVersionCheck, Business, MemberRow, Membership, PaymentAccount, Role } from '../../types/api';
 
 const platform = Platform.OS === 'ios' ? 'ios' : 'android';
 
@@ -50,7 +50,7 @@ export async function recordConsent(): Promise<void> {
   );
 }
 
-const BUSINESS_COLS = 'id, business_name, tax_code, address, allow_cashier_manual_confirm, tax_industry';
+const BUSINESS_COLS = 'id, business_name, tax_code, address, allow_cashier_manual_confirm, tax_industry, loyalty_vnd_per_point, einvoice_provider, invoice_form_no, invoice_symbol';
 
 export async function myMemberships(userId: string): Promise<Membership[]> {
   return callWithRetry(async (signal) => {
@@ -133,17 +133,22 @@ export async function updateBusinessSettings(businessId: string, allowCashierMan
   );
 }
 
-export async function listMembers(businessId: string): Promise<{ user_id: string; role: Role }[]> {
+export async function listMembers(businessId: string): Promise<MemberRow[]> {
   return callWithRetry(async (signal) =>
     unwrap(
       await supabase
         .from('business_members')
-        .select('user_id, role')
+        .select('user_id, role, member_phone')
         .eq('business_id', businessId)
         .order('created_at', { ascending: true })
         .abortSignal(signal),
-    ) as { user_id: string; role: Role }[],
+    ) as MemberRow[],
   );
+}
+
+/** Nhận lời mời làm nhân viên gửi tới số điện thoại đang đăng nhập. Trả về số quán vừa vào. */
+export async function acceptInvites(): Promise<number> {
+  return callWithRetry(async (signal) => unwrap(await supabase.rpc('accept_invites_v1').abortSignal(signal)) as number);
 }
 
 export async function requestAccountDeletion(): Promise<void> {

@@ -165,8 +165,12 @@ appId: vn.quickpos.app
     visible: "Hôm nay đã thu.*"
     timeout: 10000
 - scrollUntilVisible:
-    element: "Thuế"
-- tapOn: "Thuế"
+    element: "Việc khác.*"
+- tapOn: "Việc khác.*"
+- extendedWaitUntil:
+    visible: "Ca bán và két tiền.*"
+    timeout: 10000
+- tapOn: "Thuế.*"
 - runFlow:
     when:
       visible: "Mã PIN chủ quán"

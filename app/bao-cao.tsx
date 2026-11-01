@@ -1,4 +1,9 @@
 import { useState } from 'react';
+import { useQuery } from '@tanstack/react-query';
+import { salesByHour, topProducts } from '../src/features/shop/api';
+import { formatQty } from '../src/features/shop/hooks';
+import { printHtml, sharePdf } from '../src/features/receipt/print';
+import { revenueBookHtml } from '../src/features/receipt/receipt';
 import { Share, View } from 'react-native';
 import { Screen, Card } from '../src/components/Screen';
 import { Amount, Txt } from '../src/components/Txt';
@@ -9,7 +14,7 @@ import { useBusinessId, useSession } from '../src/features/session/store';
 import { usePeriodReport } from '../src/features/books/hooks';
 import { bucketSeries, changePct, revenueCsv, type PeriodKey } from '../src/features/reports/period';
 import { formatVND } from '../src/lib/money';
-import { vnDay } from '../src/lib/time';
+import { vnDay, vnDayRange } from '../src/lib/time';
 import { font, space } from '../src/theme/tokens';
 import { vi } from '../src/i18n/vi';
 
@@ -29,6 +34,28 @@ export default function BaoCao() {
     const title = vi.reports.exportTitle(dmy(data.period.from) + '/' + data.period.from.slice(0, 4), dmy(data.period.to) + '/' + data.period.to.slice(0, 4));
     await Share.share({ title, message: `${shop}\n${title}\n\n${revenueCsv(data.now, data.expensesByDay)}` });
   };
+
+  // Theo giờ và món bán chạy: đọc trên đơn nên chỉ cho kỳ ≤ 93 ngày (hàm SQL cũng chặn)
+  const range = data && key !== 'year' ? { from: vnDayRange(data.period.from).from, to: vnDayRange(data.period.to).to } : null;
+  const hours = useQuery({
+    queryKey: ['hours', businessId, range?.from, range?.to],
+    queryFn: () => salesByHour(businessId, range!.from, range!.to),
+    enabled: !!range,
+  });
+  const top = useQuery({
+    queryKey: ['top', businessId, range?.from, range?.to],
+    queryFn: () => topProducts(businessId, range!.from, range!.to, 10),
+    enabled: !!range,
+  });
+  const book = () =>
+    data
+      ? revenueBookHtml({
+          shopName: shop,
+          taxCode: useSession.getState().business?.tax_code ?? '',
+          title: vi.reports.exportTitle(dmy(data.period.from) + '/' + data.period.from.slice(0, 4), dmy(data.period.to) + '/' + data.period.to.slice(0, 4)),
+          rows: data.now.series.map((x) => ({ day: x.day, revenue: x.amount, expense: data.expensesByDay.get(x.day) ?? 0 })),
+        })
+      : '';
 
   const pct = data ? changePct(data.now.revenue, data.prev.revenue) : null;
   const bars = data ? bucketSeries(data.now.series) : [];
@@ -89,7 +116,37 @@ export default function BaoCao() {
             </>
           )}
 
+          {hours.data && hours.data.length > 0 ? (
+            <Card style={{ gap: space.sm }}>
+              <Txt variant="title">{vi.reports.byHour}</Txt>
+              <BarChart
+                bars={Array.from({ length: 24 }, (_, h) => h)
+                  .filter((h) => h >= Math.min(...hours.data.map((x) => x.hour)) && h <= Math.max(...hours.data.map((x) => x.hour)))
+                  .map((h) => ({ label: `${h}h`, amount: hours.data.find((x) => x.hour === h)?.amount ?? 0 }))}
+                format={formatVND}
+              />
+              <Txt tone="secondary">
+                {vi.reports.busiest(`${hours.data.reduce((b, x) => (x.amount > b.amount ? x : b)).hour}h`)}
+              </Txt>
+            </Card>
+          ) : null}
+          {top.data && top.data.length > 0 ? (
+            <Card style={{ gap: space.sm }}>
+              <Txt variant="title">{vi.reports.topItems}</Txt>
+              {top.data.map((t, i) => (
+                <View key={t.product_id} style={{ flexDirection: 'row', gap: space.md }}>
+                  <Txt style={{ flex: 1 }}>{`${i + 1}. ${t.name} · ${formatQty(Number(t.quantity))}`}</Txt>
+                  <Txt variant="bodyStrong">{formatVND(t.amount)}</Txt>
+                </View>
+              ))}
+            </Card>
+          ) : null}
+
           <Button kind="secondary" label={vi.reports.export} onPress={() => void share()} />
+          <View style={{ flexDirection: 'row', gap: space.md }}>
+            <Button kind="secondary" label={vi.reports.pdf} onPress={() => void sharePdf(book(), vi.reports.pdf).catch(() => undefined)} style={{ flex: 1 }} />
+            <Button kind="secondary" label={vi.reports.print} onPress={() => void printHtml(book()).catch(() => undefined)} style={{ flex: 1 }} />
+          </View>
         </>
       ) : null}
     </Screen>

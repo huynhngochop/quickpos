@@ -63,8 +63,8 @@ select pg_temp.expect_error(
       select v, '33333333-3333-3333-3333-333333333333', 'OWNER' from t_ctx where k='biz_a' $q$,
   'Không ai được thêm thành viên vai trò OWNER');
 
-insert into products (business_id, name, price, sku)
-select v, 'Nước suối 500ml', 6000, 'NS500' from t_ctx where k = 'biz_a';
+-- Từ migration 7 hàng hóa ghi qua hàm upsert_product_v1
+select upsert_product_v1(gen_random_uuid(), v, 'Nước suối 500ml', 6000, 'chai') from t_ctx where k = 'biz_a';
 
 -- ---------- Chủ hộ B không thấy dữ liệu hộ A ----------
 set local request.jwt.claim.sub = '33333333-3333-3333-3333-333333333333';

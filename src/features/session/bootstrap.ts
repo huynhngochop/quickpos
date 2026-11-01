@@ -7,7 +7,7 @@ import { getDeviceId } from '../../lib/device';
 import { toAppError } from '../../lib/errors';
 import { ENV } from '../../lib/env';
 import { useSession } from './store';
-import { checkAppVersion, hasConsent, myMemberships, registerDevice } from './api';
+import { acceptInvites, checkAppVersion, hasConsent, myMemberships, registerDevice } from './api';
 import { hasOwnerPin } from '../settings/pinStore';
 import { usePrefs } from '../settings/prefs';
 import { getPushToken, ensurePaymentChannel } from '../notifications/setup';
@@ -66,7 +66,8 @@ export async function bootstrap(): Promise<Route> {
       if (!(await hasConsent(userId))) return { to: '/dong-y' };
       useSession.getState().set({ consentVersion: ENV.policyVersion });
     }
-    // 4. Quán
+    // 4. Quán (nhận lời mời làm nhân viên gửi tới số điện thoại này trước)
+    await acceptInvites().catch(() => 0);
     const members = await myMemberships(userId);
     if (members.length === 0) return { to: '/thiet-lap/quan' };
     const keep = members.find((m) => m.business.id === useSession.getState().business?.id) ?? members[0]!;

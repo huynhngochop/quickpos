@@ -1,6 +1,10 @@
 import { useRef, useState } from 'react';
 import { Share, View } from 'react-native';
-import { useLocalSearchParams } from 'expo-router';
+import { router, useLocalSearchParams } from 'expo-router';
+import { useMutation } from '@tanstack/react-query';
+import { createDebtPaymentOrder } from '../../src/features/shop/api';
+import { useSale } from '../../src/features/sale/store';
+import { deviceIdSync } from '../../src/lib/device';
 import { Screen, Card } from '../../src/components/Screen';
 import { Amount, Txt } from '../../src/components/Txt';
 import { Button } from '../../src/components/Button';
@@ -20,7 +24,7 @@ const digitsOnly = (s: string) => s.replace(/\D/g, '').replace(/^0+/, '').slice(
 
 /** 3.7 Một khách nợ: số đang nợ, ghi lấy nợ / trả tiền, lịch sử, nhắn nhắc nợ. */
 export default function KhachNo() {
-  const { id } = useLocalSearchParams<{ id: string }>();
+  const { id, amount: fromSale } = useLocalSearchParams<{ id: string; amount?: string }>();
   const businessId = useBusinessId();
   const shop = useSession((s) => s.business?.business_name ?? '');
   const role = useSession((s) => s.role);
@@ -29,7 +33,8 @@ export default function KhachNo() {
   const record = useRecordDebt(businessId, id);
   const voidMut = useVoidDebtEntry(businessId, id);
   const [kind, setKind] = useState<Kind>('DEBT');
-  const [amount, setAmount] = useState('');
+  const [amount, setAmount] = useState(fromSale ?? '');
+  const [savedFromSale, setSavedFromSale] = useState(false);
   const [note, setNote] = useState('');
   const [problem, setProblem] = useState<string | null>(null);
   const [voidId, setVoidId] = useState<string | null>(null);
@@ -47,12 +52,22 @@ export default function KhachNo() {
       {
         onSuccess: () => {
           entryId.current = newId();
+          if (fromSale && kind === 'DEBT') setSavedFromSale(true);
           setAmount('');
           setNote('');
         },
       },
     );
   };
+
+  // Thu nợ bằng mã QR: tạo đơn chuyển khoản "Trả nợ"; tiền về thì server tự trừ sổ nợ
+  const qrPay = useMutation({
+    mutationFn: () => createDebtPaymentOrder(newId(), id, value > 0 && kind === 'PAYMENT' ? value : balance, deviceIdSync()),
+    onSuccess: (o) => {
+      useSale.getState().setActive(o.id);
+      router.push({ pathname: '/cho-tien/[id]', params: { id: o.id } });
+    },
+  });
 
   const remind = () => {
     if (!me) return;
@@ -73,7 +88,26 @@ export default function KhachNo() {
             </Txt>
             <Amount value={formatVND(balance)} size={font.size.amount} tone={balance > 0 ? 'warn' : 'ink'} />
           </Card>
-          {balance > 0 ? <Button kind="secondary" label={vi.debts.remind} onPress={remind} /> : null}
+          {savedFromSale ? (
+            <Card tone="success" style={{ gap: space.sm }}>
+              <Txt tone="success" variant="bodyStrong">{`✓ ${vi.debts.savedFromSale}`}</Txt>
+              <Button
+                big
+                label={vi.paid.newOrder}
+                onPress={() => {
+                  useSale.getState().newSale();
+                  router.replace('/thu-tien');
+                }}
+              />
+            </Card>
+          ) : null}
+          {balance > 0 ? (
+            <View style={{ flexDirection: 'row', gap: space.md }}>
+              <Button kind="secondary" label={vi.debts.remind} onPress={remind} style={{ flex: 1 }} />
+              <Button kind="secondary" label={vi.debts.qrPay} onPress={() => qrPay.mutate()} busy={qrPay.isPending} style={{ flex: 1 }} />
+            </View>
+          ) : null}
+          {qrPay.error ? <ErrorView error={qrPay.error} /> : null}
 
           <Card style={{ gap: space.md }}>
             <ChoiceGrid

@@ -1,0 +1,344 @@
+appId: vn.quickpos.app
+---
+# Hàng hóa + tồn kho, bán theo món, khách quen tích điểm, biên nhận, hóa đơn điện tử (bản thử),
+# ca bán / két tiền, mời nhân viên, ghi nợ từ màn thu tiền, thu nợ bằng mã QR.
+# Dữ liệu mẫu: Bánh mì 15.000 (tồn 20 ổ), Cà phê sữa 20.000; khách quen Anh Bảy 35 điểm; Anh Tư xe ôm nợ 40.000.
+- runFlow: subflows/dismiss-system-dialogs.yaml
+- assertVisible: "Hôm nay đã thu.*"
+
+# ---------- Hàng hóa: thêm món, nhập hàng ----------
+- scrollUntilVisible:
+    element: "Hàng hóa"
+- tapOn: "Hàng hóa"
+- extendedWaitUntil:
+    visible: "Thêm món"
+    timeout: 10000
+- assertVisible: ".*Còn 20 ổ.*"
+- takeScreenshot: "100-hang-hoa"
+- tapOn: "Thêm món"
+- tapOn: { id: "product-name" }
+- inputText: "Sua chua"
+- tapOn: "Tên món"
+- tapOn: { id: "product-price" }
+- inputText: "12000"
+- tapOn: "Tên món"
+- scrollUntilVisible:
+    element: "Lưu món"
+- tapOn: "Lưu món"
+- extendedWaitUntil:
+    visible: ".*Sua chua.*"
+    timeout: 10000
+- scrollUntilVisible:
+    element: ".*Bánh mì.*"
+- tapOn: ".*Bánh mì.*"
+- extendedWaitUntil:
+    visible: "Tồn kho"
+    timeout: 10000
+- assertVisible: "20 ổ"
+- tapOn: { id: "stock-qty" }
+- inputText: "10"
+- tapOn: "Tồn kho"
+- tapOn: { id: "stock-cost" }
+- inputText: "8000"
+- tapOn: "Tồn kho"
+- assertVisible: "Thành tiền nhập: 80.000 đ"
+- scrollUntilVisible:
+    element: "Lưu nhập hàng"
+- tapOn: "Lưu nhập hàng"
+- extendedWaitUntil:
+    visible: "Đã nhập hàng"
+    timeout: 10000
+- scrollUntilVisible:
+    element: "30 ổ"
+    direction: UP
+- takeScreenshot: "101-nhap-hang"
+- scrollUntilVisible:
+    element: "Hàng hóa"
+    direction: UP
+- tapOn: "Hàng hóa"
+- extendedWaitUntil:
+    visible: "Thêm món"
+    timeout: 10000
+- tapOn: "Trang chính"
+
+# ---------- Bán theo món + khách quen + tiền mặt ----------
+- extendedWaitUntil:
+    visible: "Hôm nay đã thu.*"
+    timeout: 10000
+- tapOn: "Thu tiền"
+- extendedWaitUntil:
+    visible: "Khách cần trả"
+    timeout: 10000
+- tapOn: "Chọn món"
+- extendedWaitUntil:
+    visible: "Chọn món"
+    timeout: 10000
+- tapOn: { id: "sell-Bánh mì" }
+- tapOn: { id: "sell-Bánh mì" }
+- tapOn: { id: "sell-Cà phê sữa" }
+- assertVisible: "50.000 đ"
+- takeScreenshot: "102-chon-mon"
+- tapOn: "Tính tiền"
+- extendedWaitUntil:
+    visible: "Đã chọn 3 món.*"
+    timeout: 10000
+- assertVisible: "50.000 đ"
+- tapOn: "Khách quen"
+- extendedWaitUntil:
+    visible: "Chọn khách quen"
+    timeout: 10000
+- tapOn: "Anh Bảy.*"
+- extendedWaitUntil:
+    visible: "Khách: Anh Bảy · 35 điểm"
+    timeout: 10000
+- takeScreenshot: "103-khach-quen-tren-don"
+- tapOn: "Khách trả tiền mặt"
+- extendedWaitUntil:
+    visible: "Khách đưa bao nhiêu?"
+    timeout: 10000
+- tapOn: "Đưa đủ"
+- tapOn: "Đã thu tiền mặt"
+- extendedWaitUntil:
+    visible: "Đã ghi đơn tiền mặt"
+    timeout: 15000
+- tapOn: "Xem đơn · gửi biên nhận"
+- extendedWaitUntil:
+    visible: "Gửi biên nhận"
+    timeout: 10000
+- assertVisible: "2 × Bánh mì"
+- assertVisible: "Khách quen: Anh Bảy"
+- takeScreenshot: "104-chi-tiet-don"
+# Hóa đơn điện tử: chưa cài → cài bản thử → xuất
+- scrollUntilVisible:
+    element: "Cài hóa đơn điện tử"
+- tapOn: "Cài hóa đơn điện tử"
+- extendedWaitUntil:
+    visible: "Quán đã đăng ký hóa đơn với"
+    timeout: 10000
+- tapOn: { id: "provider-DEMO" }
+- scrollUntilVisible:
+    element:
+      id: "invoice-symbol"
+- tapOn: { id: "invoice-symbol" }
+- inputText: "C26MAA"
+- tapOn: "Ký hiệu hóa đơn (6 ký tự)"
+- scrollUntilVisible:
+    element: "Lưu cài đặt hóa đơn"
+- tapOn: "Lưu cài đặt hóa đơn"
+- extendedWaitUntil:
+    visible: "✓ Đã lưu"
+    timeout: 10000
+- scrollUntilVisible:
+    element: "Quay lại"
+    direction: UP
+- tapOn: "Quay lại"
+- scrollUntilVisible:
+    element: "Xuất hóa đơn điện tử"
+- tapOn: "Xuất hóa đơn điện tử"
+- scrollUntilVisible:
+    element: "Xuất hóa đơn"
+- tapOn: "Xuất hóa đơn"
+- extendedWaitUntil:
+    visible: "Đã xuất hóa đơn số 00000001 · ký hiệu C26MAA"
+    timeout: 15000
+- takeScreenshot: "105-hoa-don-dien-tu"
+- scrollUntilVisible:
+    element: "Quay lại"
+    direction: UP
+- tapOn: "Quay lại"
+- extendedWaitUntil:
+    visible: "Đơn mới"
+    timeout: 10000
+- tapOn: "Đơn mới"
+- extendedWaitUntil:
+    visible: "Khách cần trả"
+    timeout: 10000
+
+# ---------- Ghi nợ từ màn thu tiền ----------
+- tapOn: { id: "key-3" }
+- tapOn: { id: "key-0" }
+- tapOn: { id: "key-000" }
+- tapOn: "Ghi nợ"
+- extendedWaitUntil:
+    visible: "Chọn khách để ghi nợ 30.000 đ.*"
+    timeout: 10000
+- scrollUntilVisible:
+    element: "Anh Tư xe ôm.*"
+- tapOn: "Anh Tư xe ôm.*"
+- extendedWaitUntil:
+    visible: "Lịch sử"
+    timeout: 10000
+- scrollUntilVisible:
+    element: "Ghi nợ"
+- tapOn: "Ghi nợ"
+- extendedWaitUntil:
+    visible: "✓ Đã ghi nợ cho khách"
+    timeout: 10000
+- assertVisible: "70.000 đ"
+- takeScreenshot: "106-ghi-no-tu-thu-tien"
+# Thu nợ bằng mã QR → xác nhận tay → sổ nợ trừ hết
+- tapOn: "Thu nợ bằng mã QR"
+- extendedWaitUntil:
+    visible: "Khách quét mã để trả"
+    timeout: 15000
+- assertVisible: "70.000 đ"
+- takeScreenshot: "107-thu-no-qr"
+- scrollUntilVisible:
+    element: "Tôi đã thấy tiền về"
+- tapOn: "Tôi đã thấy tiền về"
+- tapOn: "Đúng, tiền đã về"
+- extendedWaitUntil:
+    visible: "Đơn mới"
+    timeout: 15000
+- tapOn:
+    text: "Đã nhận 70.000 đ"
+    optional: true
+- tapOn: "Đơn mới"
+- extendedWaitUntil:
+    visible: "Khách cần trả"
+    timeout: 10000
+- tapOn: "Trang chính"
+- extendedWaitUntil:
+    visible: "Hôm nay đã thu.*"
+    timeout: 10000
+- scrollUntilVisible:
+    element: "Sổ nợ.*"
+- tapOn: "Sổ nợ.*"
+- extendedWaitUntil:
+    visible: "Khách đang nợ tổng cộng"
+    timeout: 10000
+- scrollUntilVisible:
+    element: "Anh Tư xe ôm.*"
+- tapOn: "Anh Tư xe ôm.*"
+- extendedWaitUntil:
+    visible: "Đã trả hết"
+    timeout: 10000
+- scrollUntilVisible:
+    element: ".*Trả nợ qua chuyển khoản.*"
+- takeScreenshot: "108-no-da-tra-qua-qr"
+- scrollUntilVisible:
+    element: "Sổ nợ"
+    direction: UP
+- tapOn: "Sổ nợ"
+- extendedWaitUntil:
+    visible: "Khách đang nợ tổng cộng"
+    timeout: 10000
+- tapOn: "Trang chính"
+
+# ---------- Việc khác: khách quen (điểm, đổi quà), ca bán, nhân viên ----------
+- extendedWaitUntil:
+    visible: "Hôm nay đã thu.*"
+    timeout: 10000
+- scrollUntilVisible:
+    element: "Việc khác.*"
+- tapOn: "Việc khác.*"
+- extendedWaitUntil:
+    visible: "Ca bán và két tiền.*"
+    timeout: 10000
+- takeScreenshot: "109-viec-khac"
+- tapOn: "Khách quen.*"
+- extendedWaitUntil:
+    visible: "Thêm khách quen"
+    timeout: 10000
+- tapOn: "Anh Bảy.*"
+- extendedWaitUntil:
+    visible: "Điểm hiện có"
+    timeout: 10000
+- assertVisible: "40 điểm"
+- tapOn: { id: "redeem-points" }
+- inputText: "10"
+- tapOn: "Điểm hiện có"
+- scrollUntilVisible:
+    element: "Trừ điểm"
+- tapOn: "Trừ điểm"
+- extendedWaitUntil:
+    visible: "✓ Đã trừ điểm"
+    timeout: 10000
+- scrollUntilVisible:
+    element: "30 điểm"
+    direction: UP
+- takeScreenshot: "110-doi-diem"
+- scrollUntilVisible:
+    element: "Khách quen"
+    direction: UP
+- tapOn: "Khách quen"
+- extendedWaitUntil:
+    visible: "Thêm khách quen"
+    timeout: 10000
+- tapOn: "Trang chính"
+- extendedWaitUntil:
+    visible: "Hôm nay đã thu.*"
+    timeout: 10000
+- scrollUntilVisible:
+    element: "Việc khác.*"
+- tapOn: "Việc khác.*"
+- extendedWaitUntil:
+    visible: "Ca bán và két tiền.*"
+    timeout: 10000
+- tapOn: "Ca bán và két tiền.*"
+- extendedWaitUntil:
+    visible: "Mở ca"
+    timeout: 10000
+- tapOn: { id: "shift-cash" }
+- inputText: "100000"
+- tapOn: "Tiền mặt có sẵn trong két (đồng)"
+- scrollUntilVisible:
+    element: "Mở ca"
+- tapOn:
+    text: "Mở ca"
+    index: 1
+- extendedWaitUntil:
+    visible: "Ca đang mở từ.*"
+    timeout: 10000
+- assertVisible: "Trong két phải có"
+- takeScreenshot: "111-ca-dang-mo"
+- tapOn: { id: "shift-cash" }
+- inputText: "100000"
+- tapOn: "Tiền đếm được thực tế (đồng)"
+- scrollUntilVisible:
+    element: "Đóng ca"
+- tapOn:
+    text: "Đóng ca"
+    index: 1
+- extendedWaitUntil:
+    visible: "Đủ tiền, không thừa không thiếu"
+    timeout: 10000
+- takeScreenshot: "112-dong-ca"
+- scrollUntilVisible:
+    element: "Quay lại"
+    direction: UP
+- tapOn: "Quay lại"
+- extendedWaitUntil:
+    visible: "Nhân viên.*"
+    timeout: 10000
+- tapOn: "Nhân viên.*"
+- runFlow:
+    when:
+      visible: "Mã PIN chủ quán"
+    file: subflows/enter-pin.yaml
+- extendedWaitUntil:
+    visible: "Mời nhân viên"
+    timeout: 10000
+- tapOn: { id: "invite-phone" }
+- inputText: "0903000002"
+- tapOn: "Số điện thoại của nhân viên"
+- scrollUntilVisible:
+    element: "Gửi lời mời"
+- tapOn: "Gửi lời mời"
+- extendedWaitUntil:
+    visible: "Đã mời 0903 000 002.*"
+    timeout: 10000
+- scrollUntilVisible:
+    element: ".*chưa đăng nhập"
+- takeScreenshot: "113-moi-nhan-vien"
+- scrollUntilVisible:
+    element: "Quay lại"
+    direction: UP
+- tapOn: "Quay lại"
+- extendedWaitUntil:
+    visible: "Khách quen.*"
+    timeout: 10000
+- tapOn: "Trang chính"
+- extendedWaitUntil:
+    visible: "Hôm nay đã thu.*"
+    timeout: 10000

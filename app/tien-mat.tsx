@@ -4,7 +4,8 @@ import { router } from 'expo-router';
 import { Screen, Card } from '../src/components/Screen';
 import { Amount, Txt } from '../src/components/Txt';
 import { Button } from '../src/components/Button';
-import { useAmount, useSale, quickItems } from '../src/features/sale/store';
+import { useAmount, useSale, saleItems } from '../src/features/sale/store';
+import { setOrderCustomer } from '../src/features/shop/api';
 import { recordCashSale } from '../src/features/offline/useQueue';
 import { useBusinessId } from '../src/features/session/store';
 import { deviceIdSync, newId } from '../src/lib/device';
@@ -29,7 +30,10 @@ export default function TienMat() {
   const confirm = async () => {
     setBusy(true);
     try {
-      const r = await recordCashSale({ orderId, businessId, items: quickItems(due), deviceId: deviceIdSync() });
+      const { cart, customer } = useSale.getState();
+      const r = await recordCashSale({ orderId, businessId, items: saleItems(due, cart), deviceId: deviceIdSync() });
+      // Khách quen: cộng điểm ngay khi đơn đã lên server (mất mạng thì bỏ qua, không chặn bán hàng)
+      if (r.sentNow && customer) await setOrderCustomer(orderId, customer.id).catch(() => undefined);
       setDone({ offline: !r.sentNow });
     } finally {
       setBusy(false);
@@ -51,6 +55,9 @@ export default function TienMat() {
           <Amount value={formatVND(due)} />
           {change > 0 ? <Txt variant="title" center>{`${vi.cash.change}: ${formatVND(change)}`}</Txt> : null}
         </Card>
+        {!done.offline ? (
+          <Button kind="secondary" label={vi.order.receiptBtn} onPress={() => router.push({ pathname: '/don/[id]', params: { id: orderId, given: String(given ?? due) } })} />
+        ) : null}
       </Screen>
     );
   }
