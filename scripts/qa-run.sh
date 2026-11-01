@@ -23,6 +23,12 @@ for round in $(seq 1 "$ROUNDS"); do
     start=$(date +%s)
     ( cd "$dir" && maestro test "$ROOT/.maestro/${f}.yaml" --format junit --output report.xml --test-output-dir . ) > "$dir/maestro.log" 2>&1
     code=$?
+    # Lỗi hạ tầng (trình điều khiển máy ảo khởi động chậm), không phải lỗi app: chạy lại luồng một lần
+    if [ "$code" -ne 0 ] && grep -q "driver not ready in time" "$dir/maestro.log"; then
+      echo "- ↻ $f: trình điều khiển máy ảo chưa sẵn sàng, chạy lại" >> "$summary"
+      ( cd "$dir" && maestro test "$ROOT/.maestro/${f}.yaml" --format junit --output report.xml --test-output-dir . ) > "$dir/maestro.log" 2>&1
+      code=$?
+    fi
     secs=$(( $(date +%s) - start ))
     if [ "$code" -eq 0 ]; then
       echo "- ✅ $f (${secs}s)" >> "$summary"

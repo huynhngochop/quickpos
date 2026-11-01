@@ -20,7 +20,11 @@ appId: vn.quickpos.app
       - assertVisible: "Không phải thối"
       - tapOn: "50.000"
       - assertVisible: "Thối lại cho khách"
-      - assertVisible: "Hai mươi lăm nghìn đồng"
+      # Máy tính bảng nằm ngang: dòng đọc số tiền thối nằm sát nút đáy, cuộn cho thấy hết
+      - scrollUntilVisible:
+          element: "Hai mươi lăm nghìn đồng"
+          visibilityPercentage: 100
+          timeout: 10000
       - takeScreenshot: "30-tien-thoi"
       - tapOn: "Đã thu tiền mặt"
       - extendedWaitUntil:
