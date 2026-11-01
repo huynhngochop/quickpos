@@ -7,27 +7,39 @@ appId: vn.quickpos.app
 - assertVisible: "Hôm nay đã thu.*"
 
 # ---------- Hàng hóa: thêm món, nhập hàng ----------
+# Ô "Hàng hóa" có dòng phụ cảnh báo (sắp hết hạn) nên khớp theo đầu chữ
 - scrollUntilVisible:
-    element: "Hàng hóa"
-- tapOn: "Hàng hóa"
+    element: "Hàng hóa.*"
+- tapOn: "Hàng hóa.*"
 - extendedWaitUntil:
     visible: "Thêm món"
     timeout: 10000
-- assertVisible: ".*Còn 20 ổ.*"
+# Mở từ cảnh báo hết hạn thì đang lọc "Sắp hết hạn": về "Tất cả"
+- tapOn: { id: "product-filter-ALL" }
+- scrollUntilVisible:
+    element: ".*Còn 20 ổ.*"
 - takeScreenshot: "100-hang-hoa"
+- scrollUntilVisible:
+    element: "Thêm món"
+    direction: UP
 - tapOn: "Thêm món"
+- extendedWaitUntil:
+    visible: "Thêm món mới"
+    timeout: 10000
 - tapOn: { id: "product-name" }
 - inputText: "Sua chua"
-- tapOn: "Tên món"
+- hideKeyboard
 - tapOn: { id: "product-price" }
 - inputText: "12000"
-- tapOn: "Tên món"
+- hideKeyboard
 - scrollUntilVisible:
     element: "Lưu món"
 - tapOn: "Lưu món"
 - extendedWaitUntil:
-    visible: ".*Sua chua.*"
+    visible: "Thêm món"
     timeout: 10000
+- scrollUntilVisible:
+    element: ".*Sua chua.*"
 - scrollUntilVisible:
     element: ".*Bánh mì.*"
 - tapOn: ".*Bánh mì.*"
@@ -37,16 +49,17 @@ appId: vn.quickpos.app
 - assertVisible: "20 ổ"
 - tapOn: { id: "stock-qty" }
 - inputText: "10"
-- tapOn: "Tồn kho"
+- hideKeyboard
 - tapOn: { id: "stock-cost" }
+- eraseText: 10
 - inputText: "8000"
-- tapOn: "Tồn kho"
+- hideKeyboard
 - assertVisible: "Thành tiền nhập: 80.000 đ"
 - scrollUntilVisible:
     element: "Lưu nhập hàng"
 - tapOn: "Lưu nhập hàng"
 - extendedWaitUntil:
-    visible: "Đã nhập hàng"
+    visible: ".*Đã nhập hàng"
     timeout: 10000
 - scrollUntilVisible:
     element: "30 ổ"

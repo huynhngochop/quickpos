@@ -6,42 +6,77 @@ import { supabase } from '../../lib/supabase';
 import { callWithRetry, unwrap } from '../../lib/retry';
 import { toAppError } from '../../lib/errors';
 import type {
-  Business, ClosedShift, CurrentShift, Customer, EinvoiceProvider, HourRow, InviteRow, Invoice, LoyaltyEvent,
-  Order, OrderItemRow, Product, Role, StockMovement, TopProductRow,
+  Business, ClosedShift, CurrentShift, Customer, EinvoiceProvider, ExpiringLot, HourRow, InviteRow, Invoice, LoyaltyEvent,
+  Order, OrderItemRow, Product, Role, StockLot, StockMovement, StockOutReason, StockReportRow, TopProductRow,
 } from '../../types/api';
 
 const rpc = <T>(name: string, args: Record<string, unknown>) =>
   callWithRetry(async (signal) => unwrap(await supabase.rpc(name, args).abortSignal(signal)) as T);
 
 // ---------- Hàng hóa ----------
-export const PRODUCT_COLS = 'id, business_id, name, unit, price, category, cost_price, track_stock, stock_qty, low_stock_at, is_active';
+export const PRODUCT_COLS =
+  'id, business_id, name, unit, price, category, cost_price, track_stock, stock_qty, low_stock_at, is_active, barcode, track_expiry, expiry_warn_days';
 
 export async function listProducts(businessId: string, includeInactive = false): Promise<Product[]> {
   return callWithRetry(async (signal) => {
-    let q = supabase.from('products').select(PRODUCT_COLS).eq('business_id', businessId);
+    // Món đã xóa (archived_at) không hiện ở đâu nữa; vẫn còn trong sổ sách và báo cáo
+    let q = supabase.from('products').select(PRODUCT_COLS).eq('business_id', businessId).is('archived_at', null);
     if (!includeInactive) q = q.eq('is_active', true);
     return unwrap(await q.order('sort_order', { ascending: true }).order('name', { ascending: true }).limit(500).abortSignal(signal)) as Product[];
   });
 }
 
-export function upsertProduct(p: {
+export interface ProductInput {
   productId: string; businessId: string; name: string; price: number; unit: string; category?: string | null;
   costPrice?: number | null; trackStock: boolean; lowStockAt?: number | null;
-}) {
-  return rpc<Product>('upsert_product_v1', {
+  barcode?: string | null; trackExpiry?: boolean; expiryWarnDays?: number;
+}
+
+export function upsertProduct(p: ProductInput) {
+  return rpc<Product>('upsert_product_v2', {
     p_product_id: p.productId, p_business_id: p.businessId, p_name: p.name, p_price: p.price, p_unit: p.unit,
     p_category: p.category ?? null, p_cost_price: p.costPrice ?? null, p_track_stock: p.trackStock, p_low_stock_at: p.lowStockAt ?? null,
+    p_barcode: p.barcode?.trim() || null, p_track_expiry: !!p.trackExpiry, p_expiry_warn_days: p.expiryWarnDays ?? 7,
   });
 }
+
+/** 'DELETED' = xóa hẳn (chưa từng bán/nhập); 'ARCHIVED' = ẩn, giữ sổ sách */
+export const deleteProduct = (productId: string) => rpc<'DELETED' | 'ARCHIVED'>('delete_product_v1', { p_product_id: productId });
 
 export const setProductActive = (productId: string, active: boolean) =>
   rpc<Product>('set_product_active_v1', { p_product_id: productId, p_active: active });
 
-export const stockIn = (p: { movementId: string; productId: string; qty: number; unitCost?: number | null; note?: string; recordExpense: boolean }) =>
-  rpc<Product>('stock_in_v1', {
+export const stockIn = (p: {
+  movementId: string; productId: string; qty: number; unitCost?: number | null; note?: string; recordExpense: boolean; expiresOn?: string | null;
+}) =>
+  rpc<Product>('stock_in_v2', {
     p_movement_id: p.movementId, p_product_id: p.productId, p_qty: p.qty, p_unit_cost: p.unitCost ?? null,
-    p_note: p.note ?? null, p_record_expense: p.recordExpense,
+    p_note: p.note ?? null, p_record_expense: p.recordExpense, p_expires_on: p.expiresOn ?? null,
   });
+
+export const stockOut = (p: { movementId: string; productId: string; qty: number; reason: StockOutReason; lotId?: string | null; note?: string }) =>
+  rpc<Product>('stock_out_v1', {
+    p_movement_id: p.movementId, p_product_id: p.productId, p_qty: p.qty, p_reason: p.reason, p_lot_id: p.lotId ?? null, p_note: p.note ?? null,
+  });
+
+export async function listLots(productId: string): Promise<StockLot[]> {
+  return callWithRetry(async (signal) =>
+    unwrap(
+      await supabase
+        .from('stock_lots')
+        .select('id, product_id, expires_on, qty_in, qty_left, created_at')
+        .eq('product_id', productId)
+        .gt('qty_left', 0)
+        .order('expires_on', { ascending: true })
+        .abortSignal(signal),
+    ) as StockLot[],
+  );
+}
+
+export const expiringLots = (businessId: string) => rpc<ExpiringLot[]>('expiring_lots', { p_business_id: businessId });
+
+export const stockReport = (businessId: string, from: string, to: string) =>
+  rpc<StockReportRow[]>('stock_report', { p_business_id: businessId, p_from: from, p_to: to });
 
 export const stockCount = (p: { movementId: string; productId: string; actualQty: number; note?: string }) =>
   rpc<Product>('stock_count_v1', { p_movement_id: p.movementId, p_product_id: p.productId, p_actual_qty: p.actualQty, p_note: p.note ?? null });
@@ -51,7 +86,7 @@ export async function listMovements(productId: string): Promise<StockMovement[]>
     unwrap(
       await supabase
         .from('stock_movements')
-        .select('id, product_id, kind, qty, unit_cost, order_id, note, created_at')
+        .select('id, product_id, kind, qty, unit_cost, order_id, note, reason, lot_id, created_at')
         .eq('product_id', productId)
         .order('created_at', { ascending: false })
         .limit(50)

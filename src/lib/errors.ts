@@ -27,6 +27,9 @@ const ACTIONS: Record<ErrorCode, ErrorAction> = {
   QP_ORDER_NOT_PAID: 'none',
   QP_EINVOICE_NOT_SETUP: 'none',
   QP_EINVOICE_PROVIDER_NOT_READY: 'none',
+  QP_DUPLICATE_BARCODE: 'none',
+  QP_EXPIRY_REQUIRED: 'none',
+  QP_OUT_EXCEEDS_STOCK: 'none',
   NETWORK: 'queue',
   UNKNOWN: 'retry_later',
 };

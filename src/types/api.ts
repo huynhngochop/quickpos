@@ -178,16 +178,61 @@ export interface Product {
   stock_qty: number;
   low_stock_at: number | null;
   is_active: boolean;
+  /** Mã vạch / mã QR in sẵn trên hàng (migration 8) */
+  barcode: string | null;
+  /** Hàng có hạn dùng: nhập theo lô có ngày hết hạn */
+  track_expiry: boolean;
+  /** Báo trước bao nhiêu ngày khi lô sắp hết hạn */
+  expiry_warn_days: number;
+}
+
+export type StockOutReason = 'EXPIRED' | 'DAMAGED' | 'USED' | 'OTHER';
+
+export interface StockLot {
+  id: string;
+  product_id: string;
+  expires_on: string | null;
+  qty_in: number;
+  qty_left: number;
+  created_at: string;
+}
+
+/** rpc('expiring_lots') — days_left < 0: đã quá hạn */
+export interface ExpiringLot {
+  lot_id: string;
+  product_id: string;
+  name: string;
+  unit: string;
+  expires_on: string;
+  qty_left: number;
+  days_left: number;
+}
+
+/** rpc('stock_report') — xuất nhập tồn một món trong kỳ */
+export interface StockReportRow {
+  product_id: string;
+  name: string;
+  unit: string;
+  opening: number;
+  qty_in: number;
+  qty_sold: number;
+  qty_out: number;
+  qty_adjust: number;
+  closing: number;
+  cost_price: number | null;
+  closing_value: number | null;
 }
 
 export interface StockMovement {
   id: string;
   product_id: string;
-  kind: 'IN' | 'SALE' | 'COUNT';
+  kind: 'IN' | 'SALE' | 'COUNT' | 'OUT';
   qty: number;
   unit_cost: number | null;
   order_id: string | null;
   note: string | null;
+  reason?: StockOutReason | null;
+  lot_id?: string | null;
   created_at: string;
 }
 

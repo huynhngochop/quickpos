@@ -10,7 +10,7 @@ OUT="$ROOT/qa-out"
 mkdir -p "$OUT"
 cd "$OUT"
 export PATH="$PATH:$HOME/.maestro/bin"
-FLOWS=(01-onboarding 02-thu-tien-qr 03-xac-nhan-tay-va-huy 04-tien-mat 05-so-va-xem-lai 07-du-lieu-lon 08-so-no-chi-tieu-bao-cao-thue 09-hang-hoa-ban-mon-khach-ca-hoa-don 06-cai-dat)
+FLOWS=(01-onboarding 02-thu-tien-qr 03-xac-nhan-tay-va-huy 04-tien-mat 05-so-va-xem-lai 07-du-lieu-lon 08-so-no-chi-tieu-bao-cao-thue 09-hang-hoa-ban-mon-khach-ca-hoa-don 10-quan-ly-hang-hoa 06-cai-dat)
 summary="$OUT/SUMMARY.md"
 echo "# QA $LABEL — $(date -u +%FT%TZ)" > "$summary"
 total_fail=0

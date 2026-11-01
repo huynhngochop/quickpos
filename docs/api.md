@@ -49,6 +49,10 @@ Thêm hoặc đổi một lời gọi = sửa tài liệu này trong cùng PR v�
 | `set_product_active_v1` | OWNER, MANAGER | `p_product_id`, `p_active` | Một dòng `products` | Có | `QP_NOT_FOUND`, `QP_FORBIDDEN` | 6.2 Ngừng bán / bán lại |
 | `stock_in_v1` | Thành viên hộ | `p_movement_id` (app sinh), `p_product_id`, `p_qty > 0`, `p_unit_cost`, `p_note`, `p_record_expense` (ghi luôn chi "Nhập hàng") | Một dòng `products` (tồn mới) | Có | `QP_NOT_FOUND`, `QP_INVALID_INPUT` | 6.2 Nhập hàng |
 | `stock_count_v1` | OWNER, MANAGER | `p_movement_id`, `p_product_id`, `p_actual_qty ≥ 0`, `p_note` | Một dòng `products` | Có | `QP_NOT_FOUND`, `QP_FORBIDDEN`, `QP_INVALID_INPUT` | 6.2 Kiểm kho |
+| `upsert_product_v2` (thay v1 trên app) | OWNER, MANAGER | như v1 + `p_barcode` (mã vạch/QR in sẵn, 3–64 ký tự chữ số/`._/:+-`, bỏ khoảng trắng hai đầu; rỗng = không có), `p_track_expiry` (hàng có hạn dùng, bật luôn theo dõi kho), `p_expiry_warn_days` 1–365 (mặc định 7) | Một dòng `products` | Có (cùng mã = sửa) | `QP_FORBIDDEN`, `QP_INVALID_INPUT`, `QP_DUPLICATE_BARCODE`, `QP_NOT_FOUND` (món đã xóa) | 6.1 Thêm món, 6.2 Sửa món, 6.4 Quét mã |
+| `delete_product_v1` | OWNER, MANAGER | `p_product_id` | `'DELETED'` (chưa từng có đơn/phiếu kho → xóa hẳn) hoặc `'ARCHIVED'` (ẩn khỏi danh sách, giữ cho sổ sách; mã vạch được dùng lại) | Có | `QP_NOT_FOUND`, `QP_FORBIDDEN` | 6.2 Xóa món |
+| `stock_in_v2` (thay v1 trên app) | Thành viên hộ | như v1 + `p_expires_on date` (bắt buộc khi món có `track_expiry`); có hạn dùng thì tạo lô `stock_lots` cùng mã phiếu | Một dòng `products` | Có | `QP_NOT_FOUND`, `QP_INVALID_INPUT`, `QP_EXPIRY_REQUIRED` | 6.2 Nhập hàng |
+| `stock_out_v1` | OWNER, MANAGER | `p_movement_id` (app sinh), `p_product_id`, `p_qty > 0`, `p_reason 'EXPIRED'\|'DAMAGED'\|'USED'\|'OTHER'`, `p_lot_id` (tùy chọn: hủy đúng lô), `p_note` | Một dòng `products` | Có | `QP_NOT_FOUND`, `QP_FORBIDDEN`, `QP_INVALID_INPUT`, `QP_OUT_EXCEEDS_STOCK` | 6.2 Xuất hủy, 6.3 Sắp hết hạn |
 | `open_shift_v1` | Thành viên hộ | `p_shift_id` (app sinh), `p_business_id`, `p_opening_cash` | Một dòng `cash_shifts` (đang có ca mở thì trả ca đó) | Có | `QP_FORBIDDEN`, `QP_INVALID_INPUT` | 7.3 Ca bán |
 | `close_shift_v1` | Thành viên hộ | `p_shift_id`, `p_counted_cash`, `p_note` | Một dòng `cash_shifts` (chốt bán/chi/tiền phải có) | Có | `QP_NOT_FOUND`, `QP_INVALID_INPUT` | 7.3 |
 | `invite_member_v1` | OWNER | `p_invite_id` (app sinh), `p_business_id`, `p_phone` (`0` + 9 số), `p_role 'MANAGER'\|'CASHIER'\|'ACCOUNTANT'` | Một dòng `business_invites` | Có (mời lại = đổi quyền) | `QP_FORBIDDEN`, `QP_INVALID_INPUT`, `QP_ALREADY_MEMBER` | 4.3 Nhân viên |
@@ -97,8 +101,11 @@ Giờ bán: `p_sold_at` lệch quá 5 phút về tương lai hoặc quá 7 ngày
 | `from('journal_entries').select('id, source_id, amount, category, description, entry_date, created_at').eq('business_id', …).eq('entry_type','EXPENSE').is('voided_at', null).gte('entry_date', …).lte('entry_date', …).order('entry_date', desc).limit(500)` | khoảng ngày | Index `(business_id, entry_date desc)` | 3.5 Chi tiêu, 3.4, 5.1 |
 | `from('debt_balances').select('customer_id, business_id, name, phone, balance, last_entry_at').eq('business_id', …).order('balance', desc).limit(500)` | — | View chạy quyền người gọi (RLS hai bảng nợ) | 3.6 Sổ nợ, 2.1 |
 | `from('debt_entries').select('id, customer_id, kind, amount, note, entry_date, created_at, voided_at').eq('customer_id', …).order('created_at', desc).limit(200)` | — | Gồm cả dòng đã hủy (hiện "Đã hủy") | 3.7 |
-| `from('products').select('id, business_id, name, unit, price, category, cost_price, track_stock, stock_qty, low_stock_at, is_active').eq('business_id', …)[.eq('is_active', true)].order('sort_order').order('name').limit(500)` | — | Index `(business_id, sort_order, name) where is_active` | 2.8 Chọn món, 6.1 |
-| `from('stock_movements').select('id, product_id, kind, qty, unit_cost, order_id, note, created_at').eq('product_id', …).order('created_at', desc).limit(50)` | — | Bán: tự trừ khi đơn đã trả (một lần mỗi đơn) | 6.2 |
+| `from('products').select('id, business_id, name, unit, price, category, cost_price, track_stock, stock_qty, low_stock_at, is_active, barcode, track_expiry, expiry_warn_days').eq('business_id', …).is('archived_at', null)[.eq('is_active', true)].order('sort_order').order('name').limit(500)` | — | Index `(business_id, sort_order, name) where is_active`. Tìm theo tên/mã vạch và quét mã lọc ngay trên danh sách này (≤ 500 món) | 2.8 Chọn món, 6.1, 6.4 |
+| `from('stock_movements').select('id, product_id, kind, qty, unit_cost, order_id, note, reason, lot_id, created_at').eq('product_id', …).order('created_at', desc).limit(50)` | — | Bán: tự trừ khi đơn đã trả (một lần mỗi đơn) | 6.2 |
+| `from('stock_lots').select('id, product_id, expires_on, qty_in, qty_left, created_at').eq('product_id', …).gt('qty_left', 0).order('expires_on')` | — | Lô còn hàng của một món (bán/kiểm/xuất tự trừ lô hết hạn sớm trước) | 6.2 |
+| `rpc('expiring_lots', { p_business_id })` | — | Lô còn hàng đã/sắp hết hạn trong `expiry_warn_days` của món; `days_left < 0` là đã quá hạn. Tối đa 200 dòng | 2.1 cảnh báo, 6.1, 6.3 |
+| `rpc('stock_report', { p_business_id, p_from, p_to })` | kỳ ≤ 400 ngày (dài hơn trả rỗng) | Xuất – nhập – tồn: `opening, qty_in, qty_sold, qty_out, qty_adjust, closing, cost_price, closing_value` mỗi món; đọc phiếu kho từ `p_from` (index `(business_id, created_at)`) | 6.5 Xuất nhập tồn |
 | `from('orders').select('*').eq('id', …).single()` + `from('order_items').select('id, order_id, product_id, name, quantity, unit_price, line_amount').eq('order_id', …)` | — | Chi tiết đơn, biên nhận | 3.8 |
 | `rpc('sales_by_hour', { p_business_id, p_from, p_to })`, `rpc('top_products', { p_business_id, p_from, p_to, p_limit })` | khoảng ≤ 93 ngày (dài hơn báo `QP_INVALID_INPUT`) | Chạy quyền người gọi (RLS); dùng index `(business_id, sold_at)` | 3.4 Báo cáo |
 | `rpc('current_shift_v1', { p_business_id })` | — | 0 hoặc 1 dòng: ca đang mở + tiền mặt bán/chi tới hiện tại | 7.3, 7.0 |
@@ -141,6 +148,9 @@ Giờ bán: `p_sold_at` lệch quá 5 phút về tương lai hoặc quá 7 ngày
 | `QP_ORDER_NOT_PAID` | Đơn chưa trả tiền nên chưa xuất hóa đơn được. | — |
 | `QP_EINVOICE_NOT_SETUP` | Chưa cài hóa đơn điện tử. Vào Việc khác → Hóa đơn điện tử. | Mở 7.4 |
 | `QP_EINVOICE_PROVIDER_NOT_READY` (Edge Function) | Nhà cung cấp hóa đơn này chưa kết nối được. Gọi hỗ trợ để cài đặt. | Không thử lại |
+| `QP_DUPLICATE_BARCODE` | Mã vạch này đã gắn cho món khác. Kiểm tra lại món. | Giữ màn hình, sửa mã |
+| `QP_EXPIRY_REQUIRED` | Món này có hạn dùng. Nhập ngày hết hạn của lô hàng. | Đưa con trỏ tới ô ngày |
+| `QP_OUT_EXCEEDS_STOCK` | Số xuất nhiều hơn số còn trong kho. Kiểm tra lại số lượng. | Giữ màn hình, sửa số |
 | Hết thời gian / mất mạng | Mất mạng. Đơn đã lưu, sẽ gửi khi có mạng. | Đưa vào hàng đợi (chỉ đơn tiền mặt) |
 | Lỗi khác | Có lỗi, thử lại sau ít phút. | Ghi log kèm `detail` |
 

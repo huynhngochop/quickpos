@@ -134,6 +134,7 @@ const db: Record<string, Row[]> = {
   journal_entries: [],
   products: [],
   stock_movements: [],
+  stock_lots: [],
   order_items: [],
   cash_shifts: [],
   business_invites: [],
@@ -193,6 +194,7 @@ function onPaid(o: Row) {
     if (!p?.track_stock || db.stock_movements!.some((m) => m.kind === 'SALE' && m.order_id === o.id && m.product_id === pid)) continue;
     db.stock_movements!.push({ id: uid(), business_id: o.business_id, product_id: pid, kind: 'SALE', qty: -qty, unit_cost: null, order_id: o.id, note: null, created_at: nowIso() });
     p.stock_qty = Math.round((p.stock_qty - qty) * 1000) / 1000;
+    trimLots(p);
   }
   awardPoints(o);
   if (o.debt_customer_id && !db.debt_entries!.some((e) => e.id === o.id)) {
@@ -297,15 +299,48 @@ function debtBalances(): Row[] {
   });
 }
 
+/** Như trigger trim_lots_to_stock: tổng lô không vượt tồn kho, trừ lô hết hạn sớm trước. */
+function trimLots(p: Row) {
+  const lots = db.stock_lots!
+    .filter((l) => l.product_id === p.id && l.qty_left > 0)
+    .sort((a, b) => (a.expires_on ?? '9999') .localeCompare(b.expires_on ?? '9999') || a.created_at.localeCompare(b.created_at));
+  let excess = lots.reduce((t, l) => t + l.qty_left, 0) - Math.max(p.stock_qty, 0);
+  for (const l of lots) {
+    if (excess <= 0) break;
+    const take = Math.min(l.qty_left, excess);
+    l.qty_left = Math.round((l.qty_left - take) * 1000) / 1000;
+    excess -= take;
+  }
+}
+
+const VALID_CODE = /^[0-9A-Za-z._/:+-]{3,64}$/;
+
 /** Dữ liệu mẫu cho sổ nợ và chi tiêu (để màn hình báo cáo có lãi/chi ngay khi dùng thử). */
 function seedShop(bizId: string) {
-  const product = (name: string, price: number, unit: string, category: string, track: boolean, stock: number, low: number | null) =>
-    db.products!.push({ id: uid(), business_id: bizId, name, unit, price, category, cost_price: null, track_stock: track, stock_qty: stock,
-      low_stock_at: low, is_active: true, sort_order: 0 });
+  const today = vnDay();
+  const at = new Date(Math.min(Date.parse(vnDayRange(today).from) + 7 * 3_600_000, Date.now() - 120_000)).toISOString();
+  const product = (name: string, price: number, unit: string, category: string, track: boolean, stock: number, low: number | null,
+    extra: { barcode?: string; cost?: number; expiry?: boolean } = {}) => {
+    const id = uid();
+    db.products!.push({ id, business_id: bizId, name, unit, price, category, cost_price: extra.cost ?? null, track_stock: track, stock_qty: stock,
+      low_stock_at: low, is_active: true, sort_order: 0, barcode: extra.barcode ?? null, track_expiry: !!extra.expiry, expiry_warn_days: 7,
+      archived_at: null });
+    return id;
+  };
+  const stockIn = (pid: string, qty: number, cost: number | null, expires: string | null) => {
+    const id = uid();
+    db.stock_movements!.push({ id, business_id: bizId, product_id: pid, kind: 'IN', qty, unit_cost: cost, order_id: null, note: null,
+      reason: null, lot_id: expires ? id : null, created_at: at });
+    if (expires) db.stock_lots!.push({ id, business_id: bizId, product_id: pid, expires_on: expires, qty_in: qty, qty_left: qty, created_at: at });
+  };
   product('Cà phê sữa', 20000, 'ly', 'Đồ uống', false, 0, null);
   product('Trà đá', 5000, 'ly', 'Đồ uống', false, 0, null);
-  product('Bánh mì', 15000, 'ổ', 'Đồ ăn', true, 20, 5);
-  product('Nước suối', 10000, 'chai', 'Đồ uống', true, 24, 6);
+  stockIn(product('Bánh mì', 15000, 'ổ', 'Đồ ăn', true, 20, 5, { cost: 9000 }), 20, 9000, null);
+  stockIn(product('Nước suối', 10000, 'chai', 'Đồ uống', true, 24, 6, { barcode: '8936017366070', cost: 5000 }), 24, 5000, null);
+  // Sữa có hạn dùng: một lô còn 2 ngày (để thấy cảnh báo sắp hết hạn), một lô còn 40 ngày
+  const sua = product('Sữa tươi hộp', 9000, 'hộp', 'Sữa', true, 18, 4, { barcode: '8934673573189', cost: 7000, expiry: true });
+  stockIn(sua, 6, 7000, addDays(today, 2));
+  stockIn(sua, 12, 7000, addDays(today, 40));
   db.crm_customers!.push({ id: uid(), business_id: bizId, display_name: 'Anh Bảy', phone_number: '0911222333', consent_at: nowIso(),
     consent_source: 'app_khach_quen', points: 35, total_spent: 380000, visits: 4, last_visit_at: new Date(Date.now() - 2 * 86_400_000).toISOString(), created_at: nowIso() });
 }
@@ -352,6 +387,7 @@ class Query implements PromiseLike<Result> {
     return this;
   }
   lt(c: string, v: string | number) { this.filters.push((r) => r[c] < v); return this; }
+  gt(c: string, v: string | number) { this.filters.push((r) => r[c] > v); return this; }
   order(col: string, o?: { ascending?: boolean }) { this.sort = { col, asc: o?.ascending ?? true }; return this; }
   limit(n: number) { this.max = n; return this; }
   single() { this.mode = 'single'; return this; }
@@ -617,10 +653,137 @@ function rpcImpl(name: string, a: Row): Result {
       return ok({ ...p });
     }
 
+    case 'upsert_product_v2': {
+      const m = member(a.p_business_id);
+      if (!m || !['OWNER', 'MANAGER'].includes(m.role)) return fail('QP_FORBIDDEN');
+      const nm = String(a.p_name ?? '').trim();
+      const code = a.p_barcode ? String(a.p_barcode).trim() || null : null;
+      const warn = a.p_expiry_warn_days ?? 7;
+      if (!nm || nm.length > 100 || !(a.p_price >= 0) || !String(a.p_unit ?? '').trim() || (code && !VALID_CODE.test(code)) || !(warn >= 1 && warn <= 365))
+        return fail('QP_INVALID_INPUT');
+      let p = db.products!.find((x) => x.id === a.p_product_id);
+      if (p && (p.business_id !== a.p_business_id || p.archived_at)) return fail('QP_NOT_FOUND');
+      if (code && db.products!.some((x) => x.business_id === a.p_business_id && x.barcode === code && !x.archived_at && x.id !== a.p_product_id))
+        return fail('QP_DUPLICATE_BARCODE');
+      const fields = { name: nm, price: a.p_price, unit: String(a.p_unit).trim(), category: a.p_category ? String(a.p_category).trim() || null : null,
+        cost_price: a.p_cost_price ?? null, track_stock: !!a.p_track_stock || !!a.p_track_expiry, low_stock_at: a.p_low_stock_at ?? null,
+        barcode: code, track_expiry: !!a.p_track_expiry, expiry_warn_days: warn };
+      if (p) Object.assign(p, fields);
+      else {
+        p = { id: a.p_product_id, business_id: a.p_business_id, stock_qty: 0, sort_order: 0, is_active: true, archived_at: null, ...fields };
+        db.products!.push(p);
+      }
+      return ok({ ...p });
+    }
+
+    case 'delete_product_v1': {
+      const i = db.products!.findIndex((x) => x.id === a.p_product_id);
+      if (i < 0) return ok('DELETED');
+      const p = db.products![i]!;
+      const m = member(p.business_id);
+      if (!m) return fail('QP_NOT_FOUND');
+      if (!['OWNER', 'MANAGER'].includes(m.role)) return fail('QP_FORBIDDEN');
+      if (p.archived_at) return ok('ARCHIVED');
+      const used = db.order_items!.some((x) => x.product_id === p.id) || db.stock_movements!.some((x) => x.product_id === p.id);
+      if (!used) {
+        db.products!.splice(i, 1);
+        return ok('DELETED');
+      }
+      p.archived_at = nowIso();
+      p.is_active = false;
+      return ok('ARCHIVED');
+    }
+
+    case 'stock_in_v2': {
+      const p = db.products!.find((x) => x.id === a.p_product_id);
+      if (!p || !member(p.business_id) || p.archived_at) return fail('QP_NOT_FOUND');
+      if (db.stock_movements!.some((x) => x.id === a.p_movement_id)) return ok({ ...p });
+      if (p.track_expiry && !a.p_expires_on) return fail('QP_EXPIRY_REQUIRED');
+      const r = rpcImpl('stock_in_v1', a);
+      if (r.error) return r;
+      if (a.p_expires_on || p.track_expiry) {
+        db.stock_lots!.push({ id: a.p_movement_id, business_id: p.business_id, product_id: p.id, expires_on: a.p_expires_on ?? null,
+          qty_in: Number(a.p_qty), qty_left: Number(a.p_qty), created_at: nowIso() });
+        const mv = db.stock_movements!.find((x) => x.id === a.p_movement_id);
+        if (mv) mv.lot_id = a.p_movement_id;
+      }
+      return ok({ ...p });
+    }
+
+    case 'stock_out_v1': {
+      const p = db.products!.find((x) => x.id === a.p_product_id);
+      const m = p ? member(p.business_id) : undefined;
+      if (!p || !m || p.archived_at) return fail('QP_NOT_FOUND');
+      if (!['OWNER', 'MANAGER'].includes(m.role)) return fail('QP_FORBIDDEN');
+      if (db.stock_movements!.some((x) => x.id === a.p_movement_id)) return ok({ ...p });
+      const q = Number(a.p_qty);
+      if (!(q > 0) || !['EXPIRED', 'DAMAGED', 'USED', 'OTHER'].includes(a.p_reason)) return fail('QP_INVALID_INPUT');
+      if (q > Math.max(p.stock_qty, 0)) return fail('QP_OUT_EXCEEDS_STOCK');
+      if (a.p_lot_id) {
+        const l = db.stock_lots!.find((x) => x.id === a.p_lot_id && x.product_id === p.id);
+        if (!l) return fail('QP_NOT_FOUND');
+        if (q > l.qty_left) return fail('QP_OUT_EXCEEDS_STOCK');
+        l.qty_left = Math.round((l.qty_left - q) * 1000) / 1000;
+      }
+      db.stock_movements!.push({ id: a.p_movement_id, business_id: p.business_id, product_id: p.id, kind: 'OUT', qty: -q, unit_cost: null,
+        order_id: null, note: a.p_note ?? null, reason: a.p_reason, lot_id: a.p_lot_id ?? null, created_at: nowIso() });
+      p.stock_qty = Math.round((p.stock_qty - q) * 1000) / 1000;
+      trimLots(p);
+      return ok({ ...p });
+    }
+
+    case 'expiring_lots': {
+      if (!member(a.p_business_id)) return ok([]);
+      const today = vnDay();
+      const rows = db.stock_lots!
+        .filter((l) => l.business_id === a.p_business_id && l.qty_left > 0 && l.expires_on)
+        .map((l) => {
+          const p = db.products!.find((x) => x.id === l.product_id)!;
+          const days = Math.round((Date.parse(`${l.expires_on}T00:00:00Z`) - Date.parse(`${today}T00:00:00Z`)) / 86_400_000);
+          return { p, row: { lot_id: l.id, product_id: p.id, name: p.name, unit: p.unit, expires_on: l.expires_on, qty_left: l.qty_left, days_left: days } };
+        })
+        .filter(({ p, row }) => p && !p.archived_at && row.days_left <= (p.expiry_warn_days ?? 7))
+        .map(({ row }) => row)
+        .sort((x, y) => x.expires_on.localeCompare(y.expires_on) || x.name.localeCompare(y.name));
+      return ok(rows);
+    }
+
+    case 'stock_report': {
+      if (!member(a.p_business_id)) return ok([]);
+      const from = Date.parse(a.p_from);
+      const to = Date.parse(a.p_to);
+      if (!(to > from) || to - from > 400 * 86_400_000) return ok([]);
+      const sum = (pid: string, f: (mv: Row) => boolean) =>
+        db.stock_movements!.filter((mv) => mv.product_id === pid && f(mv)).reduce((t, mv) => t + mv.qty, 0);
+      const r3 = (n: number) => Math.round(n * 1000) / 1000;
+      const rows = db.products!
+        .filter((p) => p.business_id === a.p_business_id)
+        .map((p) => {
+          const t = (mv: Row) => Date.parse(mv.created_at);
+          const inPeriod = (mv: Row) => t(mv) >= from && t(mv) < to;
+          const any = db.stock_movements!.some((mv) => mv.product_id === p.id && t(mv) >= from);
+          if (!(p.track_stock || any) || (p.archived_at && !any)) return null;
+          const closing = r3(p.stock_qty - sum(p.id, (mv) => t(mv) >= to));
+          return {
+            product_id: p.id, name: p.name, unit: p.unit,
+            opening: r3(p.stock_qty - sum(p.id, (mv) => t(mv) >= from)),
+            qty_in: r3(sum(p.id, (mv) => inPeriod(mv) && mv.kind === 'IN')),
+            qty_sold: r3(-sum(p.id, (mv) => inPeriod(mv) && mv.kind === 'SALE')),
+            qty_out: r3(-sum(p.id, (mv) => inPeriod(mv) && mv.kind === 'OUT')),
+            qty_adjust: r3(sum(p.id, (mv) => inPeriod(mv) && mv.kind === 'COUNT')),
+            closing, cost_price: p.cost_price ?? null,
+            closing_value: p.cost_price == null ? null : Math.round(Math.max(closing, 0) * p.cost_price),
+          };
+        })
+        .filter((x): x is NonNullable<typeof x> => x !== null)
+        .sort((x, y) => x.name.localeCompare(y.name));
+      return ok(rows);
+    }
+
     case 'set_product_active_v1': {
       const p = db.products!.find((x) => x.id === a.p_product_id);
       const m = p ? member(p.business_id) : undefined;
-      if (!p || !m) return fail('QP_NOT_FOUND');
+      if (!p || !m || p.archived_at) return fail('QP_NOT_FOUND');
       if (!['OWNER', 'MANAGER'].includes(m.role)) return fail('QP_FORBIDDEN');
       p.is_active = a.p_active !== false;
       return ok({ ...p });
@@ -641,6 +804,7 @@ function rpcImpl(name: string, a: Row): Result {
         unit_cost: count ? null : a.p_unit_cost ?? null, order_id: null, note: a.p_note ?? null, created_at: nowIso() });
       p.stock_qty = count ? q : Math.round((p.stock_qty + q) * 1000) / 1000;
       p.track_stock = true;
+      if (count) trimLots(p);
       if (!count && a.p_unit_cost != null) {
         p.cost_price = a.p_unit_cost;
         if (a.p_record_expense) {

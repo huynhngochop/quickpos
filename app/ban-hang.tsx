@@ -1,19 +1,24 @@
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { Pressable, View, useWindowDimensions } from 'react-native';
 import { router } from 'expo-router';
 import { Screen, Card } from '../src/components/Screen';
 import { Amount, Txt } from '../src/components/Txt';
 import { Button } from '../src/components/Button';
-import { ChoiceGrid } from '../src/components/Choice';
+import { ChoiceGrid, Field } from '../src/components/Choice';
 import { Empty, ErrorView, Loading } from '../src/components/States';
 import { useBusinessId, useSession, canManage } from '../src/features/session/store';
-import { useProducts, formatQty } from '../src/features/shop/hooks';
+import { useProducts, useScanResult, formatQty } from '../src/features/shop/hooks';
+import { findByBarcode, matchProduct } from '../src/features/shop/inventory';
 import { cartTotal, useSale, type CartLine } from '../src/features/sale/store';
 import { formatVND } from '../src/lib/money';
 import { colors, font, radius, space } from '../src/theme/tokens';
 import { vi } from '../src/i18n/vi';
+import type { Product } from '../src/types/api';
 
-/** 2.8 Chọn món: bấm món để thêm, +/− đổi số lượng, rồi "Thu tiền" (sang màn thu tiền với tổng đã tính). */
+/**
+ * 2.8 Chọn món: bấm món để thêm, +/− đổi số lượng, rồi "Tính tiền" (sang màn thu tiền với tổng đã tính).
+ * Tìm theo tên/mã, hoặc "Quét mã" để quét liên tục từng món vào giỏ.
+ */
 export default function BanHang() {
   const businessId = useBusinessId();
   const role = useSession((s) => s.role);
@@ -21,6 +26,7 @@ export default function BanHang() {
   const initial = useSale.getState().cart;
   const [cart, setCart] = useState<CartLine[]>(initial);
   const [cat, setCat] = useState<string>('ALL');
+  const [query, setQuery] = useState('');
   const { width } = useWindowDimensions();
   const columns = width >= 900 ? 4 : width >= 600 ? 3 : 2;
 
@@ -29,7 +35,7 @@ export default function BanHang() {
     for (const p of products.data ?? []) if (p.category && !names.includes(p.category)) names.push(p.category);
     return ['ALL', ...names.sort()];
   }, [products.data]);
-  const shown = (products.data ?? []).filter((p) => cat === 'ALL' || p.category === cat);
+  const shown = (products.data ?? []).filter((p) => (cat === 'ALL' || p.category === cat) && matchProduct(p, query));
   const total = cartTotal(cart);
   const count = cart.reduce((n, l) => n + l.qty, 0);
 
@@ -39,6 +45,16 @@ export default function BanHang() {
       if (!has) return delta > 0 ? [...c, { productId: id, name, unitPrice: price, qty: delta }] : c;
       return c.map((l) => (l.productId === id ? { ...l, qty: Math.max(l.qty + delta, 0) } : l)).filter((l) => l.qty > 0);
     });
+
+  // Mã quét ở /quet-ma (chế độ bán) → thêm từng món vào giỏ
+  const scanned = useScanResult((s) => s.queue);
+  useEffect(() => {
+    if (!scanned.length || !products.data) return;
+    for (const code of useScanResult.getState().drain()) {
+      const p = findByBarcode<Product>(products.data, code);
+      if (p) add(p.id, p.name, p.price, 1);
+    }
+  }, [scanned, products.data]);
 
   const checkout = () => {
     useSale.getState().setCart(cart);
@@ -63,6 +79,12 @@ export default function BanHang() {
       }
     >
       <Txt variant="heading">{vi.catalog.pickTitle}</Txt>
+      <View style={{ flexDirection: 'row', gap: space.md, alignItems: 'flex-end' }}>
+        <View style={{ flex: 1 }}>
+          <Field label={vi.catalog.search} value={query} onChangeText={setQuery} maxLength={64} testID="sell-search" />
+        </View>
+        <Button kind="secondary" label={vi.catalog.scan} onPress={() => router.push({ pathname: '/quet-ma', params: { mode: 'sell' } })} />
+      </View>
       {cats.length > 2 ? (
         <ChoiceGrid options={cats.map((c) => ({ key: c, label: c === 'ALL' ? vi.catalog.all : c }))} value={cat} onChange={setCat} columns={3} />
       ) : null}
@@ -74,6 +96,7 @@ export default function BanHang() {
           {canManage(role) ? <Button kind="secondary" label={vi.catalog.addFirst} onPress={() => router.push('/hang-hoa')} /> : null}
         </>
       ) : null}
+      {products.data && products.data.length > 0 && shown.length === 0 ? <Empty text={vi.catalog.noMatch} /> : null}
       <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: space.md }}>
         {shown.map((p) => {
           const line = cart.find((l) => l.productId === p.id);

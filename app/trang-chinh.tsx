@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { BackHandler, Platform, Pressable, View } from 'react-native';
 import { router } from 'expo-router';
 import { Screen, Card } from '../src/components/Screen';
@@ -8,6 +8,9 @@ import { IconButton } from '../src/components/IconButton';
 import { DemoBanner, OfflineBanner } from '../src/components/States';
 import { ConfirmSheet } from '../src/components/ConfirmSheet';
 import { useDebtors, useExpenses } from '../src/features/books/hooks';
+import { useExpiringLots, useProducts } from '../src/features/shop/hooks';
+import { isLowStock } from '../src/features/shop/inventory';
+import { syncExpiryReminder } from '../src/features/notifications/expiryReminder';
 import { useSession, useBusinessId } from '../src/features/session/store';
 import { openOwnerScreen, useCanReview, useMainAccount } from '../src/features/session/hooks';
 import { useDayTotals } from '../src/features/journal/hooks';
@@ -37,6 +40,14 @@ export default function TrangChinh() {
   const expenses = useExpenses(businessId, monthStart(today), today);
   const owed = (debtors.data ?? []).reduce((s, d) => s + Math.max(d.balance, 0), 0);
   const spent = (expenses.data ?? []).reduce((s, e) => s + e.amount, 0);
+  // Hàng sắp hết hạn / sắp hết hàng hiện ngay trên ô "Hàng hóa"; còn lô sắp hết hạn thì nhắc 8 giờ sáng mỗi ngày
+  const expiring = useExpiringLots(businessId);
+  const products = useProducts(businessId);
+  const expCount = expiring.data?.length ?? 0;
+  const lowCount = (products.data ?? []).filter(isLowStock).length;
+  useEffect(() => {
+    if (expiring.data) void syncExpiryReminder(expiring.data.length);
+  }, [expiring.data]);
   const [askExit, setAskExit] = useState(false);
   // Thoát = đóng app, vẫn giữ đăng nhập (đăng xuất nằm cuối Cài đặt). iOS không cho app tự đóng nên không hiện nút.
   const canExit = Platform.OS === 'android';
@@ -111,7 +122,12 @@ export default function TrangChinh() {
         <Tile label={vi.main.journal} onPress={() => router.push('/so')} />
         <Tile label={vi.main.reports} onPress={() => openOwnerScreen('/bao-cao')} />
         <Tile label={vi.main.debts} sub={owed > 0 ? vi.debts.owes(formatVND(owed)) : undefined} onPress={() => router.push('/so-no')} />
-        <Tile label={vi.main.products} onPress={() => router.push('/hang-hoa')} />
+        <Tile
+          label={vi.main.products}
+          sub={expCount > 0 ? vi.catalog.expiringTile(expCount) : lowCount > 0 ? vi.catalog.lowTile(lowCount) : undefined}
+          subTone="warn"
+          onPress={() => router.push({ pathname: '/hang-hoa', params: expCount > 0 ? { filter: 'EXPIRY' } : lowCount > 0 ? { filter: 'LOW' } : {} })}
+        />
         <Tile label={vi.main.expenses} sub={spent > 0 ? `${vi.expenses.thisMonth}: ${formatVND(spent)}` : undefined} onPress={() => router.push('/chi-tieu')} />
         <Tile label={vi.main.more} sub={vi.main.moreSub} onPress={() => router.push('/viec-khac')} />
       </View>
@@ -140,7 +156,7 @@ export default function TrangChinh() {
 }
 
 /** Ô việc trên trang chính: chữ to, cả ô bấm được, cao ≥ 72dp; hai ô một hàng. */
-function Tile({ label, sub, onPress }: { label: string; sub?: string; onPress: () => void }) {
+function Tile({ label, sub, subTone = 'secondary', onPress }: { label: string; sub?: string; subTone?: 'secondary' | 'warn'; onPress: () => void }) {
   return (
     <Pressable
       accessibilityRole="button"
@@ -164,7 +180,7 @@ function Tile({ label, sub, onPress }: { label: string; sub?: string; onPress: (
         {label}
       </Txt>
       {sub ? (
-        <Txt variant="small" tone="secondary" center numberOfLines={2}>
+        <Txt variant="small" tone={subTone} center numberOfLines={2}>
           {sub}
         </Txt>
       ) : null}

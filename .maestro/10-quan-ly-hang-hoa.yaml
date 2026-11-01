@@ -1,0 +1,242 @@
+appId: vn.quickpos.app
+---
+# Quản lý hàng hóa: cảnh báo sắp hết hạn, bỏ lô quá hạn, nhập lô có ngày hết hạn, xuất hủy, quét/gõ mã vạch,
+# thêm món từ mã chưa có, xóa món, tìm kiếm, xuất nhập tồn, quét mã khi bán.
+# Dữ liệu mẫu: Sữa tươi hộp (mã 8934673573189) 18 hộp = lô 6 hộp còn 2 ngày + lô 12 hộp còn 40 ngày;
+# Nước suối mã 8936017366070.
+- runFlow: subflows/dismiss-system-dialogs.yaml
+- assertVisible: "Hôm nay đã thu.*"
+
+# ---------- Cảnh báo trên trang chính ----------
+- scrollUntilVisible:
+    element: ".*1 lô sắp hết hạn.*"
+- takeScreenshot: "110-canh-bao-het-han"
+- tapOn: ".*1 lô sắp hết hạn.*"
+- extendedWaitUntil:
+    visible: "1 lô hàng sắp hết hạn hoặc đã quá hạn.*"
+    timeout: 10000
+- scrollUntilVisible:
+    element: "Còn 2 ngày hết hạn.*"
+- takeScreenshot: "111-loc-sap-het-han"
+- tapOn: "Sữa tươi hộp"
+
+# ---------- Bỏ lô sắp hết hạn ----------
+- extendedWaitUntil:
+    visible: "Các lô còn hàng"
+    timeout: 10000
+- assertVisible: "18 hộp"
+- assertVisible: "Còn 2 ngày hết hạn"
+- takeScreenshot: "112-lo-hang"
+- tapOn: "Bỏ lô này"
+- extendedWaitUntil:
+    visible: "Bỏ 6 hộp Sữa tươi hộp[?]"
+    timeout: 5000
+- tapOn: "Bỏ hàng"
+- extendedWaitUntil:
+    visible: "12 hộp"
+    timeout: 10000
+- assertNotVisible: "Còn 2 ngày hết hạn"
+
+# ---------- Nhập lô mới có ngày hết hạn ----------
+- scrollUntilVisible:
+    element:
+      id: "stock-qty"
+- tapOn: { id: "stock-qty" }
+- inputText: "10"
+- hideKeyboard
+- scrollUntilVisible:
+    element:
+      id: "stock-expires"
+- tapOn: { id: "stock-expires" }
+- inputText: "31122030"
+- hideKeyboard
+- assertVisible: "31/12/2030"
+- scrollUntilVisible:
+    element: "Lưu nhập hàng"
+- tapOn: "Lưu nhập hàng"
+- extendedWaitUntil:
+    visible: ".*Đã nhập hàng"
+    timeout: 10000
+- scrollUntilVisible:
+    element: "22 hộp"
+    direction: UP
+- takeScreenshot: "113-nhap-lo-co-han"
+
+# ---------- Xuất hủy 2 hộp hư hỏng ----------
+- scrollUntilVisible:
+    element:
+      id: "product-tab-OUT"
+- tapOn: { id: "product-tab-OUT" }
+- tapOn: { id: "stock-qty" }
+- inputText: "2"
+- hideKeyboard
+- scrollUntilVisible:
+    element:
+      id: "out-reason-DAMAGED"
+- tapOn: { id: "out-reason-DAMAGED" }
+- scrollUntilVisible:
+    element: "Lưu xuất kho"
+- tapOn: "Lưu xuất kho"
+- extendedWaitUntil:
+    visible: ".*Đã xuất kho"
+    timeout: 10000
+- scrollUntilVisible:
+    element: "Xuất: Hư hỏng.*"
+- takeScreenshot: "114-xuat-huy"
+- scrollUntilVisible:
+    element: "20 hộp"
+    direction: UP
+- scrollUntilVisible:
+    element: "Hàng hóa"
+    direction: UP
+- tapOn: "Hàng hóa"
+- extendedWaitUntil:
+    visible: "Thêm món"
+    timeout: 10000
+
+# ---------- Gõ mã vạch đã có → mở đúng món ----------
+- tapOn: "Quét mã"
+- extendedWaitUntil:
+    visible: "Quét mã vạch"
+    timeout: 10000
+- takeScreenshot: "115-quet-ma"
+- tapOn: { id: "scan-code" }
+- inputText: "8936017366070"
+- hideKeyboard
+- tapOn: "Tìm mã"
+- extendedWaitUntil:
+    visible: "Nước suối"
+    timeout: 10000
+- assertVisible: "Tồn kho"
+- scrollUntilVisible:
+    element: "Hàng hóa"
+    direction: UP
+- tapOn: "Hàng hóa"
+- extendedWaitUntil:
+    visible: "Thêm món"
+    timeout: 10000
+
+# ---------- Mã chưa có → thêm món với mã đó → xóa món ----------
+- tapOn: "Quét mã"
+- extendedWaitUntil:
+    visible: "Quét mã vạch"
+    timeout: 10000
+- tapOn: { id: "scan-code" }
+- inputText: "TEST-123"
+- hideKeyboard
+- tapOn: "Tìm mã"
+- extendedWaitUntil:
+    visible: "Chưa có món nào mang mã TEST-123."
+    timeout: 10000
+- tapOn: "Thêm món với mã này"
+- extendedWaitUntil:
+    visible: "Thêm món mới"
+    timeout: 10000
+- assertVisible: "TEST-123"
+- tapOn: { id: "product-name" }
+- inputText: "Mon thu"
+- hideKeyboard
+- tapOn: { id: "product-price" }
+- inputText: "1000"
+- hideKeyboard
+- scrollUntilVisible:
+    element: "Lưu món"
+- tapOn: "Lưu món"
+- extendedWaitUntil:
+    visible: "Thêm món"
+    timeout: 10000
+- tapOn: { id: "product-search" }
+- inputText: "mon thu"
+- hideKeyboard
+- scrollUntilVisible:
+    element: "Mon thu"
+- assertVisible: "1 món"
+- takeScreenshot: "116-tim-kiem"
+- tapOn: "Mon thu"
+- extendedWaitUntil:
+    visible: "Tồn kho"
+    timeout: 10000
+- scrollUntilVisible:
+    element: "Xóa món này"
+- tapOn: "Xóa món này"
+- extendedWaitUntil:
+    visible: "Xóa món \"Mon thu\"[?]"
+    timeout: 5000
+- tapOn: "Xóa món"
+- extendedWaitUntil:
+    visible: ".*Đã xóa món"
+    timeout: 10000
+- takeScreenshot: "117-da-xoa-mon"
+
+# ---------- Xuất nhập tồn ----------
+- tapOn: "Xuất nhập tồn"
+- extendedWaitUntil:
+    visible: "Giá trị hàng tồn cuối kỳ.*"
+    timeout: 10000
+- tapOn: { id: "stock-period-TODAY" }
+- extendedWaitUntil:
+    visible: "Sữa tươi hộp"
+    timeout: 10000
+- scrollUntilVisible:
+    element: "Cuối kỳ: 20 hộp"
+- takeScreenshot: "118-xuat-nhap-ton"
+- scrollUntilVisible:
+    element: "Hàng hóa"
+    direction: UP
+- tapOn: "Hàng hóa"
+- extendedWaitUntil:
+    visible: "Thêm món"
+    timeout: 10000
+- scrollUntilVisible:
+    element: "Trang chính"
+    direction: UP
+- tapOn: "Trang chính"
+
+# ---------- Bán: tìm không dấu + quét mã thêm vào giỏ ----------
+- extendedWaitUntil:
+    visible: "Hôm nay đã thu.*"
+    timeout: 10000
+- runFlow: subflows/open-thu-tien.yaml
+- tapOn: "Chọn món"
+- extendedWaitUntil:
+    visible: "Tìm theo tên hoặc mã vạch"
+    timeout: 10000
+- tapOn: { id: "sell-search" }
+- inputText: "sua tuoi"
+- hideKeyboard
+- assertVisible:
+    id: "sell-Sữa tươi hộp"
+- assertNotVisible:
+    id: "sell-Bánh mì"
+- takeScreenshot: "119-tim-mon-khong-dau"
+- tapOn: "Quét mã"
+- extendedWaitUntil:
+    visible: "Quét mã vạch"
+    timeout: 10000
+- tapOn: { id: "scan-code" }
+- inputText: "8934673573189"
+- hideKeyboard
+- tapOn: "Tìm mã"
+- extendedWaitUntil:
+    visible: ".*Đã thêm Sữa tươi hộp vào giỏ.*"
+    timeout: 10000
+- takeScreenshot: "120-quet-ban"
+- scrollUntilVisible:
+    element: "Xong"
+- tapOn: "Xong"
+- extendedWaitUntil:
+    visible: "1 × Sữa tươi hộp"
+    timeout: 10000
+- assertVisible: "9.000 đ"
+- tapOn: "Bỏ hết món đã chọn"
+- scrollUntilVisible:
+    element: "Thu tiền"
+    direction: UP
+- tapOn: "Thu tiền"
+- extendedWaitUntil:
+    visible: "Khách cần trả"
+    timeout: 10000
+- tapOn: "Trang chính"
+- extendedWaitUntil:
+    visible: "Hôm nay đã thu.*"
+    timeout: 10000
