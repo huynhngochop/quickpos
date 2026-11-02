@@ -1,0 +1,511 @@
+01:11:26.233 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandStart: Define variables RUNNING
+01:11:26.239 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandFinished: Define variables COMPLETED
+01:11:26.241 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandStart: Apply configuration RUNNING
+01:11:26.242 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandFinished: Apply configuration COMPLETED
+01:11:26.243 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandStart: Run subflows/dismiss-system-dialogs.yaml RUNNING
+01:11:26.246 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandStart: Apply configuration RUNNING
+01:11:26.247 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandFinished: Apply configuration COMPLETED
+01:11:26.248 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandStart: Run flow when ".*isn't responding.*" is visible RUNNING
+01:11:32.701 [ INFO] maestro.orchestra.Orchestra.executeSubflowCommands: [Command execution subflow] CommandSkipped: null
+01:11:32.702 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandFinished: Run flow when ".*isn't responding.*" is visible SKIPPED
+01:11:32.702 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandStart: Run flow when ".*không phản hồi.*" is visible RUNNING
+01:11:33.149 [ INFO] maestro.orchestra.Orchestra.executeSubflowCommands: [Command execution subflow] CommandSkipped: null
+01:11:33.150 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandFinished: Run flow when ".*không phản hồi.*" is visible SKIPPED
+01:11:33.150 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandFinished: Run subflows/dismiss-system-dialogs.yaml COMPLETED
+01:11:33.153 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandStart: Assert that "Hôm nay đã thu.*" is visible RUNNING
+01:11:33.382 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandFinished: Assert that "Hôm nay đã thu.*" is visible COMPLETED
+01:11:33.383 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandStart: Repeat 3 times RUNNING
+01:11:33.384 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandStart: Retry 2 times RUNNING
+01:11:33.386 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandStart: Tap on "Thu tiền" RUNNING
+01:11:33.653 [ INFO] maestro.Maestro.tap-HgV9Ck0: Tapping on element:  UiElement(treeNode=TreeNode(attributes={accessibilityText=Thu tiền, title=, value=, text=, hintText=, resource-id=, bounds=[20,774][400,862], enabled=true, focused=false, selected=false, checked=false}, children=[], clickable=null, enabled=true, focused=false, checked=false, selected=false), bounds=Bounds(x=20, y=774, width=380, height=88))
+01:11:34.125 [ INFO] maestro.Maestro.tap-HgV9Ck0: Tap aimed via trusted pre-wait hierarchy (null settle, no recent scroll)
+01:11:34.131 [ INFO] maestro.Maestro.screenshotBasedTap-ogj28Uc: Try tapping at (210, 818) using hierarchy based logic for wait
+01:11:34.136 [TRACE] maestro.utils.ScreenshotUtils.takeScreenshot: Taking screenshot to byte array
+01:11:34.137 [TRACE] maestro.utils.ScreenshotUtils.takeScreenshot: Taking screenshot to output sink
+01:11:35.734 [ INFO] maestro.Maestro.screenshotBasedTap-ogj28Uc: Something have changed in the UI judging by view hierarchy. Proceed.
+01:11:35.735 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandFinished: Tap on "Thu tiền" COMPLETED
+01:11:35.735 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandStart: Assert that "Khách cần trả" is visible RUNNING
+01:11:46.899 [ INFO] maestro.Maestro.takeScreenshot: Taking screenshot
+01:11:46.902 [TRACE] maestro.utils.ScreenshotUtils.takeScreenshot: Taking screenshot to output sink
+01:11:47.108 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandFinished: Assert that "Khách cần trả" is visible FAILED
+01:11:47.110 [ERROR] maestro.orchestra.Orchestra.retryCommand: Attempt 1 failed for retry command
+maestro.MaestroException$AssertionFailure: Assertion is false: "Khách cần trả" is visible
+	at maestro.orchestra.Orchestra.assertConditionCommand(Orchestra.kt:566)
+	at maestro.orchestra.Orchestra.access$assertConditionCommand(Orchestra.kt:137)
+	at maestro.orchestra.Orchestra$assertConditionCommand$1.invokeSuspend(Orchestra.kt)
+	at kotlin.coroutines.jvm.internal.BaseContinuationImpl.resumeWith(ContinuationImpl.kt:34)
+	at kotlinx.coroutines.DispatchedTask.run(DispatchedTask.kt:100)
+	at kotlinx.coroutines.EventLoopImplBase.processNextEvent(EventLoop.common.kt:263)
+	at kotlinx.coroutines.BlockingCoroutine.joinBlocking(Builders.kt:94)
+	at kotlinx.coroutines.BuildersKt__BuildersKt.runBlocking(Builders.kt:70)
+	at kotlinx.coroutines.BuildersKt.runBlocking(Unknown Source)
+	at kotlinx.coroutines.BuildersKt__BuildersKt.runBlocking$default(Builders.kt:48)
+	at kotlinx.coroutines.BuildersKt.runBlocking$default(Unknown Source)
+	at maestro.cli.command.TestCommand.runShardSuite$lambda$10(TestCommand.kt:502)
+	at maestro.cli.session.MaestroSessionManager.newSession(MaestroSessionManager.kt:133)
+	at maestro.cli.session.MaestroSessionManager.newSession$default(MaestroSessionManager.kt:64)
+	at maestro.cli.command.TestCommand.runShardSuite(TestCommand.kt:477)
+	at maestro.cli.command.TestCommand.access$runShardSuite(TestCommand.kt:81)
+	at maestro.cli.command.TestCommand$handleSessions$1$results$1$1.invokeSuspend(TestCommand.kt:438)
+	at kotlin.coroutines.jvm.internal.BaseContinuationImpl.resumeWith(ContinuationImpl.kt:34)
+	at kotlinx.coroutines.DispatchedTask.run(DispatchedTask.kt:100)
+	at kotlinx.coroutines.internal.LimitedDispatcher$Worker.run(LimitedDispatcher.kt:124)
+	at kotlinx.coroutines.scheduling.TaskImpl.run(Tasks.kt:89)
+	at kotlinx.coroutines.scheduling.CoroutineScheduler.runSafely(CoroutineScheduler.kt:586)
+	at kotlinx.coroutines.scheduling.CoroutineScheduler$Worker.executeTask(CoroutineScheduler.kt:820)
+	at kotlinx.coroutines.scheduling.CoroutineScheduler$Worker.runWorker(CoroutineScheduler.kt:717)
+	at kotlinx.coroutines.scheduling.CoroutineScheduler$Worker.run(CoroutineScheduler.kt:704)
+01:11:47.131 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandStart: Tap on "Thu tiền" RUNNING
+01:11:47.395 [ INFO] maestro.Maestro.tap-HgV9Ck0: Tapping on element:  UiElement(treeNode=TreeNode(attributes={accessibilityText=Thu tiền, title=, value=, text=, hintText=, resource-id=, bounds=[20,774][400,862], enabled=true, focused=false, selected=false, checked=false}, children=[], clickable=null, enabled=true, focused=false, checked=false, selected=false), bounds=Bounds(x=20, y=774, width=380, height=88))
+01:11:47.734 [ INFO] maestro.Maestro.tap-HgV9Ck0: Tap aimed via trusted pre-wait hierarchy (null settle, no recent scroll)
+01:11:47.736 [ INFO] maestro.Maestro.screenshotBasedTap-ogj28Uc: Try tapping at (210, 818) using hierarchy based logic for wait
+01:11:47.738 [TRACE] maestro.utils.ScreenshotUtils.takeScreenshot: Taking screenshot to byte array
+01:11:47.738 [TRACE] maestro.utils.ScreenshotUtils.takeScreenshot: Taking screenshot to output sink
+01:11:49.485 [ INFO] maestro.Maestro.screenshotBasedTap-ogj28Uc: Something have changed in the UI judging by view hierarchy. Proceed.
+01:11:49.486 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandFinished: Tap on "Thu tiền" COMPLETED
+01:11:49.486 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandStart: Assert that "Khách cần trả" is visible RUNNING
+01:11:49.790 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandFinished: Assert that "Khách cần trả" is visible COMPLETED
+01:11:49.790 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandFinished: Retry 2 times COMPLETED
+01:11:49.790 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandStart: Assert that "Bấm số tiền ở bàn phím.*" is visible RUNNING
+01:11:50.048 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandFinished: Assert that "Bấm số tiền ở bàn phím.*" is visible COMPLETED
+01:11:50.049 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandStart: Assert that "Hiện mã QR", disabled is visible RUNNING
+01:11:50.419 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandFinished: Assert that "Hiện mã QR", disabled is visible COMPLETED
+01:11:50.420 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandStart: Assert that "Nhập số tiền trước" is not visible RUNNING
+01:11:51.222 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandFinished: Assert that "Nhập số tiền trước" is not visible COMPLETED
+01:11:51.223 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandStart: Tap on id: key-1 RUNNING
+01:11:51.485 [ INFO] maestro.Maestro.tap-HgV9Ck0: Tapping on element:  UiElement(treeNode=TreeNode(attributes={accessibilityText=1, title=, value=, text=, hintText=, resource-id=key-1, bounds=[20,309][141,373], enabled=true, focused=false, selected=false, checked=false}, children=[], clickable=null, enabled=true, focused=false, checked=false, selected=false), bounds=Bounds(x=20, y=309, width=121, height=64))
+01:11:51.811 [ INFO] maestro.Maestro.tap-HgV9Ck0: Tap aimed via trusted pre-wait hierarchy (null settle, no recent scroll)
+01:11:51.815 [ INFO] maestro.Maestro.screenshotBasedTap-ogj28Uc: Try tapping at (80, 341) using hierarchy based logic for wait
+01:11:51.815 [TRACE] maestro.utils.ScreenshotUtils.takeScreenshot: Taking screenshot to byte array
+01:11:51.816 [TRACE] maestro.utils.ScreenshotUtils.takeScreenshot: Taking screenshot to output sink
+01:11:52.692 [ INFO] maestro.Maestro.screenshotBasedTap-ogj28Uc: Something have changed in the UI judging by view hierarchy. Proceed.
+01:11:52.692 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandFinished: Tap on id: key-1 COMPLETED
+01:11:52.693 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandStart: Tap on id: key-8 RUNNING
+01:11:52.902 [ INFO] maestro.Maestro.tap-HgV9Ck0: Tapping on element:  UiElement(treeNode=TreeNode(attributes={accessibilityText=8, title=, value=, text=, hintText=, resource-id=key-8, bounds=[149,453][270,517], enabled=true, focused=false, selected=false, checked=false}, children=[], clickable=null, enabled=true, focused=false, checked=false, selected=false), bounds=Bounds(x=149, y=453, width=121, height=64))
+01:11:53.204 [ INFO] maestro.Maestro.tap-HgV9Ck0: Tap aimed via trusted pre-wait hierarchy (null settle, no recent scroll)
+01:11:53.206 [ INFO] maestro.Maestro.screenshotBasedTap-ogj28Uc: Try tapping at (209, 485) using hierarchy based logic for wait
+01:11:53.207 [TRACE] maestro.utils.ScreenshotUtils.takeScreenshot: Taking screenshot to byte array
+01:11:53.207 [TRACE] maestro.utils.ScreenshotUtils.takeScreenshot: Taking screenshot to output sink
+01:11:54.166 [ INFO] maestro.Maestro.screenshotBasedTap-ogj28Uc: Something have changed in the UI judging by view hierarchy. Proceed.
+01:11:54.170 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandFinished: Tap on id: key-8 COMPLETED
+01:11:54.179 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandStart: Tap on id: key-000 RUNNING
+01:11:54.347 [ INFO] maestro.Maestro.tap-HgV9Ck0: Tapping on element:  UiElement(treeNode=TreeNode(attributes={accessibilityText=Ba số không, title=, value=, text=, hintText=, resource-id=key-000, bounds=[20,525][141,589], enabled=true, focused=false, selected=false, checked=false}, children=[], clickable=null, enabled=true, focused=false, checked=false, selected=false), bounds=Bounds(x=20, y=525, width=121, height=64))
+01:11:54.596 [ INFO] maestro.Maestro.tap-HgV9Ck0: Tap aimed via trusted pre-wait hierarchy (null settle, no recent scroll)
+01:11:54.598 [ INFO] maestro.Maestro.screenshotBasedTap-ogj28Uc: Try tapping at (80, 557) using hierarchy based logic for wait
+01:11:54.598 [TRACE] maestro.utils.ScreenshotUtils.takeScreenshot: Taking screenshot to byte array
+01:11:54.598 [TRACE] maestro.utils.ScreenshotUtils.takeScreenshot: Taking screenshot to output sink
+01:11:55.505 [ INFO] maestro.Maestro.screenshotBasedTap-ogj28Uc: Something have changed in the UI judging by view hierarchy. Proceed.
+01:11:55.506 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandFinished: Tap on id: key-000 COMPLETED
+01:11:55.506 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandStart: Tap on id: key-0 RUNNING
+01:11:55.692 [ INFO] maestro.Maestro.tap-HgV9Ck0: Tapping on element:  UiElement(treeNode=TreeNode(attributes={accessibilityText=0, title=, value=, text=, hintText=, resource-id=key-0, bounds=[149,525][270,589], enabled=true, focused=false, selected=false, checked=false}, children=[], clickable=null, enabled=true, focused=false, checked=false, selected=false), bounds=Bounds(x=149, y=525, width=121, height=64))
+01:11:56.002 [ INFO] maestro.Maestro.tap-HgV9Ck0: Tap aimed via trusted pre-wait hierarchy (null settle, no recent scroll)
+01:11:56.003 [ INFO] maestro.Maestro.screenshotBasedTap-ogj28Uc: Try tapping at (209, 557) using hierarchy based logic for wait
+01:11:56.004 [TRACE] maestro.utils.ScreenshotUtils.takeScreenshot: Taking screenshot to byte array
+01:11:56.004 [TRACE] maestro.utils.ScreenshotUtils.takeScreenshot: Taking screenshot to output sink
+01:11:56.958 [ INFO] maestro.Maestro.screenshotBasedTap-ogj28Uc: Something have changed in the UI judging by view hierarchy. Proceed.
+01:11:56.959 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandFinished: Tap on id: key-0 COMPLETED
+01:11:56.960 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandStart: Tap on id: key-del RUNNING
+01:11:57.223 [ INFO] maestro.Maestro.tap-HgV9Ck0: Tapping on element:  UiElement(treeNode=TreeNode(attributes={accessibilityText=Xóa số vừa nhập, title=, value=, text=, hintText=, resource-id=key-del, bounds=[278,525][400,589], enabled=true, focused=false, selected=false, checked=false}, children=[], clickable=null, enabled=true, focused=false, checked=false, selected=false), bounds=Bounds(x=278, y=525, width=122, height=64))
+01:11:57.457 [ INFO] maestro.Maestro.tap-HgV9Ck0: Tap aimed via trusted pre-wait hierarchy (null settle, no recent scroll)
+01:11:57.458 [ INFO] maestro.Maestro.screenshotBasedTap-ogj28Uc: Try tapping at (339, 557) using hierarchy based logic for wait
+01:11:57.459 [TRACE] maestro.utils.ScreenshotUtils.takeScreenshot: Taking screenshot to byte array
+01:11:57.459 [TRACE] maestro.utils.ScreenshotUtils.takeScreenshot: Taking screenshot to output sink
+01:11:58.408 [ INFO] maestro.Maestro.screenshotBasedTap-ogj28Uc: Something have changed in the UI judging by view hierarchy. Proceed.
+01:11:58.409 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandFinished: Tap on id: key-del COMPLETED
+01:11:58.409 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandStart: Assert that "18.000 đ" is visible RUNNING
+01:11:58.652 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandFinished: Assert that "18.000 đ" is visible COMPLETED
+01:11:58.652 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandStart: Assert that "Mười tám nghìn đồng" is visible RUNNING
+01:11:58.892 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandFinished: Assert that "Mười tám nghìn đồng" is visible COMPLETED
+01:11:58.894 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandStart: Take screenshot 10-nhap-so-tien RUNNING
+01:11:58.901 [ INFO] maestro.Maestro.takeScreenshot: Taking screenshot
+01:11:58.902 [TRACE] maestro.utils.ScreenshotUtils.takeScreenshot: Taking screenshot to output sink
+01:11:59.081 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandFinished: Take screenshot 10-nhap-so-tien COMPLETED
+01:11:59.082 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandStart: Tap on "Hiện mã QR" RUNNING
+01:11:59.459 [ INFO] maestro.Maestro.tap-HgV9Ck0: Tapping on element:  UiElement(treeNode=TreeNode(attributes={accessibilityText=Hiện mã QR, title=, value=, text=, hintText=, resource-id=, bounds=[20,601][400,669], enabled=true, focused=false, selected=false, checked=false}, children=[], clickable=null, enabled=true, focused=false, checked=false, selected=false), bounds=Bounds(x=20, y=601, width=380, height=68))
+01:11:59.755 [ INFO] maestro.Maestro.tap-HgV9Ck0: Tap aimed via trusted pre-wait hierarchy (null settle, no recent scroll)
+01:11:59.756 [ INFO] maestro.Maestro.screenshotBasedTap-ogj28Uc: Try tapping at (210, 635) using hierarchy based logic for wait
+01:11:59.757 [TRACE] maestro.utils.ScreenshotUtils.takeScreenshot: Taking screenshot to byte array
+01:11:59.757 [TRACE] maestro.utils.ScreenshotUtils.takeScreenshot: Taking screenshot to output sink
+01:12:01.434 [ INFO] maestro.Maestro.screenshotBasedTap-ogj28Uc: Something have changed in the UI judging by view hierarchy. Proceed.
+01:12:01.434 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandFinished: Tap on "Hiện mã QR" COMPLETED
+01:12:01.434 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandStart: Assert that "Khách quét mã để trả" is visible RUNNING
+01:12:01.622 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandFinished: Assert that "Khách quét mã để trả" is visible COMPLETED
+01:12:01.623 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandStart: Assert that "MB Bank.*" is visible RUNNING
+01:12:01.833 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandFinished: Assert that "MB Bank.*" is visible COMPLETED
+01:12:01.834 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandStart: Assert that "Đang chờ tiền về.*" is visible RUNNING
+01:12:02.017 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandFinished: Assert that "Đang chờ tiền về.*" is visible COMPLETED
+01:12:02.017 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandStart: Take screenshot 11-cho-tien-qr RUNNING
+01:12:02.018 [ INFO] maestro.Maestro.takeScreenshot: Taking screenshot
+01:12:02.018 [TRACE] maestro.utils.ScreenshotUtils.takeScreenshot: Taking screenshot to output sink
+01:12:02.157 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandFinished: Take screenshot 11-cho-tien-qr COMPLETED
+01:12:02.157 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandStart: Assert that "Đơn mới" is visible RUNNING
+01:13:31.772 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandFinished: Assert that "Đơn mới" is visible COMPLETED
+01:13:31.792 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandStart: Take screenshot 12-da-nhan RUNNING
+01:13:31.797 [ INFO] maestro.Maestro.takeScreenshot: Taking screenshot
+01:13:31.798 [TRACE] maestro.utils.ScreenshotUtils.takeScreenshot: Taking screenshot to output sink
+01:13:32.159 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandFinished: Take screenshot 12-da-nhan COMPLETED
+01:13:32.160 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandStart: Tap on (Optional) "Đã nhận 18.000 đ" RUNNING
+01:13:32.673 [ INFO] maestro.Maestro.tap-HgV9Ck0: Tapping on element:  UiElement(treeNode=TreeNode(attributes={accessibilityText=Đã nhận 18.000 đ, title=, value=, text=, hintText=, resource-id=, bounds=[0,0][420,912], enabled=true, focused=false, selected=false, checked=false}, children=[], clickable=null, enabled=true, focused=false, checked=false, selected=false), bounds=Bounds(x=0, y=0, width=420, height=912))
+01:13:33.029 [ INFO] maestro.Maestro.tap-HgV9Ck0: Tap aimed via trusted pre-wait hierarchy (null settle, no recent scroll)
+01:13:33.036 [ INFO] maestro.Maestro.screenshotBasedTap-ogj28Uc: Try tapping at (210, 456) using hierarchy based logic for wait
+01:13:33.039 [TRACE] maestro.utils.ScreenshotUtils.takeScreenshot: Taking screenshot to byte array
+01:13:33.044 [TRACE] maestro.utils.ScreenshotUtils.takeScreenshot: Taking screenshot to output sink
+01:13:34.230 [ INFO] maestro.Maestro.screenshotBasedTap-ogj28Uc: Something have changed in the UI judging by view hierarchy. Proceed.
+01:13:34.242 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandFinished: Tap on (Optional) "Đã nhận 18.000 đ" COMPLETED
+01:13:34.243 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandStart: Assert that "Đã nhận 18.000 đ" is not visible RUNNING
+01:13:35.576 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandFinished: Assert that "Đã nhận 18.000 đ" is not visible COMPLETED
+01:13:35.576 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandStart: Tap on "Đọc lại" RUNNING
+01:13:35.753 [ INFO] maestro.Maestro.tap-HgV9Ck0: Tapping on element:  UiElement(treeNode=TreeNode(attributes={accessibilityText=Đọc lại, title=, value=, text=, hintText=, resource-id=, bounds=[20,447][400,503], enabled=true, focused=false, selected=false, checked=false}, children=[], clickable=null, enabled=true, focused=false, checked=false, selected=false), bounds=Bounds(x=20, y=447, width=380, height=56))
+01:13:36.027 [ INFO] maestro.Maestro.tap-HgV9Ck0: Tap aimed via trusted pre-wait hierarchy (null settle, no recent scroll)
+01:13:36.030 [ INFO] maestro.Maestro.screenshotBasedTap-ogj28Uc: Try tapping at (210, 475) using hierarchy based logic for wait
+01:13:36.030 [TRACE] maestro.utils.ScreenshotUtils.takeScreenshot: Taking screenshot to byte array
+01:13:36.030 [TRACE] maestro.utils.ScreenshotUtils.takeScreenshot: Taking screenshot to output sink
+01:13:37.088 [ INFO] maestro.Maestro.screenshotBasedTap-ogj28Uc: Something have changed in the UI judging by view hierarchy. Proceed.
+01:13:37.089 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandFinished: Tap on "Đọc lại" COMPLETED
+01:13:37.089 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandStart: Tap on "Đơn mới" RUNNING
+01:13:37.359 [ INFO] maestro.Maestro.tap-HgV9Ck0: Tapping on element:  UiElement(treeNode=TreeNode(attributes={accessibilityText=Đơn mới, title=, value=, text=, hintText=, resource-id=, bounds=[20,367][400,435], enabled=true, focused=false, selected=false, checked=false}, children=[], clickable=null, enabled=true, focused=false, checked=false, selected=false), bounds=Bounds(x=20, y=367, width=380, height=68))
+01:13:37.643 [ INFO] maestro.Maestro.tap-HgV9Ck0: Tap aimed via trusted pre-wait hierarchy (null settle, no recent scroll)
+01:13:37.644 [ INFO] maestro.Maestro.screenshotBasedTap-ogj28Uc: Try tapping at (210, 401) using hierarchy based logic for wait
+01:13:37.645 [TRACE] maestro.utils.ScreenshotUtils.takeScreenshot: Taking screenshot to byte array
+01:13:37.645 [TRACE] maestro.utils.ScreenshotUtils.takeScreenshot: Taking screenshot to output sink
+01:13:39.269 [ INFO] maestro.Maestro.screenshotBasedTap-ogj28Uc: Something have changed in the UI judging by view hierarchy. Proceed.
+01:13:39.269 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandFinished: Tap on "Đơn mới" COMPLETED
+01:13:39.269 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandStart: Assert that "Khách cần trả" is visible RUNNING
+01:13:39.555 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandFinished: Assert that "Khách cần trả" is visible COMPLETED
+01:13:39.556 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandStart: Assert that "Chưa nhập số tiền" is visible RUNNING
+01:13:39.823 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandFinished: Assert that "Chưa nhập số tiền" is visible COMPLETED
+01:13:39.825 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandStart: Tap on "Trang chính" RUNNING
+01:13:40.044 [ INFO] maestro.Maestro.tap-HgV9Ck0: Tapping on element:  UiElement(treeNode=TreeNode(attributes={accessibilityText=Trang chính, title=, value=, text=, hintText=, resource-id=, bounds=[20,76][165,124], enabled=true, focused=false, selected=false, checked=false}, children=[], clickable=null, enabled=true, focused=false, checked=false, selected=false), bounds=Bounds(x=20, y=76, width=145, height=48))
+01:13:40.323 [ INFO] maestro.Maestro.tap-HgV9Ck0: Tap aimed via trusted pre-wait hierarchy (null settle, no recent scroll)
+01:13:40.324 [ INFO] maestro.Maestro.screenshotBasedTap-ogj28Uc: Try tapping at (92, 100) using hierarchy based logic for wait
+01:13:40.325 [TRACE] maestro.utils.ScreenshotUtils.takeScreenshot: Taking screenshot to byte array
+01:13:40.325 [TRACE] maestro.utils.ScreenshotUtils.takeScreenshot: Taking screenshot to output sink
+01:13:41.782 [ INFO] maestro.Maestro.screenshotBasedTap-ogj28Uc: Something have changed in the UI judging by view hierarchy. Proceed.
+01:13:41.782 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandFinished: Tap on "Trang chính" COMPLETED
+01:13:41.782 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandStart: Assert that "Hôm nay đã thu.*" is visible RUNNING
+01:13:42.047 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandFinished: Assert that "Hôm nay đã thu.*" is visible COMPLETED
+01:13:42.053 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandReset: Retry 2 times PENDING
+01:13:42.053 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandReset: Tap on "Thu tiền" PENDING
+01:13:42.053 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandReset: Assert that "Khách cần trả" is visible PENDING
+01:13:42.053 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandReset: Assert that "Bấm số tiền ở bàn phím.*" is visible PENDING
+01:13:42.054 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandReset: Assert that "Hiện mã QR", disabled is visible PENDING
+01:13:42.054 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandReset: Assert that "Nhập số tiền trước" is not visible PENDING
+01:13:42.054 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandReset: Tap on id: key-1 PENDING
+01:13:42.054 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandReset: Tap on id: key-8 PENDING
+01:13:42.054 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandReset: Tap on id: key-000 PENDING
+01:13:42.054 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandReset: Tap on id: key-0 PENDING
+01:13:42.054 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandReset: Tap on id: key-del PENDING
+01:13:42.054 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandReset: Assert that "18.000 đ" is visible PENDING
+01:13:42.054 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandReset: Assert that "Mười tám nghìn đồng" is visible PENDING
+01:13:42.054 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandReset: Take screenshot 10-nhap-so-tien PENDING
+01:13:42.054 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandReset: Tap on "Hiện mã QR" PENDING
+01:13:42.054 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandReset: Assert that "Khách quét mã để trả" is visible PENDING
+01:13:42.054 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandReset: Assert that "MB Bank.*" is visible PENDING
+01:13:42.054 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandReset: Assert that "Đang chờ tiền về.*" is visible PENDING
+01:13:42.054 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandReset: Take screenshot 11-cho-tien-qr PENDING
+01:13:42.054 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandReset: Assert that "Đơn mới" is visible PENDING
+01:13:42.054 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandReset: Take screenshot 12-da-nhan PENDING
+01:13:42.054 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandReset: Tap on (Optional) "Đã nhận 18.000 đ" PENDING
+01:13:42.054 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandReset: Assert that "Đã nhận 18.000 đ" is not visible PENDING
+01:13:42.054 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandReset: Tap on "Đọc lại" PENDING
+01:13:42.054 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandReset: Tap on "Đơn mới" PENDING
+01:13:42.054 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandReset: Assert that "Khách cần trả" is visible PENDING
+01:13:42.055 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandReset: Assert that "Chưa nhập số tiền" is visible PENDING
+01:13:42.055 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandReset: Tap on "Trang chính" PENDING
+01:13:42.055 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandReset: Assert that "Hôm nay đã thu.*" is visible PENDING
+01:13:42.055 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandStart: Retry 2 times RUNNING
+01:13:42.055 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandStart: Tap on "Thu tiền" RUNNING
+01:13:42.311 [ INFO] maestro.Maestro.tap-HgV9Ck0: Tapping on element:  UiElement(treeNode=TreeNode(attributes={accessibilityText=Thu tiền, title=, value=, text=, hintText=, resource-id=, bounds=[20,774][400,862], enabled=true, focused=false, selected=false, checked=false}, children=[], clickable=null, enabled=true, focused=false, checked=false, selected=false), bounds=Bounds(x=20, y=774, width=380, height=88))
+01:13:42.641 [ INFO] maestro.Maestro.tap-HgV9Ck0: Tap aimed via trusted pre-wait hierarchy (null settle, no recent scroll)
+01:13:42.642 [ INFO] maestro.Maestro.screenshotBasedTap-ogj28Uc: Try tapping at (210, 818) using hierarchy based logic for wait
+01:13:42.643 [TRACE] maestro.utils.ScreenshotUtils.takeScreenshot: Taking screenshot to byte array
+01:13:42.643 [TRACE] maestro.utils.ScreenshotUtils.takeScreenshot: Taking screenshot to output sink
+01:13:44.352 [ INFO] maestro.Maestro.screenshotBasedTap-ogj28Uc: Something have changed in the UI judging by view hierarchy. Proceed.
+01:13:44.368 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandFinished: Tap on "Thu tiền" COMPLETED
+01:13:44.368 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandStart: Assert that "Khách cần trả" is visible RUNNING
+01:13:44.761 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandFinished: Assert that "Khách cần trả" is visible COMPLETED
+01:13:44.763 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandFinished: Retry 2 times COMPLETED
+01:13:44.763 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandStart: Assert that "Bấm số tiền ở bàn phím.*" is visible RUNNING
+01:13:45.057 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandFinished: Assert that "Bấm số tiền ở bàn phím.*" is visible COMPLETED
+01:13:45.057 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandStart: Assert that "Hiện mã QR", disabled is visible RUNNING
+01:13:45.316 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandFinished: Assert that "Hiện mã QR", disabled is visible COMPLETED
+01:13:45.316 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandStart: Assert that "Nhập số tiền trước" is not visible RUNNING
+01:13:46.130 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandFinished: Assert that "Nhập số tiền trước" is not visible COMPLETED
+01:13:46.131 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandStart: Tap on id: key-1 RUNNING
+01:13:46.436 [ INFO] maestro.Maestro.tap-HgV9Ck0: Tapping on element:  UiElement(treeNode=TreeNode(attributes={accessibilityText=1, title=, value=, text=, hintText=, resource-id=key-1, bounds=[20,309][141,373], enabled=true, focused=false, selected=false, checked=false}, children=[], clickable=null, enabled=true, focused=false, checked=false, selected=false), bounds=Bounds(x=20, y=309, width=121, height=64))
+01:13:46.758 [ INFO] maestro.Maestro.tap-HgV9Ck0: Tap aimed via trusted pre-wait hierarchy (null settle, no recent scroll)
+01:13:46.759 [ INFO] maestro.Maestro.screenshotBasedTap-ogj28Uc: Try tapping at (80, 341) using hierarchy based logic for wait
+01:13:46.761 [TRACE] maestro.utils.ScreenshotUtils.takeScreenshot: Taking screenshot to byte array
+01:13:46.761 [TRACE] maestro.utils.ScreenshotUtils.takeScreenshot: Taking screenshot to output sink
+01:13:47.680 [ INFO] maestro.Maestro.screenshotBasedTap-ogj28Uc: Something have changed in the UI judging by view hierarchy. Proceed.
+01:13:47.680 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandFinished: Tap on id: key-1 COMPLETED
+01:13:47.680 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandStart: Tap on id: key-8 RUNNING
+01:13:47.917 [ INFO] maestro.Maestro.tap-HgV9Ck0: Tapping on element:  UiElement(treeNode=TreeNode(attributes={accessibilityText=8, title=, value=, text=, hintText=, resource-id=key-8, bounds=[149,453][270,517], enabled=true, focused=false, selected=false, checked=false}, children=[], clickable=null, enabled=true, focused=false, checked=false, selected=false), bounds=Bounds(x=149, y=453, width=121, height=64))
+01:13:48.203 [ INFO] maestro.Maestro.tap-HgV9Ck0: Tap aimed via trusted pre-wait hierarchy (null settle, no recent scroll)
+01:13:48.205 [ INFO] maestro.Maestro.screenshotBasedTap-ogj28Uc: Try tapping at (209, 485) using hierarchy based logic for wait
+01:13:48.205 [TRACE] maestro.utils.ScreenshotUtils.takeScreenshot: Taking screenshot to byte array
+01:13:48.205 [TRACE] maestro.utils.ScreenshotUtils.takeScreenshot: Taking screenshot to output sink
+01:13:49.083 [ INFO] maestro.Maestro.screenshotBasedTap-ogj28Uc: Something have changed in the UI judging by view hierarchy. Proceed.
+01:13:49.083 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandFinished: Tap on id: key-8 COMPLETED
+01:13:49.083 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandStart: Tap on id: key-000 RUNNING
+01:13:49.421 [ INFO] maestro.Maestro.tap-HgV9Ck0: Tapping on element:  UiElement(treeNode=TreeNode(attributes={accessibilityText=Ba số không, title=, value=, text=, hintText=, resource-id=key-000, bounds=[20,525][141,589], enabled=true, focused=false, selected=false, checked=false}, children=[], clickable=null, enabled=true, focused=false, checked=false, selected=false), bounds=Bounds(x=20, y=525, width=121, height=64))
+01:13:49.743 [ INFO] maestro.Maestro.tap-HgV9Ck0: Tap aimed via trusted pre-wait hierarchy (null settle, no recent scroll)
+01:13:49.744 [ INFO] maestro.Maestro.screenshotBasedTap-ogj28Uc: Try tapping at (80, 557) using hierarchy based logic for wait
+01:13:49.745 [TRACE] maestro.utils.ScreenshotUtils.takeScreenshot: Taking screenshot to byte array
+01:13:49.746 [TRACE] maestro.utils.ScreenshotUtils.takeScreenshot: Taking screenshot to output sink
+01:13:50.737 [ INFO] maestro.Maestro.screenshotBasedTap-ogj28Uc: Something have changed in the UI judging by view hierarchy. Proceed.
+01:13:50.738 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandFinished: Tap on id: key-000 COMPLETED
+01:13:50.738 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandStart: Tap on id: key-0 RUNNING
+01:13:51.030 [ INFO] maestro.Maestro.tap-HgV9Ck0: Tapping on element:  UiElement(treeNode=TreeNode(attributes={accessibilityText=0, title=, value=, text=, hintText=, resource-id=key-0, bounds=[149,525][270,589], enabled=true, focused=false, selected=false, checked=false}, children=[], clickable=null, enabled=true, focused=false, checked=false, selected=false), bounds=Bounds(x=149, y=525, width=121, height=64))
+01:13:51.306 [ INFO] maestro.Maestro.tap-HgV9Ck0: Tap aimed via trusted pre-wait hierarchy (null settle, no recent scroll)
+01:13:51.308 [ INFO] maestro.Maestro.screenshotBasedTap-ogj28Uc: Try tapping at (209, 557) using hierarchy based logic for wait
+01:13:51.309 [TRACE] maestro.utils.ScreenshotUtils.takeScreenshot: Taking screenshot to byte array
+01:13:51.309 [TRACE] maestro.utils.ScreenshotUtils.takeScreenshot: Taking screenshot to output sink
+01:13:52.159 [ INFO] maestro.Maestro.screenshotBasedTap-ogj28Uc: Something have changed in the UI judging by view hierarchy. Proceed.
+01:13:52.160 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandFinished: Tap on id: key-0 COMPLETED
+01:13:52.161 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandStart: Tap on id: key-del RUNNING
+01:13:52.375 [ INFO] maestro.Maestro.tap-HgV9Ck0: Tapping on element:  UiElement(treeNode=TreeNode(attributes={accessibilityText=Xóa số vừa nhập, title=, value=, text=, hintText=, resource-id=key-del, bounds=[278,525][400,589], enabled=true, focused=false, selected=false, checked=false}, children=[], clickable=null, enabled=true, focused=false, checked=false, selected=false), bounds=Bounds(x=278, y=525, width=122, height=64))
+01:13:52.711 [ INFO] maestro.Maestro.tap-HgV9Ck0: Tap aimed via trusted pre-wait hierarchy (null settle, no recent scroll)
+01:13:52.712 [ INFO] maestro.Maestro.screenshotBasedTap-ogj28Uc: Try tapping at (339, 557) using hierarchy based logic for wait
+01:13:52.713 [TRACE] maestro.utils.ScreenshotUtils.takeScreenshot: Taking screenshot to byte array
+01:13:52.713 [TRACE] maestro.utils.ScreenshotUtils.takeScreenshot: Taking screenshot to output sink
+01:13:53.580 [ INFO] maestro.Maestro.screenshotBasedTap-ogj28Uc: Something have changed in the UI judging by view hierarchy. Proceed.
+01:13:53.580 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandFinished: Tap on id: key-del COMPLETED
+01:13:53.580 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandStart: Assert that "18.000 đ" is visible RUNNING
+01:13:53.825 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandFinished: Assert that "18.000 đ" is visible COMPLETED
+01:13:53.825 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandStart: Assert that "Mười tám nghìn đồng" is visible RUNNING
+01:13:54.057 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandFinished: Assert that "Mười tám nghìn đồng" is visible COMPLETED
+01:13:54.057 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandStart: Take screenshot 10-nhap-so-tien RUNNING
+01:13:54.058 [ INFO] maestro.Maestro.takeScreenshot: Taking screenshot
+01:13:54.060 [TRACE] maestro.utils.ScreenshotUtils.takeScreenshot: Taking screenshot to output sink
+01:13:54.205 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandFinished: Take screenshot 10-nhap-so-tien COMPLETED
+01:13:54.205 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandStart: Tap on "Hiện mã QR" RUNNING
+01:13:54.440 [ INFO] maestro.Maestro.tap-HgV9Ck0: Tapping on element:  UiElement(treeNode=TreeNode(attributes={accessibilityText=Hiện mã QR, title=, value=, text=, hintText=, resource-id=, bounds=[20,601][400,669], enabled=true, focused=false, selected=false, checked=false}, children=[], clickable=null, enabled=true, focused=false, checked=false, selected=false), bounds=Bounds(x=20, y=601, width=380, height=68))
+01:13:54.756 [ INFO] maestro.Maestro.tap-HgV9Ck0: Tap aimed via trusted pre-wait hierarchy (null settle, no recent scroll)
+01:13:54.757 [ INFO] maestro.Maestro.screenshotBasedTap-ogj28Uc: Try tapping at (210, 635) using hierarchy based logic for wait
+01:13:54.758 [TRACE] maestro.utils.ScreenshotUtils.takeScreenshot: Taking screenshot to byte array
+01:13:54.758 [TRACE] maestro.utils.ScreenshotUtils.takeScreenshot: Taking screenshot to output sink
+01:13:56.443 [ INFO] maestro.Maestro.screenshotBasedTap-ogj28Uc: Something have changed in the UI judging by view hierarchy. Proceed.
+01:13:56.443 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandFinished: Tap on "Hiện mã QR" COMPLETED
+01:13:56.443 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandStart: Assert that "Khách quét mã để trả" is visible RUNNING
+01:13:56.670 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandFinished: Assert that "Khách quét mã để trả" is visible COMPLETED
+01:13:56.670 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandStart: Assert that "MB Bank.*" is visible RUNNING
+01:13:56.881 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandFinished: Assert that "MB Bank.*" is visible COMPLETED
+01:13:56.881 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandStart: Assert that "Đang chờ tiền về.*" is visible RUNNING
+01:13:57.091 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandFinished: Assert that "Đang chờ tiền về.*" is visible COMPLETED
+01:13:57.092 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandStart: Take screenshot 11-cho-tien-qr RUNNING
+01:13:57.093 [ INFO] maestro.Maestro.takeScreenshot: Taking screenshot
+01:13:57.094 [TRACE] maestro.utils.ScreenshotUtils.takeScreenshot: Taking screenshot to output sink
+01:13:57.252 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandFinished: Take screenshot 11-cho-tien-qr COMPLETED
+01:13:57.252 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandStart: Assert that "Đơn mới" is visible RUNNING
+01:15:25.893 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandFinished: Assert that "Đơn mới" is visible COMPLETED
+01:15:25.908 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandStart: Take screenshot 12-da-nhan RUNNING
+01:15:25.913 [ INFO] maestro.Maestro.takeScreenshot: Taking screenshot
+01:15:25.918 [TRACE] maestro.utils.ScreenshotUtils.takeScreenshot: Taking screenshot to output sink
+01:15:26.056 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandFinished: Take screenshot 12-da-nhan COMPLETED
+01:15:26.056 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandStart: Tap on (Optional) "Đã nhận 18.000 đ" RUNNING
+01:15:26.230 [ INFO] maestro.Maestro.tap-HgV9Ck0: Tapping on element:  UiElement(treeNode=TreeNode(attributes={accessibilityText=Đã nhận 18.000 đ, title=, value=, text=, hintText=, resource-id=, bounds=[0,0][420,912], enabled=true, focused=false, selected=false, checked=false}, children=[], clickable=null, enabled=true, focused=false, checked=false, selected=false), bounds=Bounds(x=0, y=0, width=420, height=912))
+01:15:26.495 [ INFO] maestro.Maestro.tap-HgV9Ck0: Tap aimed via trusted pre-wait hierarchy (null settle, no recent scroll)
+01:15:26.495 [ INFO] maestro.Maestro.screenshotBasedTap-ogj28Uc: Try tapping at (210, 456) using hierarchy based logic for wait
+01:15:26.496 [TRACE] maestro.utils.ScreenshotUtils.takeScreenshot: Taking screenshot to byte array
+01:15:26.496 [TRACE] maestro.utils.ScreenshotUtils.takeScreenshot: Taking screenshot to output sink
+01:15:27.389 [ INFO] maestro.Maestro.screenshotBasedTap-ogj28Uc: Something have changed in the UI judging by view hierarchy. Proceed.
+01:15:27.389 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandFinished: Tap on (Optional) "Đã nhận 18.000 đ" COMPLETED
+01:15:27.389 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandStart: Assert that "Đã nhận 18.000 đ" is not visible RUNNING
+01:15:28.190 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandFinished: Assert that "Đã nhận 18.000 đ" is not visible COMPLETED
+01:15:28.191 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandStart: Tap on "Đọc lại" RUNNING
+01:15:28.389 [ INFO] maestro.Maestro.tap-HgV9Ck0: Tapping on element:  UiElement(treeNode=TreeNode(attributes={accessibilityText=Đọc lại, title=, value=, text=, hintText=, resource-id=, bounds=[20,447][400,503], enabled=true, focused=false, selected=false, checked=false}, children=[], clickable=null, enabled=true, focused=false, checked=false, selected=false), bounds=Bounds(x=20, y=447, width=380, height=56))
+01:15:28.699 [ INFO] maestro.Maestro.tap-HgV9Ck0: Tap aimed via trusted pre-wait hierarchy (null settle, no recent scroll)
+01:15:28.700 [ INFO] maestro.Maestro.screenshotBasedTap-ogj28Uc: Try tapping at (210, 475) using hierarchy based logic for wait
+01:15:28.700 [TRACE] maestro.utils.ScreenshotUtils.takeScreenshot: Taking screenshot to byte array
+01:15:28.700 [TRACE] maestro.utils.ScreenshotUtils.takeScreenshot: Taking screenshot to output sink
+01:15:29.583 [ INFO] maestro.Maestro.screenshotBasedTap-ogj28Uc: Something have changed in the UI judging by view hierarchy. Proceed.
+01:15:29.584 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandFinished: Tap on "Đọc lại" COMPLETED
+01:15:29.584 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandStart: Tap on "Đơn mới" RUNNING
+01:15:29.856 [ INFO] maestro.Maestro.tap-HgV9Ck0: Tapping on element:  UiElement(treeNode=TreeNode(attributes={accessibilityText=Đơn mới, title=, value=, text=, hintText=, resource-id=, bounds=[20,367][400,435], enabled=true, focused=false, selected=false, checked=false}, children=[], clickable=null, enabled=true, focused=false, checked=false, selected=false), bounds=Bounds(x=20, y=367, width=380, height=68))
+01:15:30.196 [ INFO] maestro.Maestro.tap-HgV9Ck0: Tap aimed via trusted pre-wait hierarchy (null settle, no recent scroll)
+01:15:30.197 [ INFO] maestro.Maestro.screenshotBasedTap-ogj28Uc: Try tapping at (210, 401) using hierarchy based logic for wait
+01:15:30.198 [TRACE] maestro.utils.ScreenshotUtils.takeScreenshot: Taking screenshot to byte array
+01:15:30.198 [TRACE] maestro.utils.ScreenshotUtils.takeScreenshot: Taking screenshot to output sink
+01:15:31.733 [ INFO] maestro.Maestro.screenshotBasedTap-ogj28Uc: Something have changed in the UI judging by view hierarchy. Proceed.
+01:15:31.734 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandFinished: Tap on "Đơn mới" COMPLETED
+01:15:31.734 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandStart: Assert that "Khách cần trả" is visible RUNNING
+01:15:31.976 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandFinished: Assert that "Khách cần trả" is visible COMPLETED
+01:15:31.976 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandStart: Assert that "Chưa nhập số tiền" is visible RUNNING
+01:15:32.192 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandFinished: Assert that "Chưa nhập số tiền" is visible COMPLETED
+01:15:32.192 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandStart: Tap on "Trang chính" RUNNING
+01:15:32.447 [ INFO] maestro.Maestro.tap-HgV9Ck0: Tapping on element:  UiElement(treeNode=TreeNode(attributes={accessibilityText=Trang chính, title=, value=, text=, hintText=, resource-id=, bounds=[20,76][165,124], enabled=true, focused=false, selected=false, checked=false}, children=[], clickable=null, enabled=true, focused=false, checked=false, selected=false), bounds=Bounds(x=20, y=76, width=145, height=48))
+01:15:32.735 [ INFO] maestro.Maestro.tap-HgV9Ck0: Tap aimed via trusted pre-wait hierarchy (null settle, no recent scroll)
+01:15:32.736 [ INFO] maestro.Maestro.screenshotBasedTap-ogj28Uc: Try tapping at (92, 100) using hierarchy based logic for wait
+01:15:32.737 [TRACE] maestro.utils.ScreenshotUtils.takeScreenshot: Taking screenshot to byte array
+01:15:32.737 [TRACE] maestro.utils.ScreenshotUtils.takeScreenshot: Taking screenshot to output sink
+01:15:33.961 [ INFO] maestro.Maestro.screenshotBasedTap-ogj28Uc: Something have changed in the UI judging by view hierarchy. Proceed.
+01:15:33.961 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandFinished: Tap on "Trang chính" COMPLETED
+01:15:33.962 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandStart: Assert that "Hôm nay đã thu.*" is visible RUNNING
+01:15:34.250 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandFinished: Assert that "Hôm nay đã thu.*" is visible COMPLETED
+01:15:34.251 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandReset: Retry 2 times PENDING
+01:15:34.251 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandReset: Tap on "Thu tiền" PENDING
+01:15:34.251 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandReset: Assert that "Khách cần trả" is visible PENDING
+01:15:34.251 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandReset: Assert that "Bấm số tiền ở bàn phím.*" is visible PENDING
+01:15:34.251 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandReset: Assert that "Hiện mã QR", disabled is visible PENDING
+01:15:34.251 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandReset: Assert that "Nhập số tiền trước" is not visible PENDING
+01:15:34.251 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandReset: Tap on id: key-1 PENDING
+01:15:34.251 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandReset: Tap on id: key-8 PENDING
+01:15:34.251 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandReset: Tap on id: key-000 PENDING
+01:15:34.251 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandReset: Tap on id: key-0 PENDING
+01:15:34.251 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandReset: Tap on id: key-del PENDING
+01:15:34.252 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandReset: Assert that "18.000 đ" is visible PENDING
+01:15:34.253 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandReset: Assert that "Mười tám nghìn đồng" is visible PENDING
+01:15:34.253 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandReset: Take screenshot 10-nhap-so-tien PENDING
+01:15:34.253 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandReset: Tap on "Hiện mã QR" PENDING
+01:15:34.253 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandReset: Assert that "Khách quét mã để trả" is visible PENDING
+01:15:34.253 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandReset: Assert that "MB Bank.*" is visible PENDING
+01:15:34.253 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandReset: Assert that "Đang chờ tiền về.*" is visible PENDING
+01:15:34.253 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandReset: Take screenshot 11-cho-tien-qr PENDING
+01:15:34.254 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandReset: Assert that "Đơn mới" is visible PENDING
+01:15:34.254 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandReset: Take screenshot 12-da-nhan PENDING
+01:15:34.254 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandReset: Tap on (Optional) "Đã nhận 18.000 đ" PENDING
+01:15:34.255 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandReset: Assert that "Đã nhận 18.000 đ" is not visible PENDING
+01:15:34.255 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandReset: Tap on "Đọc lại" PENDING
+01:15:34.255 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandReset: Tap on "Đơn mới" PENDING
+01:15:34.255 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandReset: Assert that "Khách cần trả" is visible PENDING
+01:15:34.255 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandReset: Assert that "Chưa nhập số tiền" is visible PENDING
+01:15:34.255 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandReset: Tap on "Trang chính" PENDING
+01:15:34.256 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandReset: Assert that "Hôm nay đã thu.*" is visible PENDING
+01:15:34.256 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandStart: Retry 2 times RUNNING
+01:15:34.256 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandStart: Tap on "Thu tiền" RUNNING
+01:15:34.550 [ INFO] maestro.Maestro.tap-HgV9Ck0: Tapping on element:  UiElement(treeNode=TreeNode(attributes={accessibilityText=Thu tiền, title=, value=, text=, hintText=, resource-id=, bounds=[20,774][400,862], enabled=true, focused=false, selected=false, checked=false}, children=[], clickable=null, enabled=true, focused=false, checked=false, selected=false), bounds=Bounds(x=20, y=774, width=380, height=88))
+01:15:34.833 [ INFO] maestro.Maestro.tap-HgV9Ck0: Tap aimed via trusted pre-wait hierarchy (null settle, no recent scroll)
+01:15:34.834 [ INFO] maestro.Maestro.screenshotBasedTap-ogj28Uc: Try tapping at (210, 818) using hierarchy based logic for wait
+01:15:34.835 [TRACE] maestro.utils.ScreenshotUtils.takeScreenshot: Taking screenshot to byte array
+01:15:34.836 [TRACE] maestro.utils.ScreenshotUtils.takeScreenshot: Taking screenshot to output sink
+01:15:36.029 [ INFO] maestro.Maestro.screenshotBasedTap-ogj28Uc: Something have changed in the UI judging by view hierarchy. Proceed.
+01:15:36.030 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandFinished: Tap on "Thu tiền" COMPLETED
+01:15:36.030 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandStart: Assert that "Khách cần trả" is visible RUNNING
+01:15:36.225 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandFinished: Assert that "Khách cần trả" is visible COMPLETED
+01:15:36.225 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandFinished: Retry 2 times COMPLETED
+01:15:36.225 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandStart: Assert that "Bấm số tiền ở bàn phím.*" is visible RUNNING
+01:15:36.423 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandFinished: Assert that "Bấm số tiền ở bàn phím.*" is visible COMPLETED
+01:15:36.423 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandStart: Assert that "Hiện mã QR", disabled is visible RUNNING
+01:15:36.626 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandFinished: Assert that "Hiện mã QR", disabled is visible COMPLETED
+01:15:36.626 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandStart: Assert that "Nhập số tiền trước" is not visible RUNNING
+01:15:37.448 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandFinished: Assert that "Nhập số tiền trước" is not visible COMPLETED
+01:15:37.449 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandStart: Tap on id: key-1 RUNNING
+01:15:37.650 [ INFO] maestro.Maestro.tap-HgV9Ck0: Tapping on element:  UiElement(treeNode=TreeNode(attributes={accessibilityText=1, title=, value=, text=, hintText=, resource-id=key-1, bounds=[20,309][141,373], enabled=true, focused=false, selected=false, checked=false}, children=[], clickable=null, enabled=true, focused=false, checked=false, selected=false), bounds=Bounds(x=20, y=309, width=121, height=64))
+01:15:37.998 [ INFO] maestro.Maestro.tap-HgV9Ck0: Tap aimed via trusted pre-wait hierarchy (null settle, no recent scroll)
+01:15:38.000 [ INFO] maestro.Maestro.screenshotBasedTap-ogj28Uc: Try tapping at (80, 341) using hierarchy based logic for wait
+01:15:38.001 [TRACE] maestro.utils.ScreenshotUtils.takeScreenshot: Taking screenshot to byte array
+01:15:38.001 [TRACE] maestro.utils.ScreenshotUtils.takeScreenshot: Taking screenshot to output sink
+01:15:38.914 [ INFO] maestro.Maestro.screenshotBasedTap-ogj28Uc: Something have changed in the UI judging by view hierarchy. Proceed.
+01:15:38.914 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandFinished: Tap on id: key-1 COMPLETED
+01:15:38.914 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandStart: Tap on id: key-8 RUNNING
+01:15:39.127 [ INFO] maestro.Maestro.tap-HgV9Ck0: Tapping on element:  UiElement(treeNode=TreeNode(attributes={accessibilityText=8, title=, value=, text=, hintText=, resource-id=key-8, bounds=[149,453][270,517], enabled=true, focused=false, selected=false, checked=false}, children=[], clickable=null, enabled=true, focused=false, checked=false, selected=false), bounds=Bounds(x=149, y=453, width=121, height=64))
+01:15:39.445 [ INFO] maestro.Maestro.tap-HgV9Ck0: Tap aimed via trusted pre-wait hierarchy (null settle, no recent scroll)
+01:15:39.450 [ INFO] maestro.Maestro.screenshotBasedTap-ogj28Uc: Try tapping at (209, 485) using hierarchy based logic for wait
+01:15:39.452 [TRACE] maestro.utils.ScreenshotUtils.takeScreenshot: Taking screenshot to byte array
+01:15:39.452 [TRACE] maestro.utils.ScreenshotUtils.takeScreenshot: Taking screenshot to output sink
+01:15:40.288 [ INFO] maestro.Maestro.screenshotBasedTap-ogj28Uc: Something have changed in the UI judging by view hierarchy. Proceed.
+01:15:40.288 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandFinished: Tap on id: key-8 COMPLETED
+01:15:40.289 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandStart: Tap on id: key-000 RUNNING
+01:15:40.485 [ INFO] maestro.Maestro.tap-HgV9Ck0: Tapping on element:  UiElement(treeNode=TreeNode(attributes={accessibilityText=Ba số không, title=, value=, text=, hintText=, resource-id=key-000, bounds=[20,525][141,589], enabled=true, focused=false, selected=false, checked=false}, children=[], clickable=null, enabled=true, focused=false, checked=false, selected=false), bounds=Bounds(x=20, y=525, width=121, height=64))
+01:15:40.737 [ INFO] maestro.Maestro.tap-HgV9Ck0: Tap aimed via trusted pre-wait hierarchy (null settle, no recent scroll)
+01:15:40.738 [ INFO] maestro.Maestro.screenshotBasedTap-ogj28Uc: Try tapping at (80, 557) using hierarchy based logic for wait
+01:15:40.739 [TRACE] maestro.utils.ScreenshotUtils.takeScreenshot: Taking screenshot to byte array
+01:15:40.739 [TRACE] maestro.utils.ScreenshotUtils.takeScreenshot: Taking screenshot to output sink
+01:15:41.895 [ INFO] maestro.Maestro.screenshotBasedTap-ogj28Uc: Something have changed in the UI judging by view hierarchy. Proceed.
+01:15:41.896 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandFinished: Tap on id: key-000 COMPLETED
+01:15:41.896 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandStart: Tap on id: key-0 RUNNING
+01:15:42.153 [ INFO] maestro.Maestro.tap-HgV9Ck0: Tapping on element:  UiElement(treeNode=TreeNode(attributes={accessibilityText=0, title=, value=, text=, hintText=, resource-id=key-0, bounds=[149,525][270,589], enabled=true, focused=false, selected=false, checked=false}, children=[], clickable=null, enabled=true, focused=false, checked=false, selected=false), bounds=Bounds(x=149, y=525, width=121, height=64))
+01:15:42.470 [ INFO] maestro.Maestro.tap-HgV9Ck0: Tap aimed via trusted pre-wait hierarchy (null settle, no recent scroll)
+01:15:42.472 [ INFO] maestro.Maestro.screenshotBasedTap-ogj28Uc: Try tapping at (209, 557) using hierarchy based logic for wait
+01:15:42.473 [TRACE] maestro.utils.ScreenshotUtils.takeScreenshot: Taking screenshot to byte array
+01:15:42.473 [TRACE] maestro.utils.ScreenshotUtils.takeScreenshot: Taking screenshot to output sink
+01:15:43.361 [ INFO] maestro.Maestro.screenshotBasedTap-ogj28Uc: Something have changed in the UI judging by view hierarchy. Proceed.
+01:15:43.361 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandFinished: Tap on id: key-0 COMPLETED
+01:15:43.361 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandStart: Tap on id: key-del RUNNING
+01:15:43.636 [ INFO] maestro.Maestro.tap-HgV9Ck0: Tapping on element:  UiElement(treeNode=TreeNode(attributes={accessibilityText=Xóa số vừa nhập, title=, value=, text=, hintText=, resource-id=key-del, bounds=[278,525][400,589], enabled=true, focused=false, selected=false, checked=false}, children=[], clickable=null, enabled=true, focused=false, checked=false, selected=false), bounds=Bounds(x=278, y=525, width=122, height=64))
+01:15:43.966 [ INFO] maestro.Maestro.tap-HgV9Ck0: Tap aimed via trusted pre-wait hierarchy (null settle, no recent scroll)
+01:15:43.967 [ INFO] maestro.Maestro.screenshotBasedTap-ogj28Uc: Try tapping at (339, 557) using hierarchy based logic for wait
+01:15:43.968 [TRACE] maestro.utils.ScreenshotUtils.takeScreenshot: Taking screenshot to byte array
+01:15:43.968 [TRACE] maestro.utils.ScreenshotUtils.takeScreenshot: Taking screenshot to output sink
+01:15:44.787 [ INFO] maestro.Maestro.screenshotBasedTap-ogj28Uc: Something have changed in the UI judging by view hierarchy. Proceed.
+01:15:44.787 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandFinished: Tap on id: key-del COMPLETED
+01:15:44.787 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandStart: Assert that "18.000 đ" is visible RUNNING
+01:15:44.961 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandFinished: Assert that "18.000 đ" is visible COMPLETED
+01:15:44.961 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandStart: Assert that "Mười tám nghìn đồng" is visible RUNNING
+01:15:45.148 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandFinished: Assert that "Mười tám nghìn đồng" is visible COMPLETED
+01:15:45.148 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandStart: Take screenshot 10-nhap-so-tien RUNNING
+01:15:45.150 [ INFO] maestro.Maestro.takeScreenshot: Taking screenshot
+01:15:45.150 [TRACE] maestro.utils.ScreenshotUtils.takeScreenshot: Taking screenshot to output sink
+01:15:45.272 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandFinished: Take screenshot 10-nhap-so-tien COMPLETED
+01:15:45.272 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandStart: Tap on "Hiện mã QR" RUNNING
+01:15:45.437 [ INFO] maestro.Maestro.tap-HgV9Ck0: Tapping on element:  UiElement(treeNode=TreeNode(attributes={accessibilityText=Hiện mã QR, title=, value=, text=, hintText=, resource-id=, bounds=[20,601][400,669], enabled=true, focused=false, selected=false, checked=false}, children=[], clickable=null, enabled=true, focused=false, checked=false, selected=false), bounds=Bounds(x=20, y=601, width=380, height=68))
+01:15:45.668 [ INFO] maestro.Maestro.tap-HgV9Ck0: Tap aimed via trusted pre-wait hierarchy (null settle, no recent scroll)
+01:15:45.669 [ INFO] maestro.Maestro.screenshotBasedTap-ogj28Uc: Try tapping at (210, 635) using hierarchy based logic for wait
+01:15:45.670 [TRACE] maestro.utils.ScreenshotUtils.takeScreenshot: Taking screenshot to byte array
+01:15:45.670 [TRACE] maestro.utils.ScreenshotUtils.takeScreenshot: Taking screenshot to output sink
+01:15:47.192 [ INFO] maestro.Maestro.screenshotBasedTap-ogj28Uc: Something have changed in the UI judging by view hierarchy. Proceed.
+01:15:47.193 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandFinished: Tap on "Hiện mã QR" COMPLETED
+01:15:47.193 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandStart: Assert that "Khách quét mã để trả" is visible RUNNING
+01:15:47.516 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandFinished: Assert that "Khách quét mã để trả" is visible COMPLETED
+01:15:47.517 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandStart: Assert that "MB Bank.*" is visible RUNNING
+01:15:47.859 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandFinished: Assert that "MB Bank.*" is visible COMPLETED
+01:15:47.860 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandStart: Assert that "Đang chờ tiền về.*" is visible RUNNING
+01:15:48.136 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandFinished: Assert that "Đang chờ tiền về.*" is visible COMPLETED
+01:15:48.136 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandStart: Take screenshot 11-cho-tien-qr RUNNING
+01:15:48.138 [ INFO] maestro.Maestro.takeScreenshot: Taking screenshot
+01:15:48.139 [TRACE] maestro.utils.ScreenshotUtils.takeScreenshot: Taking screenshot to output sink
+01:15:48.278 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandFinished: Take screenshot 11-cho-tien-qr COMPLETED
+01:15:48.279 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandStart: Assert that "Đơn mới" is visible RUNNING
+01:17:16.535 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandFinished: Assert that "Đơn mới" is visible COMPLETED
+01:17:16.540 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandStart: Take screenshot 12-da-nhan RUNNING
+01:17:16.542 [ INFO] maestro.Maestro.takeScreenshot: Taking screenshot
+01:17:16.543 [TRACE] maestro.utils.ScreenshotUtils.takeScreenshot: Taking screenshot to output sink
+01:17:16.671 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandFinished: Take screenshot 12-da-nhan COMPLETED
+01:17:16.671 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandStart: Tap on (Optional) "Đã nhận 18.000 đ" RUNNING
+01:17:16.843 [ INFO] maestro.Maestro.tap-HgV9Ck0: Tapping on element:  UiElement(treeNode=TreeNode(attributes={accessibilityText=Đã nhận 18.000 đ, title=, value=, text=, hintText=, resource-id=, bounds=[0,0][420,912], enabled=true, focused=false, selected=false, checked=false}, children=[], clickable=null, enabled=true, focused=false, checked=false, selected=false), bounds=Bounds(x=0, y=0, width=420, height=912))
+01:17:17.092 [ INFO] maestro.Maestro.tap-HgV9Ck0: Tap aimed via trusted pre-wait hierarchy (null settle, no recent scroll)
+01:17:17.094 [ INFO] maestro.Maestro.screenshotBasedTap-ogj28Uc: Try tapping at (210, 456) using hierarchy based logic for wait
+01:17:17.094 [TRACE] maestro.utils.ScreenshotUtils.takeScreenshot: Taking screenshot to byte array
+01:17:17.095 [TRACE] maestro.utils.ScreenshotUtils.takeScreenshot: Taking screenshot to output sink
+01:17:17.878 [ INFO] maestro.Maestro.screenshotBasedTap-ogj28Uc: Something have changed in the UI judging by view hierarchy. Proceed.
+01:17:17.879 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandFinished: Tap on (Optional) "Đã nhận 18.000 đ" COMPLETED
+01:17:17.879 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandStart: Assert that "Đã nhận 18.000 đ" is not visible RUNNING
+01:17:18.576 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandFinished: Assert that "Đã nhận 18.000 đ" is not visible COMPLETED
+01:17:18.576 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandStart: Tap on "Đọc lại" RUNNING
+01:17:18.748 [ INFO] maestro.Maestro.tap-HgV9Ck0: Tapping on element:  UiElement(treeNode=TreeNode(attributes={accessibilityText=Đọc lại, title=, value=, text=, hintText=, resource-id=, bounds=[20,447][400,503], enabled=true, focused=false, selected=false, checked=false}, children=[], clickable=null, enabled=true, focused=false, checked=false, selected=false), bounds=Bounds(x=20, y=447, width=380, height=56))
+01:17:18.978 [ INFO] maestro.Maestro.tap-HgV9Ck0: Tap aimed via trusted pre-wait hierarchy (null settle, no recent scroll)
+01:17:18.979 [ INFO] maestro.Maestro.screenshotBasedTap-ogj28Uc: Try tapping at (210, 475) using hierarchy based logic for wait
+01:17:18.980 [TRACE] maestro.utils.ScreenshotUtils.takeScreenshot: Taking screenshot to byte array
+01:17:18.980 [TRACE] maestro.utils.ScreenshotUtils.takeScreenshot: Taking screenshot to output sink
+01:17:19.818 [ INFO] maestro.Maestro.screenshotBasedTap-ogj28Uc: Something have changed in the UI judging by view hierarchy. Proceed.
+01:17:19.819 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandFinished: Tap on "Đọc lại" COMPLETED
+01:17:19.819 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandStart: Tap on "Đơn mới" RUNNING
+01:17:20.049 [ INFO] maestro.Maestro.tap-HgV9Ck0: Tapping on element:  UiElement(treeNode=TreeNode(attributes={accessibilityText=Đơn mới, title=, value=, text=, hintText=, resource-id=, bounds=[20,367][400,435], enabled=true, focused=false, selected=false, checked=false}, children=[], clickable=null, enabled=true, focused=false, checked=false, selected=false), bounds=Bounds(x=20, y=367, width=380, height=68))
+01:17:20.296 [ INFO] maestro.Maestro.tap-HgV9Ck0: Tap aimed via trusted pre-wait hierarchy (null settle, no recent scroll)
+01:17:20.296 [ INFO] maestro.Maestro.screenshotBasedTap-ogj28Uc: Try tapping at (210, 401) using hierarchy based logic for wait
+01:17:20.297 [TRACE] maestro.utils.ScreenshotUtils.takeScreenshot: Taking screenshot to byte array
+01:17:20.298 [TRACE] maestro.utils.ScreenshotUtils.takeScreenshot: Taking screenshot to output sink
+01:17:21.773 [ INFO] maestro.Maestro.screenshotBasedTap-ogj28Uc: Something have changed in the UI judging by view hierarchy. Proceed.
+01:17:21.774 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandFinished: Tap on "Đơn mới" COMPLETED
+01:17:21.775 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandStart: Assert that "Khách cần trả" is visible RUNNING
+01:17:22.080 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandFinished: Assert that "Khách cần trả" is visible COMPLETED
+01:17:22.080 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandStart: Assert that "Chưa nhập số tiền" is visible RUNNING
+01:17:22.373 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandFinished: Assert that "Chưa nhập số tiền" is visible COMPLETED
+01:17:22.373 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandStart: Tap on "Trang chính" RUNNING
+01:17:22.603 [ INFO] maestro.Maestro.tap-HgV9Ck0: Tapping on element:  UiElement(treeNode=TreeNode(attributes={accessibilityText=Trang chính, title=, value=, text=, hintText=, resource-id=, bounds=[20,76][165,124], enabled=true, focused=false, selected=false, checked=false}, children=[], clickable=null, enabled=true, focused=false, checked=false, selected=false), bounds=Bounds(x=20, y=76, width=145, height=48))
+01:17:22.887 [ INFO] maestro.Maestro.tap-HgV9Ck0: Tap aimed via trusted pre-wait hierarchy (null settle, no recent scroll)
+01:17:22.900 [ INFO] maestro.Maestro.screenshotBasedTap-ogj28Uc: Try tapping at (92, 100) using hierarchy based logic for wait
+01:17:22.901 [TRACE] maestro.utils.ScreenshotUtils.takeScreenshot: Taking screenshot to byte array
+01:17:22.901 [TRACE] maestro.utils.ScreenshotUtils.takeScreenshot: Taking screenshot to output sink
+01:17:24.307 [ INFO] maestro.Maestro.screenshotBasedTap-ogj28Uc: Something have changed in the UI judging by view hierarchy. Proceed.
+01:17:24.307 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandFinished: Tap on "Trang chính" COMPLETED
+01:17:24.308 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandStart: Assert that "Hôm nay đã thu.*" is visible RUNNING
+01:17:24.529 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandFinished: Assert that "Hôm nay đã thu.*" is visible COMPLETED
+01:17:24.530 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandFinished: Repeat 3 times COMPLETED
+01:17:24.530 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandStart: Assert that ".*184.000 đ.*" is visible RUNNING
+01:17:24.786 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandFinished: Assert that ".*184.000 đ.*" is visible COMPLETED
+01:17:24.787 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandStart: Take screenshot 13-trang-chinh-sau-3-don RUNNING
+01:17:24.789 [ INFO] maestro.Maestro.takeScreenshot: Taking screenshot
+01:17:24.789 [TRACE] maestro.utils.ScreenshotUtils.takeScreenshot: Taking screenshot to output sink
+01:17:24.955 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandFinished: Take screenshot 13-trang-chinh-sau-3-don COMPLETED
