@@ -37,3 +37,69 @@ và quy định thuế hộ kinh doanh từ 2026 (bỏ thuế khoán, ngưỡng 
 - Logic thuần (thuế, kỳ báo cáo): `tests/*.test.ts`.
 - Giao diện: luồng Maestro chạy 2 vòng trên điện thoại Android, máy tính bảng nằm ngang, iPhone.
 - Hiệu năng: thêm truy vấn mới vào `supabase/bench/bench_queries.sql`, đo trên DB 5 triệu đơn.
+
+---
+
+# Các giai đoạn dữ liệu (chốt 07/11/2026)
+
+| Giai đoạn | Dữ liệu ở đâu | Nhiều máy | Trạng thái |
+| --- | --- | --- | --- |
+| **1. Một máy** | SQLite của app trên máy đó (`src/lib/demoClient.ts` + `localStore.ts`) | Không; nhân viên dùng chung máy, màn của chủ có PIN | **Đang dùng** (apk-23) |
+| **2. Nhiều máy trong quán, không qua Internet** | Một "máy chủ quán" trong mạng Wi‑Fi của quán | 2–10 máy cùng mạng Wi‑Fi | Ghi chú thiết kế bên dưới, chưa code |
+| **3. Máy chủ đám mây (Premium)** | Supabase (đã viết: migration 1–8, Edge Functions) | Không giới hạn, khác mạng, chủ xem từ xa | Chờ tạo dự án Supabase + SMS + cổng thanh toán |
+
+## Giai đoạn 2 — máy chủ quán trong mạng Wi‑Fi (ghi chú thiết kế)
+
+**Ý chính: không đồng bộ hai chiều giữa các máy.** Một máy giữ dữ liệu (máy chủ quán), các máy khác chỉ gửi lệnh
+tới đó. Như vậy không có chuyện hai bản dữ liệu ghi đè nhau, cũng không phải giải xung đột.
+
+### Chọn cách nối
+
+| Cách | Đánh giá |
+| --- | --- |
+| **A. Máy chính của quán (máy tính bảng / điện thoại Android) chạy luôn máy chủ nhỏ trong app; máy nhân viên nối qua WebSocket** | **Chọn.** Không mua thêm thiết bị; dùng lại nguyên bộ máy dữ liệu hiện có |
+| B. Hộp riêng (mini PC, Android TV box) chạy Postgres + đúng các migration của giai đoạn 3 | Ổn định hơn nhưng phải mua, cài, bảo trì thiết bị; để dành cho quán lớn |
+| C. Mỗi máy giữ một bản, đồng bộ ngang hàng (CRDT) | Không chọn: phức tạp, sổ tiền/kho/số hóa đơn cần một nguồn sự thật |
+| D. TCP thô tự định khung | Không chọn: WebSocket (chạy trên TCP) có sẵn khung tin, đẩy tin hai chiều, ping giữ kết nối |
+
+### Cách làm (cách A)
+
+1. **Giao thức = đúng hợp đồng API hiện tại** (`docs/api.md`). Máy nhân viên dùng `LanClient`, có cùng giao diện
+   `rpc()` / `from().select()` / `channel()` như `supabase` và `demoClient`. Mỗi lệnh gửi qua WebSocket là JSON
+   `{ id, type: 'rpc' | 'select', name, args }`; máy chủ quán chạy `rpcImpl` / `Query` của `demoClient` rồi trả kết quả.
+   Màn hình và `features/*/api.ts` giữ nguyên. Sau này đổi sang giai đoạn 3 chỉ cần thay client.
+2. **Đẩy tin**: máy chủ quán gửi `{ type: 'order', row }` cho mọi máy khi đơn đổi trạng thái (thay `channel()` / Realtime).
+   Chỉ máy tạo đơn đọc to, giữ đúng quy tắc `created_device_id` hiện có.
+3. **Ghép máy bằng mã QR**: Cài đặt → "Thêm máy nhân viên" trên máy chủ quán hiện mã QR chứa
+   `ws://<IP>:<cổng>`, mã ghép dùng một lần (5 phút) và dấu vân tay khóa công khai của máy chủ.
+   Máy nhân viên quét mã đó, nhận `device_token` riêng và vai trò (thu ngân / quản lý). Chủ quán thu hồi được từng máy.
+4. **Tìm lại máy chủ khi IP đổi**: dò mDNS (`_quickpos._tcp`) trong mạng; không thấy thì cho quét lại mã QR.
+5. **Bảo mật trong mạng Wi‑Fi**:
+   - Mỗi tin ký HMAC bằng `device_token`, kèm số thứ tự chống gửi lại.
+   - Khi ghép máy, trao khóa và mã hóa kênh (Noise/libsodium), vì Wi‑Fi quán thường dùng chung với khách.
+   - Quyền kiểm tra ở máy chủ quán theo vai trò, như `has_role` của giai đoạn 3.
+   - Chỉ nghe trên mạng nội bộ.
+6. **Khi mất kết nối tới máy chủ quán**:
+   - Máy nhân viên vẫn bán **tiền mặt** bằng hàng đợi hiện có (UUID sinh sẵn, gửi lại an toàn).
+   - Bán **chuyển khoản**: máy nhân viên tự tạo mã QR (đã biết tài khoản quán) với mã đơn có tiền tố theo máy để
+     không trùng, xác nhận tay, gửi lên khi nối lại.
+   - Báo cáo / thuế / sổ chỉ xem trên máy chủ quán hoặc khi đang nối.
+7. **Máy chủ quán phải luôn chạy**:
+   - Android có dịch vụ chạy nền (foreground service, có thông báo thường trực) và giữ màn hình sáng khi cắm sạc.
+   - **iOS không làm máy chủ quán được** (hệ điều hành tắt máy chủ chạy nền), iPhone chỉ làm máy nhân viên.
+   - Sao lưu ra file vẫn làm trên máy chủ quán.
+8. **Giới hạn**: 2–10 máy, cùng một mạng Wi‑Fi. Router bật "cách ly máy khách" hoặc máy nhân viên vào mạng khách thì
+   không thấy nhau: màn ghép máy phải báo rõ điều này.
+9. **Thư viện cần thêm (hỏi trước khi thêm)**:
+   - máy chủ TCP/WebSocket chạy trong app (`react-native-tcp-socket` hoặc module native nhỏ);
+   - dò mDNS (`react-native-zeroconf`);
+   - mã hóa (`react-native-libsodium`).
+   Cả ba cần build native (đã dùng `expo prebuild`).
+10. **Kiểm thử**:
+    - QA Maestro hai máy ảo cùng mạng: ghép máy, bán trên máy nhân viên, máy chủ quán báo đơn.
+    - Rút Wi‑Fi rồi cắm lại: đơn chờ gửi lên đủ.
+    - Đổi IP: tìm lại được máy chủ quán.
+
+### Ước lượng
+Khoảng 2–3 tuần cho cách A: máy chủ trong app, LanClient, ghép máy, đẩy tin, mất kết nối, QA hai máy.
+Không đổi màn hình bán hàng.
