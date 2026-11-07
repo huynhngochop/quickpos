@@ -12,6 +12,10 @@ import { useExpiringLots, useProducts } from '../src/features/shop/hooks';
 import { isLowStock } from '../src/features/shop/inventory';
 import { syncExpiryReminder } from '../src/features/notifications/expiryReminder';
 import { lastBackupAt } from '../src/lib/localStore';
+import { isStaffDevice } from '../src/lib/supabase';
+import { usePlan } from '../src/features/plan/hooks';
+import { syncHost } from '../src/features/lan/hostRuntime';
+import { StaffBanner } from '../src/features/lan/StaffBanner';
 import { useSession, useBusinessId } from '../src/features/session/store';
 import { openOwnerScreen, useCanReview, useMainAccount } from '../src/features/session/hooks';
 import { useDayTotals } from '../src/features/journal/hooks';
@@ -43,6 +47,12 @@ export default function TrangChinh() {
   const owed = (debtors.data ?? []).reduce((s, d) => s + Math.max(d.balance, 0), 0);
   const spent = (expenses.data ?? []).reduce((s, e) => s + e.amount, 0);
   // Hàng sắp hết hạn / sắp hết hàng hiện ngay trên ô "Hàng hóa"; còn lô sắp hết hạn thì nhắc 8 giờ sáng mỗi ngày
+  // Gói Pro: máy chính làm máy chủ quán (bật khi còn hạn và đã có máy nhân viên)
+  const staff = isStaffDevice();
+  const plan = usePlan(staff ? '' : businessId);
+  useEffect(() => {
+    if (ENV.demo && !staff && plan.data && businessId) syncHost({ businessId, name }, plan.data);
+  }, [plan.data, businessId, name, staff]);
   const expiring = useExpiringLots(businessId);
   const products = useProducts(businessId);
   const expCount = expiring.data?.length ?? 0;
@@ -146,6 +156,7 @@ export default function TrangChinh() {
         </Card>
       ) : null}
 
+      {staff ? <StaffBanner /> : null}
       {/* Bản dùng thử / nhắc sao lưu: để cuối trang để các ô việc nằm gọn trong màn hình đầu tiên */}
       <DemoBanner />
       {backupDays !== null ? (

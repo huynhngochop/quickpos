@@ -209,7 +209,12 @@ Tính theo chiều rộng/cao cửa sổ hiện tại (`useWindowDimensions`), k
   quy tắc "không cho gõ số tài khoản" vẫn áp dụng cho bản có máy chủ.
 - Sao lưu / khôi phục bằng file qua bảng chia sẻ (Cài đặt → Sao lưu và khôi phục; bước tạo quán có liên kết khôi phục).
   Trang chính nhắc sao lưu khi chưa từng sao lưu hoặc quá 7 ngày.
-- KHÔNG đồng bộ nhiều máy qua mail (ghi đè nhau, mất đơn). Nhiều máy / nhiều nhân viên = bản có máy chủ (gói Premium, chưa thu phí).
+- KHÔNG đồng bộ nhiều máy qua mail (ghi đè nhau, mất đơn).
+- **Gói** (chốt 07/11/2026): Miễn phí = một máy, chủ tự bán. **Pro** = nhiều nhân viên, nhiều máy trong Wi‑Fi nối vào máy chủ
+  quán (`src/features/lan/`), dùng thử 30 ngày rồi trả theo năm bằng mã kích hoạt (`src/features/plan/license.ts`, ký Ed25519;
+  khóa bí mật chỉ người bán giữ, KHÔNG đưa vào repo; màn cấp mã ẩn `/cap-ma`). Hết hạn: máy nhân viên bị chặn, dữ liệu còn nguyên.
+  **Premium** (sau) = đồng bộ qua máy chủ đám mây, dữ liệu lớn.
+- Máy chủ quán: một máy giữ dữ liệu, máy nhân viên chỉ gửi lệnh (không đồng bộ hai chiều). iOS không làm máy chủ quán được.
 - QA: máy `android-local` chạy luồng 11 với bản lưu trên máy; các máy khác chạy dữ liệu mẫu.
 
 ## Khi hoàn thành một thay đổi

@@ -14,6 +14,7 @@
 import { buildVietQr } from '../../supabase/functions/_shared/vietqr';
 import { bankDisplayName } from '../../supabase/functions/_shared/banks';
 import { addDays, vnDay, vnDayRange } from './time';
+import { readLicense, shopKey } from '../features/plan/license';
 
 type Row = Record<string, any>;
 type Result = { data: any; error: { message: string } | null; count?: number };
@@ -275,6 +276,70 @@ export function restoreBackup(f: BackupFile): { businessId: string } {
   return { businessId: b.id };
 }
 
+// ---------------- Máy chủ quán (gói Pro) ----------------
+const READ_METHODS = new Set(['select', 'eq', 'is', 'in', 'gte', 'lte', 'lt', 'gt', 'order', 'limit', 'single', 'maybeSingle']);
+
+/** Thêm máy nhân viên làm thành viên của quán (user_id 'lan-<máy>'). */
+export function addLanMember(bizId: string, userId: string, role: string, name: string) {
+  db.business_members = db.business_members!.filter((m) => !(m.business_id === bizId && m.user_id === userId));
+  db.business_members.push({ business_id: bizId, user_id: userId, role, member_phone: null, member_name: name, created_at: nowIso() });
+  persistNow(true);
+}
+
+export function removeLanMember(bizId: string, userId: string) {
+  db.business_members = db.business_members!.filter((m) => !(m.business_id === bizId && m.user_id === userId));
+  persistNow(true);
+}
+
+/** Nghe mọi đơn đổi trạng thái (máy chủ quán đẩy cho máy nhân viên). */
+export function onAnyOrder(cb: (row: Row) => void): () => void {
+  const h = (p: { new: Row }) => cb(p.new);
+  orderListeners.add(h);
+  return () => {
+    orderListeners.delete(h);
+  };
+}
+
+/**
+ * Chạy một lệnh của máy nhân viên như người dùng userId (đổi người dùng tạm thời trong lúc chạy đồng bộ,
+ * nên không lẫn với chủ quán đang dùng máy chủ quán).
+ */
+export async function hostExecute(
+  userId: string,
+  req: { kind: 'rpc'; name: string; args: Row } | { kind: 'select'; table: string; ops: { m: string; a: unknown[] }[] } | { kind: 'fn'; name: string; body: Row },
+  invoke: (name: string, opts: { body: Row }) => Promise<{ data: unknown; error: { message: string } | null }>,
+): Promise<Result> {
+  if (!db.business_members!.some((m) => m.user_id === userId)) return fail('QP_UNAUTHENTICATED');
+  const saved = user;
+  if (req.kind === 'rpc') {
+    // Không cho máy nhân viên tự đổi gói, đổi tài khoản nhận tiền, tạo quán
+    if (['start_pro_trial_v1', 'set_pro_license_v1', 'set_local_payment_account_v1', 'create_business_v1'].includes(req.name)) return fail('QP_FORBIDDEN');
+    user = { id: userId, phone: '' };
+    try {
+      const r = rpcImpl(req.name, req.args ?? {});
+      if (!r.error) persistNow();
+      return r;
+    } finally {
+      user = saved;
+    }
+  }
+  if (req.kind === 'select') {
+    let q: Row = new Query(req.table);
+    for (const op of req.ops ?? []) {
+      if (!READ_METHODS.has(op.m)) return fail('QP_FORBIDDEN');
+      q = q[op.m](...(op.a ?? []));
+    }
+    user = { id: userId, phone: '' };
+    try {
+      return (q as Query).runNow();
+    } finally {
+      user = saved;
+    }
+  }
+  if (req.kind === 'fn') return (await invoke(req.name, { body: req.body ?? {} })) as Result;
+  return fail('QP_INVALID_INPUT');
+}
+
 const authListeners = new Set<(event: string, session: unknown) => void>();
 const orderListeners = new Set<(payload: { new: Row }) => void>();
 
@@ -526,6 +591,11 @@ class Query implements PromiseLike<Result> {
   maybeSingle() { this.mode = 'maybe'; return this; }
   abortSignal() { return this; }
 
+  /** Chạy ngay (máy chủ quán trả kết quả cho máy nhân viên) */
+  runNow(): Result {
+    return this.run();
+  }
+
   private run(): Result {
     let rows = tableRows(this.table, this.range).filter((r) => this.filters.every((f) => f(r)));
     if (this.sort) {
@@ -588,6 +658,27 @@ function rpcImpl(name: string, a: Row): Result {
         seedShop(b.id);
       }
       return ok(b);
+    }
+
+    // Gói Pro (lưu trên máy): bắt đầu dùng thử 30 ngày — một lần cho mỗi quán
+    case 'start_pro_trial_v1': {
+      const m = member(a.p_business_id);
+      if (!m || m.role !== 'OWNER') return fail('QP_FORBIDDEN');
+      const b = db.businesses!.find((x) => x.id === a.p_business_id)!;
+      if (!b.pro_trial_started_at) b.pro_trial_started_at = nowIso();
+      return ok({ pro_trial_started_at: b.pro_trial_started_at, pro_license: b.pro_license ?? null });
+    }
+
+    // Gói Pro: nhập mã kích hoạt (đúng chữ ký, đúng mã quán)
+    case 'set_pro_license_v1': {
+      const m = member(a.p_business_id);
+      if (!m || m.role !== 'OWNER') return fail('QP_FORBIDDEN');
+      const lic = readLicense(String(a.p_code ?? ''));
+      if (!lic) return fail('QP_LICENSE_INVALID');
+      if (lic.shop !== shopKey(a.p_business_id)) return fail('QP_LICENSE_OTHER_SHOP');
+      const b = db.businesses!.find((x) => x.id === a.p_business_id)!;
+      b.pro_license = String(a.p_code).replace(/\s+/g, '');
+      return ok({ pro_trial_started_at: b.pro_trial_started_at ?? null, pro_license: b.pro_license });
     }
 
     // Chỉ có ở chế độ lưu trên máy (không có cổng thanh toán xác minh tài khoản): chủ quán tự nhập tài khoản nhận tiền

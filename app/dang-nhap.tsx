@@ -95,6 +95,7 @@ export default function DangNhap() {
       </View>
       {error ? <ErrorView error={error} /> : null}
       <Button big label={vi.login.send} onPress={submit} busy={busy} />
+      {ENV.demo ? <Button kind="link" label={vi.plan.staffEntry} onPress={() => router.push('/noi-may-chu')} /> : null}
     </Screen>
   );
 }

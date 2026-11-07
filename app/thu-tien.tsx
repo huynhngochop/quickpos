@@ -109,14 +109,15 @@ export default function ThuTien() {
       />
       {/* Việc thêm khi bán: chọn món từ danh mục, ghi nợ cho khách, gắn khách quen để tích điểm */}
       <View style={{ flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'center', columnGap: space.lg }}>
-        <Button kind="link" label={vi.sale.pickItems} onPress={() => router.push('/ban-hang')} />
+        <Button kind="link" testID="pay-link-pick" label={vi.sale.pickItems} onPress={() => router.push('/ban-hang')} />
         <Button
           kind="link"
+          testID="pay-link-debt"
           label={vi.sale.onCredit}
           disabled={amount <= 0}
           onPress={() => router.push({ pathname: '/so-no', params: { amount: String(amount) } })}
         />
-        <Button kind="link" label={customer ? vi.sale.changeCustomer : vi.sale.regular} onPress={() => router.push({ pathname: '/khach-quen', params: { pick: '1' } })} />
+        <Button kind="link" testID="pay-link-customer" label={customer ? vi.sale.changeCustomer : vi.sale.regular} onPress={() => router.push({ pathname: '/khach-quen', params: { pick: '1' } })} />
       </View>
       {customer ? (
         <Card tone="info" style={{ flexDirection: 'row', alignItems: 'center', gap: space.md }}>

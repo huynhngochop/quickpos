@@ -14,14 +14,15 @@ npx expo install \
   expo-sqlite expo-secure-store expo-crypto expo-speech expo-haptics \
   expo-notifications expo-device expo-application expo-intent-launcher expo-screen-orientation \
   react-native-svg @expo-google-fonts/be-vietnam-pro \
-  expo-print expo-sharing expo-camera expo-file-system expo-document-picker
+  expo-print expo-sharing expo-camera expo-file-system expo-document-picker expo-keep-awake
 
 npm install \
   @supabase/supabase-js@^2 \
   @tanstack/react-query@^5 \
   zustand@^5 \
   react-hook-form@^7 @hookform/resolvers@^5 zod@^4 \
-  react-native-qrcode-svg@^6
+  react-native-qrcode-svg@^6 \
+  react-native-tcp-socket@^6 tweetnacl@^1
 
 npm install -D typescript @types/react tsx
 

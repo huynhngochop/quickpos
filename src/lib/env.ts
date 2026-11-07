@@ -16,6 +16,12 @@ export const ENV = {
   supabaseUrl: url || 'https://not-configured.invalid',
   supabaseAnonKey: anonKey || 'not-configured',
   supportPhone: process.env.EXPO_PUBLIC_SUPPORT_PHONE ?? '',
+  /** Gói Pro: giá một năm (đồng) và tài khoản nhận tiền của người bán (để khách chuyển khoản mua mã kích hoạt) */
+  proPriceYear: Number(process.env.EXPO_PUBLIC_PRO_PRICE_YEAR ?? 0) || 0,
+  vendorBankBin: process.env.EXPO_PUBLIC_VENDOR_BANK_BIN ?? '',
+  vendorAccountNo: process.env.EXPO_PUBLIC_VENDOR_ACCOUNT_NO ?? '',
+  vendorAccountName: process.env.EXPO_PUBLIC_VENDOR_ACCOUNT_NAME ?? '',
+  vendorZalo: process.env.EXPO_PUBLIC_VENDOR_ZALO ?? '',
   policyUrl: process.env.EXPO_PUBLIC_POLICY_URL ?? '',
   easProjectId: process.env.EXPO_PUBLIC_EAS_PROJECT_ID ?? '',
   appVersion: Constants.expoConfig?.version ?? '0.0.0',

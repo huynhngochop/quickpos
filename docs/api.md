@@ -202,3 +202,22 @@ Sao lưu / khôi phục (`src/features/backup/`): file JSON `{ app: 'QuickPOS', 
 business_id, business_name, orders, tables }` gồm mọi bảng của một quán; gửi qua bảng chia sẻ của máy (Gmail, Zalo,
 Drive). Khôi phục thay toàn bộ dữ liệu trên máy; người đang đăng nhập thành chủ quán, nhân viên máy cũ bỏ đi.
 Nhiều máy / nhân viên trên nhiều máy cần bản có máy chủ (gói Premium, chưa làm).
+
+### 9.1 Gói Pro (lưu trên máy)
+
+| Lời gọi | Ai | Tham số | Trả về | Lỗi |
+| --- | --- | --- | --- | --- |
+| `start_pro_trial_v1` | OWNER | `p_business_id` | `{ pro_trial_started_at, pro_license }` (dùng thử 30 ngày, một lần mỗi quán) | `QP_FORBIDDEN` |
+| `set_pro_license_v1` | OWNER | `p_business_id`, `p_code` (mã `QP-…` ký Ed25519, gắn mã quán 8 ký tự) | như trên | `QP_FORBIDDEN`, `QP_LICENSE_INVALID`, `QP_LICENSE_OTHER_SHOP` |
+| `from('businesses').select('id, pro_trial_started_at, pro_license')` | thành viên | — | trạng thái gói tính ở `src/features/plan/license.ts` (giờ chống lùi: `planNow()`) | — |
+
+Máy chủ quán (`src/features/lan/`): TCP cổng 47123 trong Wi‑Fi, mỗi dòng một JSON; sau khi ghép máy mọi tin mã hóa
+`nacl.secretbox` bằng khóa riêng của máy nhân viên, có số thứ tự tăng dần. Máy nhân viên gửi đúng các lời gọi ở trên
+(`rpc` / `select` / `functions.invoke`), máy chủ quán chạy như người dùng `lan-<máy>` (thành viên vai trò CASHIER/MANAGER).
+Máy nhân viên không gọi được `start_pro_trial_v1`, `set_pro_license_v1`, `set_local_payment_account_v1`, `create_business_v1`.
+
+| Lỗi | Hiện cho người dùng |
+| --- | --- |
+| `QP_PRO_REQUIRED` | Gói Pro của quán đã hết hạn hoặc chưa bật. Nhờ chủ quán gia hạn gói Pro. |
+| `QP_PAIRING_EXPIRED` | Mã ghép máy đã hết hạn hoặc đã dùng (hoặc máy đã bị thu hồi). Nhờ chủ quán tạo mã mới. |
+| `QP_LICENSE_INVALID` / `QP_LICENSE_OTHER_SHOP` | Mã kích hoạt không đúng / của quán khác. |

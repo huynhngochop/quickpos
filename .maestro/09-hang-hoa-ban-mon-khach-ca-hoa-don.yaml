@@ -83,10 +83,10 @@ appId: vn.quickpos.app
     visible: "Khách cần trả"
     timeout: 10000
 - runFlow:
-    file: subflows/cuon-thu-tien.yaml
+    file: subflows/cuon-thu-tien-id.yaml
     env:
-      TEXT: "Chọn món"
-- tapOn: "Chọn món"
+      ID: "pay-link-pick"
+- tapOn: { id: "pay-link-pick" }
 - extendedWaitUntil:
     visible: "Chọn món"
     timeout: 10000
@@ -106,10 +106,10 @@ appId: vn.quickpos.app
 - assertVisible: "Đã chọn 3 món.*"
 - assertVisible: "50.000 đ"
 - runFlow:
-    file: subflows/cuon-thu-tien.yaml
+    file: subflows/cuon-thu-tien-id.yaml
     env:
-      TEXT: "Khách quen"
-- tapOn: "Khách quen"
+      ID: "pay-link-customer"
+- tapOn: { id: "pay-link-customer" }
 - extendedWaitUntil:
     visible: "Chọn khách quen"
     timeout: 10000
@@ -188,10 +188,10 @@ appId: vn.quickpos.app
     maxRetries: 2
     commands:
       - runFlow:
-          file: subflows/cuon-thu-tien.yaml
+          file: subflows/cuon-thu-tien-id.yaml
           env:
-            TEXT: "Ghi nợ"
-      - tapOn: "Ghi nợ"
+            ID: "pay-link-debt"
+      - tapOn: { id: "pay-link-debt" }
       - extendedWaitUntil:
           visible: "Chọn khách để ghi nợ 30.000 đ.*"
           timeout: 8000

@@ -198,10 +198,10 @@ appId: vn.quickpos.app
     timeout: 10000
 - runFlow: subflows/open-thu-tien.yaml
 - runFlow:
-    file: subflows/cuon-thu-tien.yaml
+    file: subflows/cuon-thu-tien-id.yaml
     env:
-      TEXT: "Chọn món"
-- tapOn: "Chọn món"
+      ID: "pay-link-pick"
+- tapOn: { id: "pay-link-pick" }
 - extendedWaitUntil:
     visible: "Tìm theo tên hoặc mã vạch"
     timeout: 10000

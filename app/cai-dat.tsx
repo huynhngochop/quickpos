@@ -1,4 +1,4 @@
-import { useState, type ReactNode } from 'react';
+import { useRef, useState, type ReactNode } from 'react';
 import { Linking, Pressable, View } from 'react-native';
 import { router } from 'expo-router';
 import { useMutation, useQuery } from '@tanstack/react-query';
@@ -19,12 +19,14 @@ import { readNumber } from '../src/lib/money';
 import { getDeviceId } from '../src/lib/device';
 import { ENV } from '../src/lib/env';
 import { lastBackupAt } from '../src/lib/localStore';
+import { isStaffDevice } from '../src/lib/supabase';
 import { formatDateVN } from '../src/lib/time';
 import { colors, space } from '../src/theme/tokens';
 import { vi } from '../src/i18n/vi';
 
 /** 4.2 Cài đặt (sau mã PIN chủ quán). */
 export default function CaiDat() {
+  const versionTaps = useRef(0);
   const businessId = useBusinessId();
   const business = useSession((s) => s.business);
   const role = useSession((s) => s.role);
@@ -71,6 +73,7 @@ export default function CaiDat() {
             <Txt tone="warn">{vi.settings.accountNone}</Txt>
           )}
         </Row>
+        {ENV.demo && !isStaffDevice() ? <LinkRow label={vi.plan.settingsRow} onPress={() => router.push('/goi-su-dung')} /> : null}
         {ENV.localOnly ? (
           <LinkRow label={vi.local.accountChange} onPress={() => router.push({ pathname: '/thiet-lap/tai-khoan', params: { from: 'settings' } })} />
         ) : null}
@@ -157,9 +160,20 @@ export default function CaiDat() {
       </Card>
 
       <Button kind="link" label={vi.settings.deleteAccount} onPress={() => router.push('/xoa-tai-khoan')} />
-      <Txt variant="caption" tone="secondary" center>
-        {vi.settings.version(ENV.appVersion)}
-      </Txt>
+      <Pressable
+        accessibilityRole="text"
+        onPress={() => {
+          versionTaps.current += 1;
+          if (versionTaps.current >= 7) {
+            versionTaps.current = 0;
+            router.push('/cap-ma');
+          }
+        }}
+      >
+        <Txt variant="caption" tone="secondary" center>
+          {vi.settings.version(ENV.appVersion)}
+        </Txt>
+      </Pressable>
       {/* Đăng xuất là nút cuối cùng của Cài đặt (nút Thoát ở trang chính chỉ đóng app) */}
       {logoutMsg ? (
         <Card tone="warn">

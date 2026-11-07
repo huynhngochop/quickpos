@@ -27,14 +27,16 @@ export interface ButtonProps {
   icon?: ReactNode;
   hint?: string;
   style?: ViewStyle;
+  testID?: string;
 }
 
 /** Nút có chữ, cao ≥ 56dp. Không có nút chỉ có biểu tượng. */
-export function Button({ label, onPress, kind = 'primary', big, disabled, disabledLabel, busy, icon, hint, style }: ButtonProps) {
+export function Button({ label, onPress, kind = 'primary', big, disabled, disabledLabel, busy, icon, hint, style, testID }: ButtonProps) {
   const s = STYLE[kind];
   const off = disabled || busy;
   return (
     <Pressable
+      testID={testID}
       accessibilityRole="button"
       accessibilityLabel={disabled && disabledLabel ? disabledLabel : label}
       accessibilityHint={hint}

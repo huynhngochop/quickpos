@@ -45,8 +45,8 @@ và quy định thuế hộ kinh doanh từ 2026 (bỏ thuế khoán, ngưỡng 
 | Giai đoạn | Dữ liệu ở đâu | Nhiều máy | Trạng thái |
 | --- | --- | --- | --- |
 | **1. Một máy** | SQLite của app trên máy đó (`src/lib/demoClient.ts` + `localStore.ts`) | Không; nhân viên dùng chung máy, màn của chủ có PIN | **Đang dùng** (apk-23) |
-| **2. Nhiều máy trong quán, không qua Internet** | Một "máy chủ quán" trong mạng Wi‑Fi của quán | 2–10 máy cùng mạng Wi‑Fi | Ghi chú thiết kế bên dưới, chưa code |
-| **3. Máy chủ đám mây (Premium)** | Supabase (đã viết: migration 1–8, Edge Functions) | Không giới hạn, khác mạng, chủ xem từ xa | Chờ tạo dự án Supabase + SMS + cổng thanh toán |
+| **2. Nhiều máy trong quán, không qua Internet = gói Pro** | Một "máy chủ quán" trong mạng Wi‑Fi của quán | 2–10 máy cùng mạng Wi‑Fi | **Đã làm (apk-24)**: dùng thử 30 ngày, mã kích hoạt theo năm; QA tự động mới thử một máy, cần thử thật hai máy |
+| **3. Máy chủ đám mây = gói Premium** | Supabase (đã viết: migration 1–8, Edge Functions) | Không giới hạn, khác mạng, chủ xem từ xa | Chờ tạo dự án Supabase + SMS + cổng thanh toán |
 
 ## Giai đoạn 2 — máy chủ quán trong mạng Wi‑Fi (ghi chú thiết kế)
 

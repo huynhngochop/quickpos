@@ -1,0 +1,13 @@
+appId: vn.quickpos.app
+---
+# Như cuon-thu-tien.yaml nhưng tìm theo id (chữ như "Ghi nợ" cũng có trên màn bên dưới trong ngăn, dễ khớp nhầm).
+- repeat:
+    while:
+      notVisible:
+        id: ${ID}
+    times: 5
+    commands:
+      - swipe:
+          from:
+            id: "pay-scroll"
+          direction: UP

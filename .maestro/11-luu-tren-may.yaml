@@ -6,6 +6,29 @@ appId: vn.quickpos.app
 - launchApp:
     clearState: true
 - runFlow: subflows/dismiss-system-dialogs.yaml
+
+# Gói Pro — lối vào máy nhân viên ở màn đăng nhập; mã sai thì báo bằng chữ
+- extendedWaitUntil:
+    visible: "Nhập số điện thoại của quán"
+    timeout: 30000
+- scrollUntilVisible:
+    element: "Máy nhân viên: nối vào máy chủ quán"
+- tapOn: "Máy nhân viên: nối vào máy chủ quán"
+- extendedWaitUntil:
+    visible: "Nối vào máy chủ quán"
+    timeout: 10000
+- tapOn: { id: "pair-code" }
+- inputText: "abc"
+- hideKeyboard
+- scrollUntilVisible:
+    element: "Nối máy"
+- tapOn: "Nối máy"
+- assertVisible: "Mã này không phải mã ghép máy của QuickPOS."
+- takeScreenshot: "199-noi-may-chu-ma-sai"
+- scrollUntilVisible:
+    element: "Quay lại"
+    direction: UP
+- tapOn: "Quay lại"
 - runFlow: subflows/login.yaml
 - extendedWaitUntil:
     visible: "QuickPOS dùng thông tin của quán thế nào"
@@ -108,8 +131,9 @@ appId: vn.quickpos.app
     visibilityPercentage: 100
 - tapOn: "Tôi đã thấy tiền về"
 - tapOn: "Đúng, tiền đã về"
+# Bản lưu trên máy: xác nhận tay coi như đã nhận đủ
 - extendedWaitUntil:
-    visible: "Xác nhận tay.*"
+    visible: "Đã nhận"
     timeout: 10000
 - tapOn: "Đơn mới"
 - extendedWaitUntil:
@@ -182,3 +206,53 @@ appId: vn.quickpos.app
 - assertVisible: "Tap hoa Co Tu"
 - assertVisible: ".*25.000 đ.*"
 - takeScreenshot: "209-dang-nhap-lai-van-con"
+
+# ---------- Gói sử dụng: dùng thử Pro 30 ngày, máy nhân viên, mã kích hoạt ----------
+- tapOn: { id: "main-settings" }
+- runFlow:
+    when:
+      visible: "Mã PIN chủ quán"
+    file: subflows/enter-pin.yaml
+- extendedWaitUntil:
+    visible: "Gói sử dụng và máy nhân viên"
+    timeout: 10000
+- tapOn: "Gói sử dụng và máy nhân viên"
+- extendedWaitUntil:
+    visible: "Miễn phí — một máy"
+    timeout: 10000
+- takeScreenshot: "210-goi-mien-phi"
+- tapOn: "Dùng thử Pro 30 ngày"
+- extendedWaitUntil:
+    visible: "Bắt đầu 30 ngày dùng thử Pro[?]"
+    timeout: 5000
+- tapOn: "Bắt đầu dùng thử"
+- extendedWaitUntil:
+    visible: "Pro dùng thử — còn 30 ngày"
+    timeout: 10000
+- scrollUntilVisible:
+    element: "Thêm máy nhân viên"
+- tapOn: { id: "lan-staff-name" }
+- inputText: "Thu ngan Lan"
+- hideKeyboard
+- scrollUntilVisible:
+    element: "Hiện mã ghép máy|Máy này chưa vào Wi‑Fi.*"
+- runFlow:
+    when:
+      visible: "Hiện mã ghép máy"
+    commands:
+      - tapOn: "Hiện mã ghép máy"
+      - scrollUntilVisible:
+          element: "Mã còn dùng được.*"
+- takeScreenshot: "211-ma-ghep-may"
+- scrollUntilVisible:
+    element: "Mã quán của bạn: .*"
+- tapOn: { id: "license-code" }
+- inputText: "QP-khongdungmanay"
+- hideKeyboard
+- scrollUntilVisible:
+    element: "Kích hoạt"
+- tapOn: "Kích hoạt"
+- extendedWaitUntil:
+    visible: "Mã kích hoạt không đúng.*"
+    timeout: 10000
+- takeScreenshot: "212-ma-kich-hoat-sai"
