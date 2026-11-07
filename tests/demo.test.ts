@@ -1,6 +1,9 @@
 import { test, mock } from 'node:test';
 import assert from 'node:assert/strict';
-import { createDemoClient } from '../src/lib/demoClient';
+import { createDemoClient, setSampleMode } from '../src/lib/demoClient';
+
+// Các ca này dùng dữ liệu mẫu, kể cả khi build đặt EXPO_PUBLIC_DEMO_SAMPLE=0
+setSampleMode(true);
 import { vnDay, vnDayRange } from '../src/lib/time';
 
 test('chế độ dùng thử: đăng nhập → tạo quán → bán → khách chuyển tiền', async () => {
