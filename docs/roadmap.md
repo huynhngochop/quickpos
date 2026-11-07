@@ -88,6 +88,13 @@ tới đó. Như vậy không có chuyện hai bản dữ liệu ghi đè nhau, 
    - Android có dịch vụ chạy nền (foreground service, có thông báo thường trực) và giữ màn hình sáng khi cắm sạc.
    - **iOS không làm máy chủ quán được** (hệ điều hành tắt máy chủ chạy nền), iPhone chỉ làm máy nhân viên.
    - Sao lưu ra file vẫn làm trên máy chủ quán.
+   **Pin / nóng** (trả lời 07/11/2026):
+   - Phần máy chủ rất nhẹ (vài lệnh mỗi phút, gói tin nhỏ, SQLite).
+   - Tốn pin chủ yếu do giữ Wi‑Fi và CPU không ngủ: chỉ giữ khi có máy nhân viên đang nối, không bắt sáng màn hình,
+     ban đêm / ngoài giờ bán thì nghỉ. Đo thực tế ở bản thử phase 2.
+   - Khuyên dùng **máy riêng ở quầy** (máy tính bảng / điện thoại Android cũ, cắm sạc, bật giới hạn sạc 80% nếu máy có)
+     làm máy chủ quán, không dùng điện thoại cá nhân của chủ. Lý do: chủ mang máy đi thì cả quán mất máy chủ;
+     hãng máy (Xiaomi, Oppo, Vivo, Samsung…) hay tự tắt app chạy nền, phải hướng dẫn tắt tối ưu pin cho QuickPOS.
 8. **Giới hạn**: 2–10 máy, cùng một mạng Wi‑Fi. Router bật "cách ly máy khách" hoặc máy nhân viên vào mạng khách thì
    không thấy nhau: màn ghép máy phải báo rõ điều này.
 9. **Thư viện cần thêm (hỏi trước khi thêm)**:
