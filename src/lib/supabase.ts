@@ -7,8 +7,8 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { createClient } from '@supabase/supabase-js';
 import { AppState, Platform } from 'react-native';
 import { ENV } from './env';
-import { attachStorage, createDemoClient, persistNow } from './demoClient';
-import { localStore } from './localStore';
+import { attachRowStore, createDemoClient, persistNow } from './demoClient';
+import { rowStore } from './localStore';
 import '../features/lan/prng';
 import { LanClient } from '../features/lan/client';
 import { createLanSupabase } from '../features/lan/lanSupabase';
@@ -29,13 +29,19 @@ const realClient = () => createClient(ENV.supabaseUrl, ENV.supabaseAnonKey, {
 type Client = ReturnType<typeof realClient>;
 
 // Thiếu địa chỉ máy chủ → dữ liệu nằm trên máy (src/lib/demoClient.ts), lưu bền trong SQLite của app
-if (ENV.demo) attachStorage(localStore);
+if (ENV.demo) attachRowStore(rowStore);
 const localClient = ENV.demo ? (createDemoClient() as unknown as Client) : null;
 
 // Gói Pro: máy nhân viên gửi mọi lệnh tới máy chủ quán trong Wi‑Fi (src/features/lan)
 let lanClient: LanClient | null = null;
 function staffClient(p: StaffPairing): Client {
-  lanClient = new LanClient(p, connect, scanForHost, (ip) => saveStaffPairing({ ...p, hostIp: ip }));
+  lanClient = new LanClient(
+    p,
+    connect,
+    scanForHost,
+    (ip) => saveStaffPairing({ ...p, hostIp: ip }),
+    () => AppState.currentState === 'active',
+  );
   return createLanSupabase(lanClient, () => setStaffPairing(null)) as unknown as Client;
 }
 
@@ -60,10 +66,11 @@ export const supabase: Client = ENV.demo
   ? (new Proxy({} as Client, { get: (_t, k) => (current as unknown as Record<string | symbol, unknown>)[k] }) as Client)
   : current;
 
-// App vào nền / bị tắt: ghi ngay phần chưa lưu
+// App vào nền / bị tắt: ghi ngay phần chưa lưu. Mở lại: máy nhân viên nối lại máy chủ quán
 if (ENV.demo && Platform.OS !== 'web') {
   AppState.addEventListener('change', (state) => {
     if (state !== 'active') persistNow(true);
+    else lanClient?.warmUp();
   });
 }
 

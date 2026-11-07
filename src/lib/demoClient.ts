@@ -138,7 +138,7 @@ function bulkDaysBetween(fromDay: string, toDay: string): number[] {
 }
 
 // ---------------- Dữ liệu trong bộ nhớ ----------------
-const db: Record<string, Row[]> = {
+const TABLES = {
   businesses: [],
   business_members: [],
   payment_accounts: [],
@@ -158,7 +158,153 @@ const db: Record<string, Row[]> = {
   loyalty_events: [],
   invoices: [],
   invoice_lines: [],
-};
+} as Record<string, Row[]>;
+
+// ---------------- Theo dõi thay đổi để chỉ ghi phần đổi (không ghi lại cả kho mỗi lần bán) ----------------
+// Mỗi bảng là mảng bọc Proxy: thêm / sửa một dòng thì đánh dấu đúng dòng đó; thay cả mảng hoặc xóa dòng thì ghi lại cả bảng
+// (chỉ xảy ra ở bảng nhỏ: thành viên, hàng hóa…). Bảng lớn (đơn, dòng đơn, phiếu kho) chỉ thêm và sửa.
+const dirtyRows = new Map<string, Set<string>>();
+const dirtyTables = new Set<string>();
+const proxied = new WeakSet<object>();
+const rowIndex = new WeakMap<object, number>();
+let ordersVersion = 0;
+/** Chỉ mục theo id cho mọi bảng + dòng đơn theo đơn (tránh quét cả bảng ở mỗi lần bán / mỗi lần ghi) */
+const byId = new Map<string, Map<string, Row>>();
+const itemsByOrder = new Map<string, Row[]>();
+const ordersByDay = new Map<string, Row[]>();
+/** daily_sales cộng dồn: mỗi đơn đóng góp vào đúng một ô (quán|ngày|cách trả); đơn đổi thì trừ phần cũ, cộng phần mới */
+const salesAgg = new Map<string, Row>();
+const contrib = new Map<string, { k: string; amt: number }>();
+function applyOrderAgg(o: Row) {
+  const old = contrib.get(o.id);
+  if (old) {
+    const r = salesAgg.get(old.k);
+    if (r) {
+      r.orders_count -= 1;
+      r.amount -= old.amt;
+      if (r.orders_count <= 0) salesAgg.delete(old.k);
+    }
+    contrib.delete(o.id);
+  }
+  if (o.payment_status !== 'PAID' || typeof o.sold_at !== 'string') return;
+  const day = dayOf(o.sold_at);
+  const k = `${o.business_id}|${day}|${o.payment_method}`;
+  const r = salesAgg.get(k) ?? { business_id: o.business_id, sale_date: day, method: o.payment_method, orders_count: 0, amount: 0 };
+  r.orders_count += 1;
+  r.amount += o.total_amount;
+  salesAgg.set(k, r);
+  contrib.set(o.id, { k, amt: o.total_amount });
+}
+
+function indexRow(t: string, r: Row) {
+  if (typeof r.id === 'string') {
+    let m = byId.get(t);
+    if (!m) byId.set(t, (m = new Map()));
+    m.set(r.id, r);
+  }
+  if (t === 'orders' && typeof r.sold_at === 'string') {
+    const k = `${r.business_id}|${dayOf(r.sold_at)}`;
+    const list = ordersByDay.get(k);
+    if (list) {
+      if (!list.includes(r)) list.push(r);
+    } else ordersByDay.set(k, [r]);
+    applyOrderAgg(r);
+  }
+  if (t === 'order_items' && typeof r.order_id === 'string') {
+    const list = itemsByOrder.get(r.order_id);
+    if (list) {
+      if (!list.includes(r)) list.push(r);
+    } else itemsByOrder.set(r.order_id, [r]);
+  }
+}
+
+function markRow(t: string, raw: Row) {
+  if (t === 'orders') {
+    ordersVersion++;
+    if (typeof raw.id === 'string') applyOrderAgg(raw);
+  }
+  const k = typeof raw.id === 'string' ? raw.id : null;
+  if (!k) dirtyTables.add(t);
+  else {
+    let set = dirtyRows.get(t);
+    if (!set) dirtyRows.set(t, (set = new Set()));
+    set.add(k);
+  }
+  scheduleSave();
+}
+
+function wrapRow(t: string, r: Row): Row {
+  if (proxied.has(r)) return r;
+  const px = new Proxy(r, {
+    set(o, k, v) {
+      (o as Row)[k as string] = v;
+      markRow(t, o);
+      return true;
+    },
+    deleteProperty(o, k) {
+      delete (o as Row)[k as string];
+      markRow(t, o);
+      return true;
+    },
+  });
+  proxied.add(px);
+  return px;
+}
+
+function wrapTable(t: string, arr: Row[]): Row[] {
+  const a = arr.map((r) => wrapRow(t, r));
+  a.forEach((r, i) => rowIndex.set(r, i));
+  byId.set(t, new Map());
+  if (t === 'order_items') itemsByOrder.clear();
+  if (t === 'orders') {
+    ordersByDay.clear();
+    salesAgg.clear();
+    contrib.clear();
+  }
+  for (const r of a) indexRow(t, r);
+  if (t === 'orders') ordersVersion++;
+  return new Proxy(a, {
+    set(o, k, v) {
+      if (k === 'length') {
+        if ((v as number) < o.length) dirtyTables.add(t);
+        o.length = v as number;
+        return true;
+      }
+      const i = typeof k === 'string' ? Number(k) : NaN;
+      if (Number.isInteger(i) && v && typeof v === 'object') {
+        const w = wrapRow(t, v as Row);
+        o[i] = w;
+        rowIndex.set(w, i);
+        indexRow(t, w);
+        markRow(t, w);
+        return true;
+      }
+      (o as unknown as Record<string | symbol, unknown>)[k] = v;
+      return true;
+    },
+    deleteProperty(o, k) {
+      delete (o as unknown as Record<string | symbol, unknown>)[k];
+      dirtyTables.add(t);
+      return true;
+    },
+  });
+}
+
+const db: Record<string, Row[]> = new Proxy({} as Record<string, Row[]>, {
+  set(o, t, v) {
+    o[t as string] = wrapTable(t as string, v as Row[]);
+    dirtyTables.add(t as string);
+    return true;
+  },
+});
+for (const [t, rows] of Object.entries(TABLES)) db[t] = rows;
+dirtyTables.clear();
+
+/** Tìm đơn theo id không phải quét cả bảng */
+const findOrder = (id: string): Row | undefined => byId.get('orders')?.get(id);
+const findRow = (t: string, id: string): Row | undefined => byId.get(t)?.get(id);
+const orderItems = (orderId: string): Row[] => itemsByOrder.get(orderId) ?? [];
+
 let user: { id: string; phone: string } | null = null;
 
 // ---------------- Lưu xuống máy ----------------
@@ -166,8 +312,24 @@ export interface LocalStorageAdapter {
   load(): string | null;
   save(json: string): void;
 }
+
+/** Lưu từng dòng (SQLite): chỉ ghi dòng đổi; bảng thay cả thì ghi lại cả bảng. */
+export interface RowStoreAdapter {
+  /** Toàn bộ dòng đã lưu, theo bảng và thứ tự */
+  loadRows(): { t: string; k: string; n: number; j: string }[];
+  loadMeta(): string | null;
+  apply(c: {
+    replace: { t: string; rows: { k: string; n: number; j: string }[] }[];
+    upsert: { t: string; k: string; n: number; j: string }[];
+    meta: string;
+  }): void;
+  /** Bản lưu cả khối cũ (trước khi chuyển sang lưu từng dòng) để chuyển dữ liệu một lần */
+  legacyLoad(): string | null;
+  legacyClear(): void;
+}
 const SNAPSHOT_VERSION = 1;
 let storage: LocalStorageAdapter | null = null;
+let rowStore: RowStoreAdapter | null = null;
 let saveTimer: ReturnType<typeof setTimeout> | null = null;
 
 function snapshot(): string {
@@ -181,6 +343,7 @@ function applyTables(tables: Record<string, Row[]>) {
 /** Gắn nơi lưu (SQLite trên máy) và nạp lại dữ liệu đã lưu. Gọi một lần lúc mở app. */
 export function attachStorage(s: LocalStorageAdapter) {
   storage = s;
+  rowStore = null;
   try {
     const raw = s.load();
     if (raw) {
@@ -193,22 +356,81 @@ export function attachStorage(s: LocalStorageAdapter) {
   } catch {
     // Dữ liệu lưu hỏng: giữ nguyên bản trong máy, không ghi đè cho tới lần ghi kế tiếp
   }
+  dirtyTables.clear();
+  dirtyRows.clear();
+}
+
+/** Gắn kho lưu từng dòng (SQLite) và nạp lại; chuyển một lần từ bản lưu cả khối cũ nếu có. */
+export function attachRowStore(rs: RowStoreAdapter) {
+  rowStore = rs;
+  storage = null;
+  try {
+    const rows = rs.loadRows();
+    if (rows.length === 0) {
+      const legacy = rs.legacyLoad();
+      if (legacy) {
+        const snap = JSON.parse(legacy) as { v: number; user: typeof user; db: Record<string, Row[]> };
+        if (snap?.v === SNAPSHOT_VERSION && snap.db) {
+          applyTables(snap.db);
+          user = snap.user ?? null;
+          for (const t of Object.keys(db)) dirtyTables.add(t);
+          writeRows();
+          rs.legacyClear();
+        }
+      }
+    } else {
+      const byTable: Record<string, Row[]> = {};
+      for (const r of rows) (byTable[r.t] ??= []).push(JSON.parse(r.j));
+      applyTables(byTable);
+      const meta = rs.loadMeta();
+      user = meta ? ((JSON.parse(meta) as { user: typeof user }).user ?? null) : null;
+    }
+  } catch {
+    // Kho lỗi: chạy với dữ liệu trống trong phiên này, không ghi đè kho cũ cho tới lần ghi kế tiếp
+  }
+  dirtyTables.clear();
+  dirtyRows.clear();
+}
+
+function writeRows() {
+  if (!rowStore) return;
+  const replace = [...dirtyTables].map((t) => ({
+    t,
+    rows: (db[t] ?? []).map((r, i) => ({ k: typeof r.id === 'string' ? r.id : `#${i}`, n: i, j: JSON.stringify(r) })),
+  }));
+  const upsert: { t: string; k: string; n: number; j: string }[] = [];
+  for (const [t, keys] of dirtyRows) {
+    if (dirtyTables.has(t)) continue;
+    for (const k of keys) {
+      const r = findRow(t, k);
+      if (r) upsert.push({ t, k, n: rowIndex.get(r) ?? 0, j: JSON.stringify(r) });
+    }
+  }
+  dirtyTables.clear();
+  dirtyRows.clear();
+  rowStore.apply({ replace, upsert, meta: JSON.stringify({ v: SNAPSHOT_VERSION, user }) });
+}
+
+function scheduleSave() {
+  if ((!storage && !rowStore) || saveTimer) return;
+  saveTimer = setTimeout(() => persistNow(true), 300);
 }
 
 /** Ghi xuống máy (gộp nhiều thay đổi liên tiếp). flush=true: ghi ngay (app sắp vào nền). */
 export function persistNow(flush = false) {
-  if (!storage) return;
+  if (!storage && !rowStore) return;
+  if (!flush) {
+    scheduleSave();
+    return;
+  }
   if (saveTimer) clearTimeout(saveTimer);
   saveTimer = null;
-  const write = () => {
-    try {
-      storage?.save(snapshot());
-    } catch {
-      // Hết chỗ trống / lỗi ghi: lần sau thử lại
-    }
-  };
-  if (flush) write();
-  else saveTimer = setTimeout(write, 300);
+  try {
+    if (rowStore) writeRows();
+    else storage?.save(snapshot());
+  } catch {
+    // Hết chỗ trống / lỗi ghi: lần sau thử lại
+  }
 }
 
 // ---------------- Sao lưu / khôi phục bằng file ----------------
@@ -365,7 +587,9 @@ function newOrder(bizId: string, items: Row[], method: string, deviceId: string 
   };
 }
 
-function updateOrder(o: Row, patch: Row) {
+function updateOrder(raw: Row, patch: Row) {
+  // Luôn sửa qua bản bọc trong bảng (bản gốc giữ trong hẹn giờ không được theo dõi thay đổi)
+  const o = findOrder(raw.id) ?? raw;
   const wasPaid = o.payment_status === 'PAID';
   Object.assign(o, patch, { updated_at: nowIso() });
   o.overpaid_amount = Math.max(o.amount_received - o.total_amount, 0);
@@ -385,7 +609,7 @@ function saveItems(orderId: string, items: Row[]) {
 /** Đơn vừa trả xong: trừ kho món có theo dõi, cộng điểm khách quen, trừ sổ nợ (đơn thu nợ bằng QR). */
 function onPaid(o: Row) {
   const byProduct = new Map<string, number>();
-  for (const it of db.order_items!.filter((x) => x.order_id === o.id && x.product_id)) byProduct.set(it.product_id, (byProduct.get(it.product_id) ?? 0) + it.quantity);
+  for (const it of orderItems(o.id).filter((x) => x.product_id)) byProduct.set(it.product_id, (byProduct.get(it.product_id) ?? 0) + it.quantity);
   for (const [pid, qty] of byProduct) {
     const p = db.products!.find((x) => x.id === pid);
     if (!p?.track_stock || db.stock_movements!.some((m) => m.kind === 'SALE' && m.order_id === o.id && m.product_id === pid)) continue;
@@ -457,19 +681,21 @@ function paidRowsFor(bizId: string) {
   return db.orders!.filter((o) => o.business_id === bizId && o.payment_status === 'PAID');
 }
 
-function dailySales(): Row[] {
-  const map = new Map<string, Row>();
-  for (const o of db.orders!) {
-    if (o.payment_status !== 'PAID') continue;
-    const day = vnDay(new Date(o.sold_at));
-    const k = `${o.business_id}|${day}|${o.payment_method}`;
-    const r = map.get(k) ?? { business_id: o.business_id, sale_date: day, method: o.payment_method, orders_count: 0, amount: 0 };
-    r.orders_count += 1;
-    r.amount += o.total_amount;
-    map.set(k, r);
+const dayCache = new Map<string, string>();
+function dayOf(soldAt: string): string {
+  let d = dayCache.get(soldAt);
+  if (!d) {
+    d = vnDay(new Date(soldAt));
+    if (dayCache.size > 200_000) dayCache.clear();
+    dayCache.set(soldAt, d);
   }
-  return [...map.values()];
+  return d;
 }
+
+function dailySales(): Row[] {
+  return [...salesAgg.values()].map((r) => ({ ...r }));
+}
+
 
 /** daily_sales của ngày cũ trong khoảng ngày (mặc định cả năm). */
 function bulkDailySales(fromDay = '0000-00-00', toDay = '9999-99-99'): Row[] {
@@ -714,7 +940,7 @@ function rpcImpl(name: string, a: Row): Result {
       const e = needUser();
       if (e) return e;
       if (!member(a.p_business_id)) return fail('QP_FORBIDDEN');
-      const existing = db.orders!.find((o) => o.id === a.p_order_id);
+      const existing = findOrder(a.p_order_id);
       if (existing) return ok(existing);
       const items = (a.p_items ?? []) as Row[];
       if (items.length === 0) return fail('QP_INVALID_ITEMS');
@@ -729,8 +955,9 @@ function rpcImpl(name: string, a: Row): Result {
       if (!cash && SAMPLE) {
         // Giả lập khách quét mã và chuyển đủ tiền
         setTimeout(() => {
-          if (o.payment_status === 'UNPAID' && o.amount_received === 0) {
-            updateOrder(o, { amount_received: o.total_amount, payment_status: 'PAID', paid_at: nowIso() });
+          const cur = findOrder(o.id);
+          if (cur && cur.payment_status === 'UNPAID' && cur.amount_received === 0) {
+            updateOrder(cur, { amount_received: cur.total_amount, payment_status: 'PAID', paid_at: nowIso() });
           }
         }, CUSTOMER_PAYS_AFTER_MS);
       }
@@ -738,7 +965,7 @@ function rpcImpl(name: string, a: Row): Result {
     }
 
     case 'cancel_order_v1': {
-      const o = db.orders!.find((x) => x.id === a.p_order_id);
+      const o = findOrder(a.p_order_id);
       if (!o) return fail('QP_NOT_FOUND');
       if (o.payment_status === 'CANCELLED') return ok({ ...o });
       if (o.payment_status !== 'UNPAID' || o.amount_received > 0) return fail('QP_ORDER_NOT_CANCELLABLE');
@@ -747,7 +974,7 @@ function rpcImpl(name: string, a: Row): Result {
     }
 
     case 'confirm_transfer_manually_v1': {
-      const o = db.orders!.find((x) => x.id === a.p_order_id);
+      const o = findOrder(a.p_order_id);
       if (!o) return fail('QP_NOT_FOUND');
       if (o.payment_status === 'PAID') return ok({ ...o });
       if (o.payment_status !== 'UNPAID') return fail('QP_ORDER_NOT_CONFIRMABLE');
@@ -759,7 +986,7 @@ function rpcImpl(name: string, a: Row): Result {
 
     case 'assign_payment_event_v1': {
       const ev = db.payment_events!.find((x) => x.id === a.p_event_id);
-      const o = db.orders!.find((x) => x.id === a.p_order_id);
+      const o = findOrder(a.p_order_id);
       if (!ev || !o || ev.business_id !== o.business_id) return fail('QP_NOT_FOUND');
       if (ev.match_status !== 'UNMATCHED') return fail('QP_ALREADY_ASSIGNED');
       const received = o.amount_received + ev.amount;
@@ -783,7 +1010,22 @@ function rpcImpl(name: string, a: Row): Result {
       const limit = Math.min(a.p_limit ?? 20, 100);
       const before = (o: Row) => o.sold_at < afterSold || (o.sold_at === afterSold && o.id < afterId);
       const inRange = (o: Row) => o.business_id === a.p_business_id && o.sold_at >= a.p_from && o.sold_at < a.p_to;
-      const candidates = db.orders!.filter((o) => inRange(o) && before(o));
+      // Đơn trong máy: đi theo từng ngày từ mới về cũ, đủ trang thì dừng (như index (business_id, sold_at desc, id desc))
+      const candidates: Row[] = [];
+      {
+        const fromDay = vnDay(new Date(a.p_from));
+        let d = vnDay(new Date(Date.parse(a.p_to) - 1));
+        let got = 0;
+        for (let guard = 0; d >= fromDay && guard < 4000; guard++, d = addDays(d, -1)) {
+          for (const o of ordersByDay.get(`${a.p_business_id}|${d}`) ?? []) {
+            if (inRange(o) && before(o)) {
+              candidates.push(o);
+              got++;
+            }
+          }
+          if (got >= limit) break;
+        }
+      }
       // Ngày cũ: lấy từng ngày từ mới về cũ, đủ một trang thì dừng (giống index (business_id, sold_at desc, id desc))
       if (a.p_business_id === bulkBiz) {
         let found = 0;
@@ -800,10 +1042,17 @@ function rpcImpl(name: string, a: Row): Result {
           if (found >= limit) break;
         }
       }
-      const rows = candidates
-        .sort((x, y) => (x.sold_at === y.sold_at ? (x.id < y.id ? 1 : -1) : x.sold_at < y.sold_at ? 1 : -1))
-        .slice(0, limit);
-      return ok(rows.map((r) => ({ ...r })));
+      // Chỉ giữ `limit` đơn mới nhất (không sắp xếp cả bảng)
+      const newer = (x: Row, y: Row) => x.sold_at > y.sold_at || (x.sold_at === y.sold_at && x.id > y.id);
+      const top: Row[] = [];
+      for (const o of candidates) {
+        if (top.length === limit && !newer(o, top[top.length - 1]!)) continue;
+        let i = top.length;
+        while (i > 0 && newer(o, top[i - 1]!)) i--;
+        top.splice(i, 0, o);
+        if (top.length > limit) top.pop();
+      }
+      return ok(top.map((r) => ({ ...r })));
     }
 
     case 'update_tax_settings_v1': {
@@ -1181,7 +1430,7 @@ function rpcImpl(name: string, a: Row): Result {
     }
 
     case 'set_order_customer_v1': {
-      const o = db.orders!.find((x) => x.id === a.p_order_id);
+      const o = findOrder(a.p_order_id);
       if (!o || !member(o.business_id) || !db.crm_customers!.some((c) => c.id === a.p_customer_id && c.business_id === o.business_id)) return fail('QP_NOT_FOUND');
       if (o.customer_id && o.customer_id !== a.p_customer_id) return fail('QP_ALREADY_ASSIGNED');
       if (!o.customer_id) {
@@ -1221,19 +1470,19 @@ function rpcImpl(name: string, a: Row): Result {
     case 'create_debt_payment_order_v1': {
       const c = db.debt_customers!.find((x) => x.id === a.p_customer_id);
       if (!c || !member(c.business_id)) return fail('QP_NOT_FOUND');
-      const existing = db.orders!.find((x) => x.id === a.p_order_id);
+      const existing = findOrder(a.p_order_id);
       if (existing) return ok({ ...existing });
       if (!(a.p_amount > 0)) return fail('QP_INVALID_INPUT');
       if (a.p_amount > debtBalanceOf(c.id)) return fail('QP_PAYMENT_EXCEEDS_DEBT');
       const r = rpcImpl('create_order_v1', { p_order_id: a.p_order_id, p_business_id: c.business_id, p_items: [{ name: 'Trả nợ', quantity: 1, unit_price: a.p_amount }], p_device_id: a.p_device_id });
       if (r.error) return r;
-      const o = db.orders!.find((x) => x.id === a.p_order_id)!;
+      const o = findOrder(a.p_order_id)!;
       o.debt_customer_id = c.id;
       return ok({ ...o });
     }
 
     case 'create_invoice_from_order_v1': {
-      const o = db.orders!.find((x) => x.id === a.p_order_id);
+      const o = findOrder(a.p_order_id);
       if (!o || !member(o.business_id)) return fail('QP_NOT_FOUND');
       if (o.payment_status !== 'PAID') return fail('QP_ORDER_NOT_PAID');
       const b = db.businesses!.find((x) => x.id === o.business_id)!;
@@ -1313,14 +1562,14 @@ export function createDemoClient() {
             if (b.einvoice_provider !== 'DEMO') return { data: null, error: { message: 'QP_EINVOICE_PROVIDER_NOT_READY' } };
             const year = Number(vnDay().slice(0, 4));
             const no = db.invoices!.filter((x) => x.business_id === inv.business_id && x.symbol === inv.symbol && x.invoice_no).length + 1;
-            const total = db.order_items!.filter((i) => i.order_id === inv.order_id).reduce((t, i) => t + i.line_amount, 0);
+            const total = orderItems(inv.order_id).reduce((t, i) => t + i.line_amount, 0);
             Object.assign(inv, { status: 'ISSUED', invoice_no: no, issued_at: nowIso(), total_amount: total,
               tax_authority_code: `M1-${String(year % 100).padStart(2, '0')}-DEMO0-${String(no).padStart(11, '0')}` });
           }
           return { data: { ...inv }, error: null };
         }
         if (name !== 'qr-for-order') return { data: null, error: { message: `demo: chưa giả lập ${name}` } };
-        const o = db.orders!.find((x) => x.id === opts.body.order_id);
+        const o = findOrder(String(opts.body.order_id));
         if (!o) return { data: null, error: { message: 'QP_NOT_FOUND' } };
         const amount = o.total_amount - o.amount_received;
         const acc = db.payment_accounts!.find((x) => x.business_id === o.business_id && x.is_active && x.kind === 'MAIN');

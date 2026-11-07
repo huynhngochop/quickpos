@@ -500,6 +500,7 @@ export const vi = {
     hostAdvice: 'Nên dùng một máy riêng đặt ở quầy, cắm sạc. Nếu là điện thoại của chủ quán, mang máy đi thì máy nhân viên tạm dừng.',
     noWifi: 'Máy này chưa vào Wi‑Fi. Bật Wi‑Fi của quán rồi thử lại.',
     hostAt: (ip: string) => `Máy chủ quán: ${ip}`,
+    keepAwake: 'Giữ màn hình sáng khi có máy nhân viên đang nối (nên cắm sạc; tắt thì Android có thể ngắt kết nối khi màn hình tắt lâu)',
     addDevice: 'Thêm máy nhân viên',
     staffName: 'Tên nhân viên / tên máy',
     staffRole: 'Quyền',
@@ -546,6 +547,12 @@ export const vi = {
     vendorShare: 'Gửi mã cho khách',
     vendorBadKey: 'Khóa bí mật không đúng.',
     vendorBadShop: 'Mã quán gồm 8 chữ hoặc số.',
+  },
+
+  crash: {
+    title: 'App gặp lỗi',
+    body: 'Đơn và số liệu đã lưu trên máy. Bấm "Mở lại" để tiếp tục. Lỗi lặp lại thì gọi hỗ trợ.',
+    retry: 'Mở lại',
   },
 
   catalog: {

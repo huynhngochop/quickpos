@@ -9,6 +9,8 @@ interface Prefs {
   speak: boolean;
   fontChoice: FontChoice;
   batteryDone: boolean;
+  /** Máy chủ quán (Pro): giữ màn hình sáng khi có máy nhân viên đang nối — tắt nếu máy không cắm sạc */
+  hostKeepAwake: boolean;
   /** Mở khóa bằng PIN chủ quán đến thời điểm này (chỉ trong bộ nhớ, không lưu) */
   ownerUnlockedUntil: number;
   set: (p: Partial<Omit<Prefs, 'set'>>) => void;
@@ -20,13 +22,14 @@ export const usePrefs = create<Prefs>()(
       speak: true,
       fontChoice: 'lg',
       batteryDone: false,
+      hostKeepAwake: true,
       ownerUnlockedUntil: 0,
       set: (p) => set(p),
     }),
     {
       name: 'quickpos.prefs',
       storage: createJSONStorage(() => AsyncStorage),
-      partialize: (s) => ({ speak: s.speak, fontChoice: s.fontChoice, batteryDone: s.batteryDone }),
+      partialize: (s) => ({ speak: s.speak, fontChoice: s.fontChoice, batteryDone: s.batteryDone, hostKeepAwake: s.hostKeepAwake }),
     },
   ),
 );

@@ -215,6 +215,14 @@ Tính theo chiều rộng/cao cửa sổ hiện tại (`useWindowDimensions`), k
   khóa bí mật chỉ người bán giữ, KHÔNG đưa vào repo; màn cấp mã ẩn `/cap-ma`). Hết hạn: máy nhân viên bị chặn, dữ liệu còn nguyên.
   **Premium** (sau) = đồng bộ qua máy chủ đám mây, dữ liệu lớn.
 - Máy chủ quán: một máy giữ dữ liệu, máy nhân viên chỉ gửi lệnh (không đồng bộ hai chiều). iOS không làm máy chủ quán được.
+- **Hiệu năng bộ máy trên máy** (đo 07/11/2026, 100.000 đơn): mỗi lần bán ghi 2–3 dòng SQLite (< 1 ms), không ghi lại cả kho
+  (trước đó ghi cả khối 84 MB, ~0,4 s trên máy tính, vài giây trên điện thoại). Quy tắc:
+  - Không giữ tham chiếu dòng gốc rồi sửa sau khi đã `push` vào bảng: tìm lại qua `findOrder()` / `findRow()` (bản bọc Proxy
+    mới ghi nhận thay đổi).
+  - Tra theo id dùng chỉ mục (`findOrder`, `findRow`, `orderItems`), không `db.x.find()` trên bảng lớn trong đường bán hàng.
+  - Tổng ngày lấy từ `salesAgg` (cộng dồn), danh sách đơn đi theo `ordersByDay`; không quét / sắp xếp cả bảng đơn.
+  - Máy nhân viên: nối lại giãn dần tới 60 giây, dò mạng tối đa 2 phút một lần, không nối khi app ở nền.
+  - Còn lại (chưa làm): đưa đơn cũ hơn 13 tháng ra kho lưu trữ để bộ nhớ không tăng mãi (100.000 đơn ≈ 300–400 MB trên Node).
 - QA: máy `android-local` chạy luồng 11 với bản lưu trên máy; các máy khác chạy dữ liệu mẫu.
 
 ## Khi hoàn thành một thay đổi

@@ -22,6 +22,9 @@ import { useSession } from '../src/features/session/store';
 import { useBusinessRealtime } from '../src/features/sale/realtime';
 import { flushNow } from '../src/features/offline/useQueue';
 import { PaidFlash } from '../src/components/PaidFlash';
+import { Txt } from '../src/components/Txt';
+import { Button } from '../src/components/Button';
+import { vi } from '../src/i18n/vi';
 
 void SplashScreen.preventAutoHideAsync();
 
@@ -75,5 +78,26 @@ export default function RootLayout() {
         </View>
       </QueryClientProvider>
     </SafeAreaProvider>
+  );
+}
+
+/**
+ * Lỗi bất ngờ khi vẽ màn hình: hiện màn báo lỗi bằng chữ + nút mở lại, thay vì app tự đóng.
+ * Dữ liệu đã lưu trên máy sau mỗi thao tác nên mở lại không mất đơn.
+ */
+export function ErrorBoundary({ retry }: { error: Error; retry: () => Promise<void> }) {
+  return (
+    <View style={{ flex: 1, justifyContent: 'center', padding: 24, gap: 16, backgroundColor: colors.ground }}>
+      <Txt variant="heading">{vi.crash.title}</Txt>
+      <Txt>{vi.crash.body}</Txt>
+      <Button
+        big
+        label={vi.crash.retry}
+        onPress={() => {
+          void retry();
+          router.replace('/');
+        }}
+      />
+    </View>
   );
 }

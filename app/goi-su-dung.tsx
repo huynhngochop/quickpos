@@ -7,12 +7,13 @@ import { Txt } from '../src/components/Txt';
 import { Button } from '../src/components/Button';
 import { ChoiceGrid, Field } from '../src/components/Choice';
 import { ConfirmSheet } from '../src/components/ConfirmSheet';
-import { ErrorView, Loading, callSupport } from '../src/components/States';
+import { Checkbox, ErrorView, Loading, callSupport } from '../src/components/States';
+import { usePrefs } from '../src/features/settings/prefs';
 import { useBusinessId, useSession } from '../src/features/session/store';
 import { usePlan } from '../src/features/plan/hooks';
 import { activateLicense, startProTrial } from '../src/features/plan/api';
 import { formatShopKey, shopKey } from '../src/features/plan/license';
-import { HOST_PORT, getHost, hostIdNow, hostIp, syncHost } from '../src/features/lan/hostRuntime';
+import { HOST_PORT, getHost, hostIdNow, hostIp, refreshKeepAwake, syncHost } from '../src/features/lan/hostRuntime';
 import { encodePairingQr, type LanRole } from '../src/features/lan/protocol';
 import { buildVietQr } from '../supabase/functions/_shared/vietqr';
 import { bankDisplayName } from '../src/lib/banks';
@@ -188,6 +189,7 @@ function Devices({ businessId, shopName }: { businessId: string; shopName: strin
   };
 
   const devices = host.list();
+  const keepAwake = usePrefs((s) => s.hostKeepAwake);
   const expired = pair ? pair.expiresAt <= now : false;
 
   return (
@@ -206,6 +208,14 @@ function Devices({ businessId, shopName }: { businessId: string; shopName: strin
         </Txt>
       ) : null}
 
+      <Checkbox
+        label={vi.plan.keepAwake}
+        value={keepAwake}
+        onChange={(v) => {
+          usePrefs.getState().set({ hostKeepAwake: v });
+          refreshKeepAwake();
+        }}
+      />
       {devices.length === 0 ? <Txt tone="secondary">{vi.plan.noDevices}</Txt> : null}
       {devices.map((d) => (
         <View key={d.deviceId} style={{ gap: space.xs, borderTopWidth: 1, borderTopColor: colors.divider, paddingTop: space.sm }}>

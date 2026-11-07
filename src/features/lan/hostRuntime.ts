@@ -12,6 +12,7 @@ import { addLanMember, hostExecute, onAnyOrder, removeLanMember } from '../../li
 import { supabase } from '../../lib/supabase';
 import { planStatus } from '../plan/license';
 import type { PlanRow } from '../plan/types';
+import { usePrefs } from '../settings/prefs';
 
 interface HostState {
   hostId: string;
@@ -54,7 +55,7 @@ export function getHost(): LanHost {
 }
 
 async function keepAwake() {
-  const want = (host?.connectedCount() ?? 0) > 0;
+  const want = (host?.connectedCount() ?? 0) > 0 && usePrefs.getState().hostKeepAwake;
   if (want === awake) return;
   awake = want;
   try {
@@ -87,6 +88,8 @@ export function stopHost() {
 }
 
 export const hostRunning = () => server !== null;
+/** Đổi tùy chọn giữ màn hình sáng: áp dụng ngay */
+export const refreshKeepAwake = () => void keepAwake();
 export const hostIp = wifiIp;
 export const HOST_PORT = LAN_PORT;
 export const hostIdNow = () => state().hostId;
