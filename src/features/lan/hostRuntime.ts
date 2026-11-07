@@ -1,7 +1,8 @@
 /**
  * Chạy máy chủ quán trên máy chính (gói Pro, chế độ lưu trên máy). Một bản duy nhất cho cả app.
  * Bật khi quán có gói Pro còn hạn và (đã có máy nhân viên ghép, hoặc đang mở ghép máy).
- * Giữ màn hình không tắt khi có máy nhân viên đang nối (Android có thể dừng app nằm nền).
+ * Android: dịch vụ chạy nền có thông báo cố định (modules/qp-foreground) giữ app sống khi tắt màn hình; chỉ giữ CPU + Wi‑Fi
+ * thức khi có máy nhân viên đang nối. Giữ màn hình sáng là tùy chọn thêm.
  */
 import { activateKeepAwakeAsync, deactivateKeepAwake } from 'expo-keep-awake';
 import { LanHost, type LanDevice } from './host';
@@ -13,6 +14,7 @@ import { supabase } from '../../lib/supabase';
 import { planStatus } from '../plan/license';
 import type { PlanRow } from '../plan/types';
 import { usePrefs } from '../settings/prefs';
+import { foregroundOff, foregroundOn } from './foreground';
 
 interface HostState {
   hostId: string;
@@ -50,7 +52,10 @@ export function getHost(): LanHost {
     execute: (userId, req) =>
       hostExecute(userId, req as never, (name, opts) => supabase.functions.invoke(name, opts as never) as never),
   });
-  host.subscribe(() => void keepAwake());
+  host.subscribe(() => {
+    void keepAwake();
+    if (server) foregroundOn(host?.connectedCount() ?? 0);
+  });
   return host;
 }
 
@@ -76,6 +81,8 @@ export function syncHost(next: { businessId: string; name: string } | null, next
     server = listen(LAN_PORT, (c) => h.attach(c));
     offOrders = onAnyOrder((row) => h.broadcastOrder(row));
   }
+  // Android: dịch vụ chạy nền để máy chủ quán không bị dừng khi tắt màn hình (thử lại mỗi lần mở trang chính)
+  if (want) foregroundOn(h.connectedCount(), true);
   if (!want && server) stopHost();
 }
 
@@ -84,6 +91,7 @@ export function stopHost() {
   server = null;
   offOrders?.();
   offOrders = null;
+  foregroundOff();
   void keepAwake();
 }
 

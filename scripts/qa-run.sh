@@ -11,7 +11,8 @@ mkdir -p "$OUT"
 cd "$OUT"
 export PATH="$PATH:$HOME/.maestro/bin"
 FLOWS=(01-onboarding 02-thu-tien-qr 03-xac-nhan-tay-va-huy 04-tien-mat 05-so-va-xem-lai 07-du-lieu-lon 08-so-no-chi-tieu-bao-cao-thue 09-hang-hoa-ban-mon-khach-ca-hoa-don 10-quan-ly-hang-hoa 06-cai-dat)
-# QA_FLOWS="11-luu-tren-may": chỉ chạy các luồng này (máy android-local chạy bản lưu trên máy)
+# QA_FLOWS="11-luu-tren-may": chỉ chạy các luồng này (máy android-local chạy bản lưu trên máy).
+# Mục "sh:<tên>" chạy scripts/<tên>.sh thay cho một luồng Maestro (QA hai máy).
 if [ -n "${QA_FLOWS:-}" ]; then read -r -a FLOWS <<< "$QA_FLOWS"; fi
 summary="$OUT/SUMMARY.md"
 echo "# QA $LABEL — $(date -u +%FT%TZ)" > "$summary"
@@ -20,11 +21,17 @@ total_fail=0
 for round in $(seq 1 "$ROUNDS"); do
   echo "## Vòng $round" >> "$summary"
   for f in "${FLOWS[@]}"; do
-    dir="r${round}-${f}"
+    dir="r${round}-${f/:/-}"
     mkdir -p "$dir"
     start=$(date +%s)
-    ( cd "$dir" && maestro test "$ROOT/.maestro/${f}.yaml" --format junit --output report.xml --test-output-dir . ) > "$dir/maestro.log" 2>&1
-    code=$?
+    if [ "${f#sh:}" != "$f" ]; then
+      # Bước chạy script (vd. sh:qa-lan-staff = máy nhân viên giả nối vào máy chủ quán đang mở trên máy ảo)
+      ( cd "$dir" && bash "$ROOT/scripts/${f#sh:}.sh" ) > "$dir/maestro.log" 2>&1
+      code=$?
+    else
+      ( cd "$dir" && maestro test "$ROOT/.maestro/${f}.yaml" --format junit --output report.xml --test-output-dir . ) > "$dir/maestro.log" 2>&1
+      code=$?
+    fi
     # Lỗi hạ tầng (trình điều khiển máy ảo khởi động chậm), không phải lỗi app: chạy lại luồng một lần
     if [ "$code" -ne 0 ] && grep -q "driver not ready in time" "$dir/maestro.log"; then
       echo "- ↻ $f: trình điều khiển máy ảo chưa sẵn sàng, chạy lại" >> "$summary"

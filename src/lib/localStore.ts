@@ -19,7 +19,11 @@ function handle(): SQLite.SQLiteDatabase {
   dbh.execSync(
     'PRAGMA journal_mode = WAL; PRAGMA synchronous = NORMAL; ' +
       'CREATE TABLE IF NOT EXISTS qp_rows (t TEXT NOT NULL, k TEXT NOT NULL, n INTEGER NOT NULL, j TEXT NOT NULL, PRIMARY KEY (t, k)); ' +
-      'CREATE INDEX IF NOT EXISTS qp_rows_order ON qp_rows (t, n);',
+      'CREATE INDEX IF NOT EXISTS qp_rows_order ON qp_rows (t, n); ' +
+      // Kho lưu trữ đơn cũ hơn 13 tháng: không nạp khi mở app, tra theo id / id đơn / quán|ngày
+      'CREATE TABLE IF NOT EXISTS qp_archive (t TEXT NOT NULL, k TEXT NOT NULL, o TEXT, d TEXT, j TEXT NOT NULL, PRIMARY KEY (t, k)); ' +
+      'CREATE INDEX IF NOT EXISTS qp_archive_o ON qp_archive (t, o); ' +
+      'CREATE INDEX IF NOT EXISTS qp_archive_d ON qp_archive (t, d);',
   );
   return dbh;
 }
@@ -27,9 +31,22 @@ function handle(): SQLite.SQLiteDatabase {
 export const rowStore: RowStoreAdapter = {
   loadRows: () => handle().getAllSync<{ t: string; k: string; n: number; j: string }>('SELECT t, k, n, j FROM qp_rows ORDER BY t, n'),
   loadMeta: () => Storage.getItemSync(META_KEY),
-  apply({ replace, upsert, meta }) {
+  apply({ replace, upsert, meta, archive }) {
     const h = handle();
     h.withTransactionSync(() => {
+      if (archive?.length) {
+        const put = h.prepareSync('INSERT OR REPLACE INTO qp_archive (t, k, o, d, j) VALUES (?, ?, ?, ?, ?)');
+        const del = h.prepareSync('DELETE FROM qp_rows WHERE t = ? AND k = ?');
+        try {
+          for (const r of archive) {
+            put.executeSync([r.t, r.k, r.o, r.d, r.j]);
+            del.executeSync([r.t, r.k]);
+          }
+        } finally {
+          put.finalizeSync();
+          del.finalizeSync();
+        }
+      }
       const ins = h.prepareSync('INSERT OR REPLACE INTO qp_rows (t, k, n, j) VALUES (?, ?, ?, ?)');
       try {
         for (const tb of replace) {
@@ -45,6 +62,12 @@ export const rowStore: RowStoreAdapter = {
   },
   legacyLoad: () => Storage.getItemSync(LEGACY_KEY),
   legacyClear: () => void Storage.removeItemSync(LEGACY_KEY),
+  archiveFind: (t, col, v) =>
+    handle()
+      .getAllSync<{ j: string }>(`SELECT j FROM qp_archive WHERE t = ? AND ${col === 'k' ? 'k' : col === 'o' ? 'o' : 'd'} = ?`, [t, v])
+      .map((r) => r.j),
+  archiveAll: () => handle().getAllSync<{ t: string; j: string }>('SELECT t, j FROM qp_archive'),
+  archiveClear: () => void handle().runSync('DELETE FROM qp_archive', []),
 };
 
 export function lastBackupAt(): string | null {

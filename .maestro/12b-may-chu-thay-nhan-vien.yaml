@@ -1,0 +1,23 @@
+appId: vn.quickpos.app
+---
+# QA hai máy, phần 2 (máy chủ quán): máy nhân viên giả đã ghép và bán 23.000 đ tiền mặt.
+# Máy chủ quán thấy máy nhân viên trong danh sách, thấy đơn trong sổ hôm nay, thu hồi được máy.
+- scrollUntilVisible:
+    element: "Thu ngan Lan · Thu ngân"
+    direction: UP
+- takeScreenshot: "221-may-nhan-vien-da-ghep"
+- back
+- runFlow:
+    when:
+      notVisible: "Hôm nay đã thu.*"
+    commands:
+      - back
+- extendedWaitUntil:
+    visible: "Hôm nay đã thu.*"
+    timeout: 10000
+- takeScreenshot: "222-trang-chinh-co-don-nhan-vien"
+- tapOn: "Sổ hôm nay"
+- extendedWaitUntil:
+    visible: ".*23.000 đ.*"
+    timeout: 10000
+- takeScreenshot: "223-so-hom-nay-don-nhan-vien"

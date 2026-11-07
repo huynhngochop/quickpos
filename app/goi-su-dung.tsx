@@ -168,6 +168,7 @@ function Devices({ businessId, shopName }: { businessId: string; shopName: strin
   const [name, setName] = useState('');
   const [role, setRole] = useState<LanRole>('CASHIER');
   const [pair, setPair] = useState<{ qr: string; expiresAt: number } | null>(null);
+  const [showText, setShowText] = useState(false);
   const [now, setNow] = useState(Date.now());
   const [revoke, setRevoke] = useState<{ id: string; name: string } | null>(null);
   const ip = useQuery({ queryKey: ['lan-ip'], queryFn: hostIp, refetchInterval: 15_000 });
@@ -185,6 +186,7 @@ function Devices({ businessId, shopName }: { businessId: string; shopName: strin
     syncHost({ businessId, name: shopName }, planRow, true);
     const p = host.startPairing(role, name || vi.plan.roles[role]!);
     setPair({ qr: encodePairingQr({ h: ip.data, p: HOST_PORT, i: hostIdNow(), k: p.key }), expiresAt: p.expiresAt });
+    setShowText(false);
     setNow(Date.now());
   };
 
@@ -252,6 +254,18 @@ function Devices({ businessId, shopName }: { businessId: string; shopName: strin
             {vi.plan.qrExpires(mmss(pair.expiresAt - now))}
           </Txt>
           <Button kind="link" label={vi.plan.sharePair} onPress={() => void Share.share({ message: pair.qr })} />
+          {showText ? (
+            <>
+              <Txt variant="small" tone="secondary" center>
+                {vi.plan.pairTextHelp}
+              </Txt>
+              <Txt variant="small" selectable center testID="lan-pair-text">
+                {pair.qr}
+              </Txt>
+            </>
+          ) : (
+            <Button kind="link" label={vi.plan.showPairText} onPress={() => setShowText(true)} testID="lan-pair-show-text" />
+          )}
         </View>
       ) : pair && expired ? (
         <Txt tone="warn">{vi.plan.qrExpired}</Txt>

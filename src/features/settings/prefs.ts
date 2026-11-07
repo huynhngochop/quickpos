@@ -22,7 +22,7 @@ export const usePrefs = create<Prefs>()(
       speak: true,
       fontChoice: 'lg',
       batteryDone: false,
-      hostKeepAwake: true,
+      hostKeepAwake: false,
       ownerUnlockedUntil: 0,
       set: (p) => set(p),
     }),

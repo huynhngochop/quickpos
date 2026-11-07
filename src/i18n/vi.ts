@@ -500,7 +500,11 @@ export const vi = {
     hostAdvice: 'Nên dùng một máy riêng đặt ở quầy, cắm sạc. Nếu là điện thoại của chủ quán, mang máy đi thì máy nhân viên tạm dừng.',
     noWifi: 'Máy này chưa vào Wi‑Fi. Bật Wi‑Fi của quán rồi thử lại.',
     hostAt: (ip: string) => `Máy chủ quán: ${ip}`,
-    keepAwake: 'Giữ màn hình sáng khi có máy nhân viên đang nối (nên cắm sạc; tắt thì Android có thể ngắt kết nối khi màn hình tắt lâu)',
+    keepAwake: 'Giữ màn hình sáng khi có máy nhân viên đang nối (không bắt buộc: QuickPOS vẫn chạy khi tắt màn hình; bật nếu máy hay ngắt kết nối)',
+    // Thông báo cố định khi máy này làm máy chủ quán (Android)
+    fgTitle: 'QuickPOS đang làm máy chủ quán',
+    fgBody: (n: number) =>
+      n > 0 ? `${n} máy nhân viên đang nối. Đừng vuốt tắt QuickPOS.` : 'Chờ máy nhân viên nối vào. Đừng vuốt tắt QuickPOS.',
     addDevice: 'Thêm máy nhân viên',
     staffName: 'Tên nhân viên / tên máy',
     staffRole: 'Quyền',
@@ -526,6 +530,8 @@ export const vi = {
     pairPaste: 'Hoặc dán mã ghép máy',
     pairPasteFirst: 'Quét mã hoặc dán mã trước',
     sharePair: 'Gửi mã ghép máy qua Zalo (để dán trên máy nhân viên)',
+    showPairText: 'Không quét được? Hiện mã dạng chữ',
+    pairTextHelp: 'Chép mã này sang máy nhân viên, dán vào ô "Hoặc dán mã ghép máy".',
     pairGo: 'Nối máy',
     pairBad: 'Mã này không phải mã ghép máy của QuickPOS.',
     pairing: 'Đang nối…',

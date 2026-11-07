@@ -203,6 +203,12 @@ business_id, business_name, orders, tables }` gồm mọi bảng của một qu�
 Drive). Khôi phục thay toàn bộ dữ liệu trên máy; người đang đăng nhập thành chủ quán, nhân viên máy cũ bỏ đi.
 Nhiều máy / nhân viên trên nhiều máy cần bản có máy chủ (gói Premium, chưa làm).
 
+Kho lưu trữ: đơn cũ hơn 13 tháng (tính cả tháng này) cùng `order_items`, `payment_events`, `stock_movements`, `loyalty_events`
+của đơn đó chuyển khỏi bộ nhớ sang kho lưu trữ trên máy. App gọi như cũ: `from('orders').eq('id', …)`,
+`from('order_items').eq('order_id', …)`, `list_orders` vẫn trả đơn đã lưu trữ (chỉ đọc). `daily_sales` / `day_summary` cộng cả
+tổng của đơn đã lưu trữ. File sao lưu gồm cả đơn đã lưu trữ. `top_products`, `sales_by_hour` của kỳ cũ hơn 13 tháng không còn
+chi tiết (chỉ còn tổng ngày).
+
 ### 9.1 Gói Pro (lưu trên máy)
 
 | Lời gọi | Ai | Tham số | Trả về | Lỗi |

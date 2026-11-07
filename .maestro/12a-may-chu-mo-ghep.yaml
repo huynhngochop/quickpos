@@ -1,0 +1,17 @@
+appId: vn.quickpos.app
+---
+# QA hai máy, phần 1 (máy chủ quán): tiếp theo luồng 11 (đang ở màn Gói sử dụng, Pro dùng thử).
+# Mở mã ghép máy và hiện mã dạng chữ để máy nhân viên giả (scripts/qa-lan-client.ts) đọc được qua cây giao diện.
+- scrollUntilVisible:
+    element: "Hiện mã ghép máy"
+    direction: UP
+- tapOn: "Hiện mã ghép máy"
+- scrollUntilVisible:
+    element:
+      id: "lan-pair-show-text"
+- tapOn: { id: "lan-pair-show-text" }
+- scrollUntilVisible:
+    element:
+      id: "lan-pair-text"
+- assertVisible: "QPLAN1:.*"
+- takeScreenshot: "220-ma-ghep-dang-chu"

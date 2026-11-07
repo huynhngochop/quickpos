@@ -158,6 +158,8 @@ const TABLES = {
   loyalty_events: [],
   invoices: [],
   invoice_lines: [],
+  /** Tổng ngày của các đơn đã chuyển vào kho lưu trữ (giữ báo cáo / thuế đủ số khi đơn cũ không còn trong bộ nhớ) */
+  archived_daily_sales: [],
 } as Record<string, Row[]>;
 
 // ---------------- Theo dõi thay đổi để chỉ ghi phần đổi (không ghi lại cả kho mỗi lần bán) ----------------
@@ -167,6 +169,10 @@ const dirtyRows = new Map<string, Set<string>>();
 const dirtyTables = new Set<string>();
 const proxied = new WeakSet<object>();
 const rowIndex = new WeakMap<object, number>();
+/** Số thứ tự kế tiếp của mỗi bảng (cột n): dòng mới luôn đứng sau, kể cả khi đã có dòng chuyển đi lưu trữ */
+const nextN = new Map<string, number>();
+/** Mảng gốc (không bọc) của mỗi bảng: để chuyển dòng đi lưu trữ mà không đánh dấu ghi lại cả bảng */
+const rawOf = new Map<string, Row[]>();
 let ordersVersion = 0;
 /** Chỉ mục theo id cho mọi bảng + dòng đơn theo đơn (tránh quét cả bảng ở mỗi lần bán / mỗi lần ghi) */
 const byId = new Map<string, Map<string, Row>>();
@@ -175,17 +181,19 @@ const ordersByDay = new Map<string, Row[]>();
 /** daily_sales cộng dồn: mỗi đơn đóng góp vào đúng một ô (quán|ngày|cách trả); đơn đổi thì trừ phần cũ, cộng phần mới */
 const salesAgg = new Map<string, Row>();
 const contrib = new Map<string, { k: string; amt: number }>();
-function applyOrderAgg(o: Row) {
-  const old = contrib.get(o.id);
-  if (old) {
-    const r = salesAgg.get(old.k);
-    if (r) {
-      r.orders_count -= 1;
-      r.amount -= old.amt;
-      if (r.orders_count <= 0) salesAgg.delete(old.k);
-    }
-    contrib.delete(o.id);
+function unAgg(id: string) {
+  const old = contrib.get(id);
+  if (!old) return;
+  const r = salesAgg.get(old.k);
+  if (r) {
+    r.orders_count -= 1;
+    r.amount -= old.amt;
+    if (r.orders_count <= 0) salesAgg.delete(old.k);
   }
+  contrib.delete(id);
+}
+function applyOrderAgg(o: Row) {
+  unAgg(o.id);
   if (o.payment_status !== 'PAID' || typeof o.sold_at !== 'string') return;
   const day = dayOf(o.sold_at);
   const k = `${o.business_id}|${day}|${o.payment_method}`;
@@ -254,6 +262,8 @@ function wrapRow(t: string, r: Row): Row {
 function wrapTable(t: string, arr: Row[]): Row[] {
   const a = arr.map((r) => wrapRow(t, r));
   a.forEach((r, i) => rowIndex.set(r, i));
+  nextN.set(t, a.length);
+  rawOf.set(t, a);
   byId.set(t, new Map());
   if (t === 'order_items') itemsByOrder.clear();
   if (t === 'orders') {
@@ -274,7 +284,9 @@ function wrapTable(t: string, arr: Row[]): Row[] {
       if (Number.isInteger(i) && v && typeof v === 'object') {
         const w = wrapRow(t, v as Row);
         o[i] = w;
-        rowIndex.set(w, i);
+        const n = Math.max(i, nextN.get(t) ?? 0);
+        rowIndex.set(w, n);
+        nextN.set(t, n + 1);
         indexRow(t, w);
         markRow(t, w);
         return true;
@@ -322,10 +334,24 @@ export interface RowStoreAdapter {
     replace: { t: string; rows: { k: string; n: number; j: string }[] }[];
     upsert: { t: string; k: string; n: number; j: string }[];
     meta: string;
+    /** Chuyển sang kho lưu trữ trong cùng giao dịch: ghi vào kho rồi xóa khỏi qp_rows */
+    archive?: ArchiveRow[];
   }): void;
   /** Bản lưu cả khối cũ (trước khi chuyển sang lưu từng dòng) để chuyển dữ liệu một lần */
   legacyLoad(): string | null;
   legacyClear(): void;
+  /** Kho lưu trữ đơn cũ (không nạp vào bộ nhớ). Thiếu thì không chuyển đơn đi lưu trữ. */
+  archiveFind?(t: string, col: 'k' | 'o' | 'd', v: string): string[];
+  archiveAll?(): { t: string; j: string }[];
+  archiveClear?(): void;
+}
+/** Dòng chuyển sang kho lưu trữ: k = id, o = id đơn (dòng con của đơn), d = 'quán|ngày' (đơn) */
+export interface ArchiveRow {
+  t: string;
+  k: string;
+  o: string | null;
+  d: string | null;
+  j: string;
 }
 const SNAPSHOT_VERSION = 1;
 let storage: LocalStorageAdapter | null = null;
@@ -380,10 +406,23 @@ export function attachRowStore(rs: RowStoreAdapter) {
       }
     } else {
       const byTable: Record<string, Row[]> = {};
-      for (const r of rows) (byTable[r.t] ??= []).push(JSON.parse(r.j));
+      const ns: Record<string, number[]> = {};
+      for (const r of rows) {
+        (byTable[r.t] ??= []).push(JSON.parse(r.j));
+        (ns[r.t] ??= []).push(r.n);
+      }
       applyTables(byTable);
+      // Giữ đúng số thứ tự đã lưu (có thể có chỗ trống sau khi chuyển dòng đi lưu trữ)
+      for (const [t, list] of Object.entries(ns)) {
+        const a = db[t];
+        if (!a) continue;
+        list.forEach((n, i) => a[i] && rowIndex.set(a[i]!, n));
+        nextN.set(t, Math.max(a.length, (list[list.length - 1] ?? -1) + 1));
+      }
       const meta = rs.loadMeta();
-      user = meta ? ((JSON.parse(meta) as { user: typeof user }).user ?? null) : null;
+      const m = meta ? (JSON.parse(meta) as { user: typeof user; arc?: typeof archiveInfo }) : null;
+      user = m?.user ?? null;
+      if (m?.arc) archiveInfo = { ...archiveInfo, ...m.arc };
     }
   } catch {
     // Kho lỗi: chạy với dữ liệu trống trong phiên này, không ghi đè kho cũ cho tới lần ghi kế tiếp
@@ -392,12 +431,14 @@ export function attachRowStore(rs: RowStoreAdapter) {
   dirtyRows.clear();
 }
 
-function writeRows() {
+function writeRows(archive?: ArchiveRow[]) {
   if (!rowStore) return;
-  const replace = [...dirtyTables].map((t) => ({
-    t,
-    rows: (db[t] ?? []).map((r, i) => ({ k: typeof r.id === 'string' ? r.id : `#${i}`, n: i, j: JSON.stringify(r) })),
-  }));
+  const replace = [...dirtyTables].map((t) => {
+    const a = db[t] ?? [];
+    a.forEach((r, i) => rowIndex.set(r, i));
+    nextN.set(t, a.length);
+    return { t, rows: a.map((r, i) => ({ k: typeof r.id === 'string' ? r.id : `#${i}`, n: i, j: JSON.stringify(r) })) };
+  });
   const upsert: { t: string; k: string; n: number; j: string }[] = [];
   for (const [t, keys] of dirtyRows) {
     if (dirtyTables.has(t)) continue;
@@ -408,7 +449,7 @@ function writeRows() {
   }
   dirtyTables.clear();
   dirtyRows.clear();
-  rowStore.apply({ replace, upsert, meta: JSON.stringify({ v: SNAPSHOT_VERSION, user }) });
+  rowStore.apply({ replace, upsert, meta: JSON.stringify({ v: SNAPSHOT_VERSION, user, arc: archiveInfo }), archive });
 }
 
 function scheduleSave() {
@@ -426,11 +467,127 @@ export function persistNow(flush = false) {
   if (saveTimer) clearTimeout(saveTimer);
   saveTimer = null;
   try {
+    if (rowStore && archiveInfo.lastRun !== vnDay()) archiveOldOrders();
     if (rowStore) writeRows();
     else storage?.save(snapshot());
   } catch {
     // Hết chỗ trống / lỗi ghi: lần sau thử lại
   }
+}
+
+
+// ---------------- Kho lưu trữ đơn cũ (bộ nhớ không tăng mãi theo số đơn) ----------------
+// Đơn cũ hơn 13 tháng (cùng dòng đơn, tiền về, phiếu kho, điểm của đơn đó) chuyển sang bảng qp_archive trong SQLite:
+// không nạp vào bộ nhớ khi mở app, vẫn xem lại được (danh sách đơn theo ngày, chi tiết đơn) và có trong file sao lưu.
+// Tổng ngày giữ ở archived_daily_sales nên báo cáo, thuế của kỳ cũ vẫn đủ số.
+export const ARCHIVE_MONTHS = 13;
+const ARCHIVE_TABLES = ['orders', 'order_items', 'payment_events', 'stock_movements', 'loyalty_events'];
+let archiveInfo: { min: string | null; max: string | null; lastRun: string | null } = { min: null, max: null, lastRun: null };
+
+/** Ngày đầu tiên còn giữ trong bộ nhớ: mùng 1 của tháng cách đây 12 tháng (giữ đủ 13 tháng tính cả tháng này). */
+export function archiveCutoffDay(now: number = Date.now()): string {
+  const [y, m] = vnDay(new Date(now)).split('-').map(Number) as [number, number];
+  const idx = y * 12 + (m - 1) - (ARCHIVE_MONTHS - 1);
+  return `${Math.floor(idx / 12)}-${String((idx % 12) + 1).padStart(2, '0')}-01`;
+}
+
+/** Bỏ các dòng có id trong tập khỏi mảng gốc (không qua Proxy → không ghi lại cả bảng) và khỏi chỉ mục */
+function dropRows(t: string, ids: Set<string>) {
+  const a = rawOf.get(t);
+  if (!a || ids.size === 0) return;
+  let j = 0;
+  for (let i = 0; i < a.length; i++) {
+    const r = a[i]!;
+    if (typeof r.id === 'string' && ids.has(r.id)) continue;
+    a[j++] = r;
+  }
+  a.length = j;
+  const m = byId.get(t);
+  const dirty = dirtyRows.get(t);
+  for (const id of ids) {
+    m?.delete(id);
+    dirty?.delete(id);
+    if (t === 'orders') {
+      unAgg(id);
+      itemsByOrder.delete(id);
+    }
+  }
+}
+
+/** Chuyển đơn cũ sang kho lưu trữ. Trả số đơn đã chuyển. Chạy mỗi ngày một lần (lần ghi đầu tiên trong ngày). */
+export function archiveOldOrders(now: number = Date.now()): number {
+  if (!rowStore?.archiveFind) return 0;
+  archiveInfo = { ...archiveInfo, lastRun: vnDay(new Date(now)) };
+  const cut = archiveCutoffDay(now);
+  // Đơn đã có hóa đơn điện tử: giữ lại (hóa đơn tính tổng từ dòng đơn)
+  const keep = new Set((db.invoices ?? []).map((i) => i.order_id).filter((x): x is string => typeof x === 'string'));
+  const old = (rawOf.get('orders') ?? []).filter(
+    (o) => typeof o.id === 'string' && typeof o.sold_at === 'string' && dayOf(o.sold_at) < cut && !keep.has(o.id),
+  );
+  if (old.length === 0) return 0;
+  const ids = new Set(old.map((o) => o.id as string));
+  const move: ArchiveRow[] = [];
+  const days = new Set<string>();
+  for (const o of old) {
+    const day = dayOf(o.sold_at);
+    days.add(`${o.business_id}|${day}`);
+    move.push({ t: 'orders', k: o.id, o: o.id, d: `${o.business_id}|${day}`, j: JSON.stringify(o) });
+    if (o.payment_status !== 'PAID') continue;
+    const key = `${o.business_id}|${day}|${o.payment_method}`;
+    const r = findRow('archived_daily_sales', key);
+    if (r) Object.assign(r, { orders_count: r.orders_count + 1, amount: r.amount + o.total_amount });
+    else
+      db.archived_daily_sales!.push({
+        id: key, business_id: o.business_id, sale_date: day, method: o.payment_method, orders_count: 1, amount: o.total_amount,
+      });
+  }
+  const byTable = new Map<string, Set<string>>([['orders', ids]]);
+  for (const t of ARCHIVE_TABLES) {
+    if (t === 'orders') continue;
+    const set = new Set<string>();
+    for (const r of rawOf.get(t) ?? []) {
+      if (typeof r.id !== 'string' || typeof r.order_id !== 'string' || !ids.has(r.order_id)) continue;
+      set.add(r.id);
+      move.push({ t, k: r.id, o: r.order_id, d: null, j: JSON.stringify(r) });
+    }
+    byTable.set(t, set);
+  }
+  for (const [t, set] of byTable) dropRows(t, set);
+  for (const k of days) {
+    const list = ordersByDay.get(k);
+    if (!list) continue;
+    const rest = list.filter((o) => !ids.has(o.id));
+    if (rest.length) ordersByDay.set(k, rest);
+    else ordersByDay.delete(k);
+  }
+  for (const k of days) {
+    const day = k.slice(k.indexOf('|') + 1);
+    if (!archiveInfo.min || day < archiveInfo.min) archiveInfo.min = day;
+    if (!archiveInfo.max || day > archiveInfo.max) archiveInfo.max = day;
+  }
+  ordersVersion++;
+  writeRows(move);
+  return old.length;
+}
+
+const ARCHIVE_SET = new Set(ARCHIVE_TABLES);
+/** Đọc dòng đã lưu trữ (chỉ đọc: sửa trên bản này không được ghi lại) */
+function archived(t: string, col: 'k' | 'o' | 'd', v: string): Row[] {
+  if (!rowStore?.archiveFind || !archiveInfo.min || !ARCHIVE_SET.has(t)) return [];
+  try {
+    return rowStore.archiveFind(t, col, v).map((j) => JSON.parse(j) as Row);
+  } catch {
+    return [];
+  }
+}
+/** Đơn đã lưu trữ của một ngày (quán|ngày) — chỉ hỏi SQLite khi ngày nằm trong khoảng đã lưu trữ */
+function archivedOrdersOfDay(bizId: string, day: string): Row[] {
+  if (!archiveInfo.min || !archiveInfo.max || day < archiveInfo.min || day > archiveInfo.max) return [];
+  return archived('orders', 'd', `${bizId}|${day}`);
+}
+/** Tìm đơn kể cả đơn đã lưu trữ */
+function findOrderAny(id: string): Row | undefined {
+  return findOrder(id) ?? archived('orders', 'k', id)[0];
 }
 
 // ---------------- Sao lưu / khôi phục bằng file ----------------
@@ -450,9 +607,22 @@ export function exportBackup(bizId: string): BackupFile {
   const b = db.businesses!.find((x) => x.id === bizId);
   if (!b) throw new Error('QP_NOT_FOUND');
   const tables: Record<string, Row[]> = {};
-  const orderIds = new Set(db.orders!.filter((o) => o.business_id === bizId).map((o) => o.id));
+  // Gộp dòng đã lưu trữ vào bản sao lưu (máy mới nhận đủ đơn cũ)
+  const src: Record<string, Row[]> = { ...db };
+  if (rowStore?.archiveAll && archiveInfo.min) {
+    const extra: Record<string, Row[]> = {};
+    for (const r of rowStore.archiveAll()) {
+      try {
+        (extra[r.t] ??= []).push(JSON.parse(r.j));
+      } catch {
+        /* dòng hỏng: bỏ qua */
+      }
+    }
+    for (const [t, rows] of Object.entries(extra)) src[t] = [...rows, ...(db[t] ?? [])];
+  }
+  const orderIds = new Set(src.orders!.filter((o) => o.business_id === bizId).map((o) => o.id));
   const invoiceIds = new Set(db.invoices!.filter((i) => i.business_id === bizId).map((i) => i.id));
-  for (const [k, rows] of Object.entries(db)) {
+  for (const [k, rows] of Object.entries(src)) {
     if (k === 'user_consents') continue;
     if (k === 'order_items') tables[k] = rows.filter((r) => orderIds.has(r.order_id));
     else if (k === 'invoice_lines') tables[k] = rows.filter((r) => invoiceIds.has(r.invoice_id));
@@ -486,6 +656,10 @@ export function restoreBackup(f: BackupFile): { businessId: string } {
   const consents = db.user_consents!.filter((c) => c.user_id === user!.id);
   applyTables(f.tables);
   db.user_consents = consents;
+  // Bản sao lưu đã có đủ đơn cũ: bỏ tổng lưu trữ cũ, lần ghi tới sẽ chuyển lại đơn cũ vào kho lưu trữ
+  db.archived_daily_sales = [];
+  rowStore?.archiveClear?.();
+  archiveInfo = { min: null, max: null, lastRun: null };
   const b = db.businesses!.find((x) => x.id === f.business_id)!;
   const oldOwner = b.owner_id;
   b.owner_id = user.id;
@@ -693,7 +867,17 @@ function dayOf(soldAt: string): string {
 }
 
 function dailySales(): Row[] {
-  return [...salesAgg.values()].map((r) => ({ ...r }));
+  const arc = db.archived_daily_sales ?? [];
+  if (arc.length === 0) return [...salesAgg.values()].map((r) => ({ ...r }));
+  const out = new Map<string, Row>();
+  for (const r of salesAgg.values()) out.set(`${r.business_id}|${r.sale_date}|${r.method}`, { ...r });
+  for (const r of arc) {
+    const k = r.id as string;
+    const cur = out.get(k);
+    if (cur) Object.assign(cur, { orders_count: cur.orders_count + r.orders_count, amount: cur.amount + r.amount });
+    else out.set(k, { business_id: r.business_id, sale_date: r.sale_date, method: r.method, orders_count: r.orders_count, amount: r.amount });
+  }
+  return [...out.values()];
 }
 
 
@@ -795,7 +979,8 @@ class Query implements PromiseLike<Result> {
   private cols = '*';
   constructor(private table: string) {}
   select(cols = '*') { this.cols = cols; return this; }
-  eq(c: string, v: unknown) { this.filters.push((r) => r[c] === v); return this; }
+  private eqs: Record<string, unknown> = {};
+  eq(c: string, v: unknown) { this.eqs[c] = v; this.filters.push((r) => r[c] === v); return this; }
   is(c: string, v: null) { this.filters.push((r) => (r[c] ?? null) === v); return this; }
   in(c: string, vs: unknown[]) { this.filters.push((r) => vs.includes(r[c])); return this; }
   private range: { from?: string; to?: string } = {};
@@ -824,6 +1009,13 @@ class Query implements PromiseLike<Result> {
 
   private run(): Result {
     let rows = tableRows(this.table, this.range).filter((r) => this.filters.every((f) => f(r)));
+    // Đơn cũ đã chuyển vào kho lưu trữ: tìm theo id / id đơn
+    if (rows.length === 0 && archiveInfo.min && ARCHIVE_SET.has(this.table)) {
+      const id = this.eqs.id;
+      const oid = this.eqs.order_id;
+      const found = typeof id === 'string' ? archived(this.table, 'k', id) : typeof oid === 'string' ? archived(this.table, 'o', oid) : [];
+      rows = found.filter((r) => this.filters.every((f) => f(r)));
+    }
     if (this.sort) {
       const { col, asc } = this.sort;
       rows = [...rows].sort((a, b) => (a[col] < b[col] ? -1 : a[col] > b[col] ? 1 : 0) * (asc ? 1 : -1));
@@ -838,7 +1030,7 @@ class Query implements PromiseLike<Result> {
   private embed(r: Row): Row {
     if (this.cols.includes('business:businesses(')) r.business = db.businesses!.find((b) => b.id === r.business_id) ?? null;
     if (this.cols.includes('order:orders(')) {
-      const o = db.orders!.find((x) => x.id === r.order_id);
+      const o = typeof r.order_id === 'string' ? findOrderAny(r.order_id) : undefined;
       r.order = o ? { order_code: o.order_code } : null;
     }
     return r;
@@ -1017,7 +1209,9 @@ function rpcImpl(name: string, a: Row): Result {
         let d = vnDay(new Date(Date.parse(a.p_to) - 1));
         let got = 0;
         for (let guard = 0; d >= fromDay && guard < 4000; guard++, d = addDays(d, -1)) {
-          for (const o of ordersByDay.get(`${a.p_business_id}|${d}`) ?? []) {
+          const mem = ordersByDay.get(`${a.p_business_id}|${d}`);
+          const day = archiveInfo.min && d <= (archiveInfo.max ?? '') ? [...(mem ?? []), ...archivedOrdersOfDay(a.p_business_id, d)] : mem;
+          for (const o of day ?? []) {
             if (inRange(o) && before(o)) {
               candidates.push(o);
               got++;

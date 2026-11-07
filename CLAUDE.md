@@ -222,8 +222,17 @@ Tính theo chiều rộng/cao cửa sổ hiện tại (`useWindowDimensions`), k
   - Tra theo id dùng chỉ mục (`findOrder`, `findRow`, `orderItems`), không `db.x.find()` trên bảng lớn trong đường bán hàng.
   - Tổng ngày lấy từ `salesAgg` (cộng dồn), danh sách đơn đi theo `ordersByDay`; không quét / sắp xếp cả bảng đơn.
   - Máy nhân viên: nối lại giãn dần tới 60 giây, dò mạng tối đa 2 phút một lần, không nối khi app ở nền.
-  - Còn lại (chưa làm): đưa đơn cũ hơn 13 tháng ra kho lưu trữ để bộ nhớ không tăng mãi (100.000 đơn ≈ 300–400 MB trên Node).
-- QA: máy `android-local` chạy luồng 11 với bản lưu trên máy; các máy khác chạy dữ liệu mẫu.
+  - **Kho lưu trữ**: đơn cũ hơn 13 tháng (tính cả tháng này) cùng dòng đơn, tiền về, phiếu kho, điểm của đơn đó chuyển sang bảng
+    `qp_archive` (lần ghi đầu tiên mỗi ngày, `archiveOldOrders()`): không nạp vào bộ nhớ, vẫn xem được (danh sách theo ngày, chi tiết
+    đơn), có trong file sao lưu; tổng ngày giữ ở `archived_daily_sales` nên báo cáo / thuế kỳ cũ đủ số. Đơn có hóa đơn điện tử
+    không chuyển. Bản ghi đã lưu trữ chỉ đọc. Chuyển dòng đi lưu trữ không qua Proxy (không ghi lại cả bảng); cột `n` tăng dần theo
+    `nextN`, không theo vị trí mảng.
+- **Máy chủ quán chạy nền (Android)**: module trong `modules/qp-foreground` (dịch vụ foreground `connectedDevice`, thông báo cố định).
+  Chỉ giữ CPU + Wi‑Fi thức khi có máy nhân viên đang nối; vuốt tắt app thì dịch vụ dừng. Giữ màn hình sáng là tùy chọn (mặc định tắt).
+- QA: máy `android-local` chạy luồng 11 với bản lưu trên máy, rồi QA hai máy: 12a (máy chủ hiện mã dạng chữ) → `sh:qa-lan-staff`
+  (máy nhân viên giả bằng Node qua `adb forward`, `scripts/qa-lan-client.ts`; kiểm tra dịch vụ chạy nền) → 12b (máy chủ thấy máy
+  nhân viên và đơn). Thử trên máy tính không cần máy ảo: `QA_SIM_SELFTEST=1 npx tsx scripts/qa-lan-host-sim.ts`.
+  Các máy khác chạy dữ liệu mẫu.
 
 ## Khi hoàn thành một thay đổi
 
