@@ -66,3 +66,6 @@ const NAME_BY_BIN: Record<string, string> = {
 export function bankDisplayName(bin: string): string {
   return NAME_BY_BIN[bin] ?? 'Ngân hàng';
 }
+
+/** Danh sách ngân hàng (BIN, tên) cho màn chọn ngân hàng — thứ tự như bảng trên (ngân hàng phổ biến trước). */
+export const BANK_LIST: { bin: string; name: string }[] = Object.entries(NAME_BY_BIN).map(([bin, name]) => ({ bin, name }));

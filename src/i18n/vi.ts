@@ -417,6 +417,52 @@ export const vi = {
     emailWrong: 'Email chưa đúng.',
   },
 
+  // Chế độ lưu trên máy (chưa có máy chủ) + sao lưu / khôi phục bằng file
+  local: {
+    loginTitle: 'Dữ liệu lưu trên máy này',
+    loginBody: 'Nhập số điện thoại của quán rồi mã 6 số bất kỳ. Đăng nhập lại đúng số này là thấy lại dữ liệu cũ.',
+    reminderNever: 'Dữ liệu của quán chỉ nằm trên máy này và chưa sao lưu lần nào. Bấm để sao lưu ra file.',
+    reminderOld: (days: number) => `Đã ${days} ngày chưa sao lưu dữ liệu. Bấm để sao lưu ra file.`,
+    // Màn sao lưu
+    title: 'Sao lưu và khôi phục',
+    body: 'Dữ liệu của quán đang lưu trên máy này: tắt app, đăng xuất hay cập nhật app đều không mất. Nếu đổi máy, làm mất máy hoặc gỡ app thì sẽ mất, nên hãy sao lưu ra file và gửi cho chính mình qua Mail, Zalo hoặc Google Drive.',
+    lastNever: 'Chưa sao lưu lần nào',
+    last: (when: string) => `Lần sao lưu gần nhất: ${when}`,
+    backupNow: 'Sao lưu ngay',
+    backupHint: 'Máy sẽ hỏi gửi file qua đâu: chọn Gmail (gửi cho chính mình), Zalo (Cloud của tôi) hoặc Drive.',
+    backupPrivacy: 'File có số liệu bán hàng và số điện thoại khách quen. Chỉ gửi cho chính mình, không gửi người lạ.',
+    backupDone: 'Đã tạo file sao lưu. Nhớ chọn nơi gửi để lưu file.',
+    restoreTitle: 'Khôi phục từ file sao lưu',
+    restoreBody: 'Cài app trên máy mới, đăng nhập, rồi chọn file sao lưu (tải file từ Mail/Zalo/Drive về máy trước).',
+    restorePick: 'Chọn file sao lưu',
+    restoreBad: 'File này không phải file sao lưu của QuickPOS. Chọn lại file có tên bắt đầu bằng "QuickPOS".',
+    restoreAsk: (shop: string) => `Khôi phục dữ liệu quán "${shop}"?`,
+    restoreAskBody: (when: string, orders: number) =>
+      `Bản sao lưu lúc ${when}, có ${orders} đơn. Dữ liệu đang có trên máy này sẽ được thay bằng dữ liệu trong file.`,
+    restoreYes: 'Khôi phục',
+    restoreDone: 'Đã khôi phục dữ liệu',
+    restoreError: 'Không đọc được file. Thử tải lại file về máy rồi chọn lại.',
+    fileTitle: (shop: string) => `Sao lưu QuickPOS – ${shop}`,
+    haveBackup: 'Đã có file sao lưu? Khôi phục dữ liệu',
+    // Tài khoản nhận tiền tự nhập
+    accountTitle: 'Tài khoản nhận tiền của quán',
+    accountBody: 'Mã QR sẽ mang số tài khoản này để khách quét chuyển tiền. Khi thấy tiền về trong app ngân hàng, bấm "Tôi đã thấy tiền về".',
+    bank: 'Ngân hàng',
+    bankSearch: 'Tìm ngân hàng',
+    accountNo: 'Số tài khoản',
+    accountName: 'Tên chủ tài khoản (không dấu, như trên thẻ)',
+    accountSave: 'Lưu tài khoản',
+    accountChange: 'Đổi tài khoản nhận tiền',
+    enterBank: 'Chọn ngân hàng của quán',
+    enterAccountNo: 'Nhập số tài khoản (chỉ chữ số, 4 đến 19 số)',
+    enterAccountName: 'Nhập tên chủ tài khoản',
+    accountSaved: 'Đã lưu tài khoản nhận tiền',
+    manualOnly: 'Bản lưu trên máy chưa tự biết tiền về: xem app ngân hàng, thấy tiền thì bấm "Tôi đã thấy tiền về".',
+    // Nhiều máy / nhân viên
+    staffTitle: 'Nhiều nhân viên, nhiều máy',
+    staffBody: 'Bản lưu trên máy: nhân viên dùng chung máy này, màn của chủ quán có mã PIN. Dùng nhiều máy cùng lúc (đồng bộ tự động) cần bản có máy chủ — sắp có trong gói Premium.',
+  },
+
   catalog: {
     title: 'Hàng hóa',
     subtitle: 'Món bán, giá, tồn kho. Bán theo món ở màn Thu tiền → "Chọn món".',

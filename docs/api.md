@@ -178,3 +178,27 @@ Giờ bán: `p_sold_at` lệch quá 5 phút về tương lai hoặc quá 7 ngày
 Đã có bản `_v1` báo lỗi bằng mã cho xác nhận tay và gán tiền (migration 5). App không gọi bản cũ nữa. Còn lại: `issue_invoice` (giai đoạn 2).
 
 Secrets: `SEPAY_WEBHOOK_SECRET` (HMAC) hoặc `SEPAY_API_KEY`, `PUSH_WEBHOOK_SECRET`, `CRON_SECRET`, `EXPO_ACCESS_TOKEN` (tùy chọn). Ba hàm `payment-webhook`, `push-payment`, `process-account-deletion` deploy với `--no-verify-jwt` và tự xác thực bằng secret.
+
+## 9. Chế độ lưu trên máy (bản chưa có máy chủ)
+
+Khi bản build thiếu `EXPO_PUBLIC_SUPABASE_URL` / `ANON_KEY`, `src/lib/supabase.ts` dùng bộ máy trên máy
+(`src/lib/demoClient.ts`) với cùng các lời gọi ở trên. Dữ liệu ghi vào SQLite của app (`expo-sqlite/kv-store`,
+khóa `quickpos.local.v1`) sau mỗi lệnh ghi và khi app vào nền: còn nguyên khi tắt app, đăng xuất, cập nhật app;
+mất khi gỡ app / xóa dữ liệu app → sao lưu ra file.
+
+| Biến build | Kiểu chạy |
+| --- | --- |
+| `EXPO_PUBLIC_DEMO_SAMPLE=0` (bản phát hành) | Quán trống, không giả lập khách chuyển khoản; xác nhận chuyển khoản bằng tay (`confirm_transfer_manually_v1`, coi như đã nhận đủ) |
+| khác `0` (QA, xem thử) | Dữ liệu mẫu, tài khoản ngân hàng giả, giả lập khách chuyển khoản sau `EXPO_PUBLIC_DEMO_PAY_MS` |
+
+Chỉ có ở chế độ này (KHÔNG có trên máy chủ — bản có máy chủ lấy tài khoản qua cổng thanh toán, xem CLAUDE.md):
+
+| Lời gọi | Ai | Tham số | Trả về | Lỗi |
+| --- | --- | --- | --- | --- |
+| `set_local_payment_account_v1` | OWNER | `p_business_id`, `p_bank_bin` (6 số NAPAS), `p_account_no` (4–19 chữ/số), `p_account_name` (2–50 ký tự, viết hoa không dấu) | `{ bank_bin, account_no }`; tài khoản cũ thôi dùng | `QP_FORBIDDEN`, `QP_INVALID_INPUT` |
+| `functions.invoke('qr-for-order')` | — | như mục 3 | QR theo tài khoản đang dùng của quán | `QP_NO_PAYMENT_ACCOUNT` khi chưa nhập tài khoản |
+
+Sao lưu / khôi phục (`src/features/backup/`): file JSON `{ app: 'QuickPOS', kind: 'backup', version: 1, created_at,
+business_id, business_name, orders, tables }` gồm mọi bảng của một quán; gửi qua bảng chia sẻ của máy (Gmail, Zalo,
+Drive). Khôi phục thay toàn bộ dữ liệu trên máy; người đang đăng nhập thành chủ quán, nhân viên máy cũ bỏ đi.
+Nhiều máy / nhân viên trên nhiều máy cần bản có máy chủ (gói Premium, chưa làm).

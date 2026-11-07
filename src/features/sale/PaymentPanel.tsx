@@ -18,6 +18,7 @@ import { ErrorView, Loading } from '../../components/States';
 import { capitalize, formatVND, readNumber, readVND } from '../../lib/money';
 import { formatElapsed, formatTimeVN } from '../../lib/time';
 import { colors, font, space } from '../../theme/tokens';
+import { ENV } from '../../lib/env';
 import { vi } from '../../i18n/vi';
 
 /** Sau bao lâu không có báo từ ngân hàng thì hiện hướng dẫn "ngân hàng báo chậm" */
@@ -215,6 +216,11 @@ export function PaymentPanel({ orderId, qrSize, onNewSale }: { orderId: string; 
               {vi.sale.waiting(formatElapsed(waitedS))}
             </Txt>
           )}
+          {ENV.localOnly ? (
+            <Txt variant="small" tone="warn" center>
+              {vi.local.manualOnly}
+            </Txt>
+          ) : null}
           {manualAllowed ? (
             <View style={{ gap: 4 }}>
               <Button kind="success" label={vi.sale.iSawMoney} onPress={() => setAskManual(true)} />

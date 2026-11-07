@@ -36,7 +36,15 @@ jobs:
             profile: pixel_6
           - label: android-tablet
             profile: medium_tablet
+          # Bản phát hành chưa có máy chủ: dữ liệu thật lưu trên máy (không dữ liệu mẫu), chỉ chạy luồng 11
+          - label: android-local
+            profile: pixel_6
+            sample: "0"
+            flows: "11-luu-tren-may"
     runs-on: ubuntu-24.04
+    env:
+      EXPO_PUBLIC_DEMO_SAMPLE: ${{ matrix.sample || '1' }}
+      QA_FLOWS: ${{ matrix.flows || '' }}
     timeout-minutes: 90
     steps:
       - uses: actions/checkout@v4

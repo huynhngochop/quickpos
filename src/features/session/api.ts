@@ -160,3 +160,11 @@ export async function requestAccountDeletion(): Promise<void> {
 export async function signOut(): Promise<void> {
   await supabase.auth.signOut();
 }
+
+/** Chỉ ở chế độ lưu trên máy (không có cổng thanh toán xác minh): chủ quán tự nhập tài khoản nhận tiền. */
+export async function setLocalPaymentAccount(p: { businessId: string; bankBin: string; accountNo: string; accountName: string }) {
+  const r = await supabase.rpc('set_local_payment_account_v1', {
+    p_business_id: p.businessId, p_bank_bin: p.bankBin, p_account_no: p.accountNo, p_account_name: p.accountName,
+  });
+  return unwrap(r) as { bank_bin: string; account_no: string };
+}

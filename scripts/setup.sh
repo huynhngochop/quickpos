@@ -14,7 +14,7 @@ npx expo install \
   expo-sqlite expo-secure-store expo-crypto expo-speech expo-haptics \
   expo-notifications expo-device expo-application expo-intent-launcher expo-screen-orientation \
   react-native-svg @expo-google-fonts/be-vietnam-pro \
-  expo-print expo-sharing expo-camera
+  expo-print expo-sharing expo-camera expo-file-system expo-document-picker
 
 npm install \
   @supabase/supabase-js@^2 \

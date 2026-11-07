@@ -13,6 +13,7 @@ import { inviteMember, listInvites, removeMember, revokeInvite, setMemberRole } 
 import { formatPhoneVN } from '../src/lib/money';
 import { newId } from '../src/lib/device';
 import { colors, space } from '../src/theme/tokens';
+import { ENV } from '../src/lib/env';
 import { vi } from '../src/i18n/vi';
 import type { Role } from '../src/types/api';
 
@@ -97,7 +98,13 @@ export default function NhanVien() {
       ))}
       {change.error ? <ErrorView error={change.error} /> : null}
 
-      {owner ? (
+      {ENV.localOnly ? (
+        <Card tone="info" style={{ gap: space.sm }}>
+          <Txt variant="title">{vi.local.staffTitle}</Txt>
+          <Txt>{vi.local.staffBody}</Txt>
+        </Card>
+      ) : null}
+      {owner && !ENV.localOnly ? (
         <Card style={{ gap: space.md }}>
           <Txt variant="title">{vi.staff.invite}</Txt>
           <Field label={vi.staff.phone} value={phone} onChangeText={setPhone} keyboardType="phone-pad" maxLength={13} testID="invite-phone" />

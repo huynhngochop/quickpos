@@ -5,7 +5,8 @@ appId: vn.quickpos.app
 - extendedWaitUntil:
     visible: "Nhập số điện thoại của quán"
     timeout: 30000
-- assertVisible: "Bản dùng thử — dữ liệu mẫu"
+# Bản dữ liệu mẫu hoặc bản lưu trên máy (chưa có máy chủ)
+- assertVisible: "Bản dùng thử — dữ liệu mẫu|Dữ liệu lưu trên máy này"
 - takeScreenshot: "01-dang-nhap"
 # Số sai → báo lỗi bằng chữ
 - tapOn: { id: "phone-input" }

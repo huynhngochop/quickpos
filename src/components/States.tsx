@@ -69,6 +69,20 @@ export function OfflineBanner({ queued = 0 }: { queued?: number }) {
 /** Dải báo bản dùng thử (chỉ hiện khi chưa nối máy chủ thật). */
 export function DemoBanner({ login }: { login?: boolean }) {
   if (!ENV.demo) return null;
+  // Lưu trên máy (dữ liệu thật): chỉ dặn ở màn đăng nhập; trang chính nhắc sao lưu (BackupReminder)
+  if (ENV.localOnly) {
+    if (!login) return null;
+    return (
+      <Card tone="info" style={{ padding: 12 }}>
+        <Txt variant="bodyStrong" tone="primary">
+          {vi.local.loginTitle}
+        </Txt>
+        <Txt variant="small" tone="primary">
+          {vi.local.loginBody}
+        </Txt>
+      </Card>
+    );
+  }
   return (
     <Card tone="info" style={{ padding: 12 }}>
       <Txt variant="bodyStrong" tone="primary">

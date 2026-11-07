@@ -201,6 +201,17 @@ Tính theo chiều rộng/cao cửa sổ hiện tại (`useWindowDimensions`), k
 - **Kiểm thử bắt buộc cho màn hình mới**: chạy ở cỡ chữ hệ thống lớn nhất, trên máy Android tầm thấp (RAM 3GB),
   mạng 3G giả lập; chụp màn hình đính kèm khi báo xong.
 
+## Chế độ lưu trên máy (chưa có máy chủ — quyết định 07/11/2026)
+
+- Bản phát hành hiện chưa nối Supabase: build với `EXPO_PUBLIC_DEMO_SAMPLE=0`, dữ liệu thật nằm trong SQLite của app
+  (`src/lib/demoClient.ts` + `src/lib/localStore.ts`), còn nguyên khi đăng xuất / cập nhật app. Đăng xuất KHÔNG xóa dữ liệu.
+- Chỉ ở chế độ này chủ quán được tự nhập tài khoản nhận tiền (`set_local_payment_account_v1`) và xác nhận chuyển khoản bằng tay;
+  quy tắc "không cho gõ số tài khoản" vẫn áp dụng cho bản có máy chủ.
+- Sao lưu / khôi phục bằng file qua bảng chia sẻ (Cài đặt → Sao lưu và khôi phục; bước tạo quán có liên kết khôi phục).
+  Trang chính nhắc sao lưu khi chưa từng sao lưu hoặc quá 7 ngày.
+- KHÔNG đồng bộ nhiều máy qua mail (ghi đè nhau, mất đơn). Nhiều máy / nhiều nhân viên = bản có máy chủ (gói Premium, chưa thu phí).
+- QA: máy `android-local` chạy luồng 11 với bản lưu trên máy; các máy khác chạy dữ liệu mẫu.
+
 ## Khi hoàn thành một thay đổi
 
 1. `npx tsc --noEmit` và lint sạch.

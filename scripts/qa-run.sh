@@ -11,6 +11,8 @@ mkdir -p "$OUT"
 cd "$OUT"
 export PATH="$PATH:$HOME/.maestro/bin"
 FLOWS=(01-onboarding 02-thu-tien-qr 03-xac-nhan-tay-va-huy 04-tien-mat 05-so-va-xem-lai 07-du-lieu-lon 08-so-no-chi-tieu-bao-cao-thue 09-hang-hoa-ban-mon-khach-ca-hoa-don 10-quan-ly-hang-hoa 06-cai-dat)
+# QA_FLOWS="11-luu-tren-may": chỉ chạy các luồng này (máy android-local chạy bản lưu trên máy)
+if [ -n "${QA_FLOWS:-}" ]; then read -r -a FLOWS <<< "$QA_FLOWS"; fi
 summary="$OUT/SUMMARY.md"
 echo "# QA $LABEL — $(date -u +%FT%TZ)" > "$summary"
 total_fail=0

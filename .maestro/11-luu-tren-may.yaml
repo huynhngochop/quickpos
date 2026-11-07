@@ -1,0 +1,184 @@
+appId: vn.quickpos.app
+---
+# Bản phát hành chưa có máy chủ (EXPO_PUBLIC_DEMO_SAMPLE=0): dữ liệu thật lưu trên máy.
+# Quán trống → tự nhập tài khoản nhận tiền → bán QR, xác nhận tay → tắt app mở lại vẫn còn → đăng xuất,
+# đăng nhập lại vẫn còn → màn sao lưu. Chạy trên máy riêng (android-local), không chạy chung các luồng dữ liệu mẫu.
+- launchApp:
+    clearState: true
+- runFlow: subflows/dismiss-system-dialogs.yaml
+- runFlow: subflows/login.yaml
+- extendedWaitUntil:
+    visible: "QuickPOS dùng thông tin của quán thế nào"
+    timeout: 15000
+- tapOn: "Tôi đã đọc và đồng ý"
+- tapOn: "Đồng ý và tiếp tục"
+
+# Bước 1: thông tin quán (có liên kết khôi phục từ file sao lưu)
+- extendedWaitUntil:
+    visible: "Thông tin quán"
+    timeout: 15000
+- scrollUntilVisible:
+    element: "Đã có file sao lưu.*"
+- takeScreenshot: "200-quan-co-khoi-phuc"
+- scrollUntilVisible:
+    element:
+      id: "field-name"
+    direction: UP
+- tapOn: { id: "field-name" }
+- inputText: "Tap hoa Co Tu"
+- hideKeyboard
+- tapOn: { id: "field-taxCode" }
+- inputText: "0312345678"
+- hideKeyboard
+- scrollUntilVisible:
+    element:
+      id: "field-address"
+- tapOn: { id: "field-address" }
+- inputText: "5 Tran Hung Dao"
+- hideKeyboard
+- tapOn: "Tiếp tục"
+
+# Bước 2: tự nhập tài khoản nhận tiền
+- extendedWaitUntil:
+    visible: "Tài khoản nhận tiền của quán"
+    timeout: 15000
+- takeScreenshot: "201-tai-khoan-tu-nhap"
+- scrollUntilVisible:
+    element: "Lưu tài khoản"
+- tapOn: "Lưu tài khoản"
+- assertVisible: "Chọn ngân hàng của quán"
+- scrollUntilVisible:
+    element:
+      id: "bank-search"
+    direction: UP
+- tapOn: { id: "bank-search" }
+- inputText: "vietcom"
+- hideKeyboard
+- tapOn: { id: "bank-970436" }
+- tapOn: { id: "account-no" }
+- inputText: "0071000123456"
+- hideKeyboard
+- scrollUntilVisible:
+    element:
+      id: "account-name"
+- tapOn: { id: "account-name" }
+- inputText: "Nguyen Thi Tu"
+- hideKeyboard
+- scrollUntilVisible:
+    element: "Lưu tài khoản"
+- takeScreenshot: "202-tai-khoan-dien-xong"
+- tapOn: "Lưu tài khoản"
+
+# Bước 3: PIN
+- extendedWaitUntil:
+    visible: "Tạo mã PIN 4 số cho chủ quán"
+    timeout: 10000
+- runFlow: subflows/enter-pin.yaml
+- runFlow: subflows/enter-pin.yaml
+
+# Trang chính: quán trống (không có đơn mẫu), nhắc sao lưu
+- extendedWaitUntil:
+    visible: "Hôm nay đã thu.*"
+    timeout: 15000
+- assertVisible: "Tap hoa Co Tu"
+- assertNotVisible: "Bản dùng thử — dữ liệu mẫu"
+- scrollUntilVisible:
+    element: "Dữ liệu của quán chỉ nằm trên máy này.*"
+- takeScreenshot: "203-trang-chinh-trong"
+- scrollUntilVisible:
+    element:
+      id: "main-settings"
+    direction: UP
+
+# Bán chuyển khoản: mã QR mang tài khoản Vietcombank của quán, xác nhận tay
+- runFlow: subflows/open-thu-tien.yaml
+- tapOn: { id: "key-2" }
+- tapOn: { id: "key-5" }
+- tapOn: { id: "key-000" }
+- tapOn: "Hiện mã QR"
+- extendedWaitUntil:
+    visible: "Tôi đã thấy tiền về"
+    timeout: 15000
+- assertVisible: ".*Vietcombank.*"
+- scrollUntilVisible:
+    element: "Bản lưu trên máy chưa tự biết tiền về.*"
+- takeScreenshot: "204-qr-tai-khoan-that"
+- scrollUntilVisible:
+    element: "Tôi đã thấy tiền về"
+    visibilityPercentage: 100
+- tapOn: "Tôi đã thấy tiền về"
+- tapOn: "Đúng, tiền đã về"
+- extendedWaitUntil:
+    visible: "Xác nhận tay.*"
+    timeout: 10000
+- tapOn: "Đơn mới"
+- extendedWaitUntil:
+    visible: "Khách cần trả"
+    timeout: 10000
+- tapOn: "Trang chính"
+- extendedWaitUntil:
+    visible: ".*25.000 đ.*"
+    timeout: 10000
+
+# Tắt hẳn app rồi mở lại: dữ liệu vẫn còn (trước đây mất hết)
+- stopApp
+- launchApp
+- runFlow: subflows/dismiss-system-dialogs.yaml
+- extendedWaitUntil:
+    visible: "Hôm nay đã thu.*"
+    timeout: 30000
+- assertVisible: "Tap hoa Co Tu"
+- assertVisible: ".*25.000 đ.*"
+- takeScreenshot: "205-mo-lai-van-con"
+
+# Đăng xuất rồi đăng nhập lại cùng số: vẫn còn dữ liệu
+- tapOn: { id: "main-settings" }
+- runFlow:
+    when:
+      visible: "Mã PIN chủ quán"
+    file: subflows/enter-pin.yaml
+- extendedWaitUntil:
+    visible: "Sao lưu và khôi phục"
+    timeout: 10000
+- assertVisible: "Chưa sao lưu lần nào"
+- assertVisible: "Đổi tài khoản nhận tiền"
+- tapOn: "Sao lưu và khôi phục"
+- extendedWaitUntil:
+    visible: "Sao lưu ngay"
+    timeout: 10000
+- assertVisible: "Khôi phục từ file sao lưu"
+- takeScreenshot: "206-sao-luu"
+- tapOn: "Sao lưu ngay"
+# Bảng chia sẻ của Android (Gmail, Zalo, Drive…) hiện ra: chụp lại rồi đóng
+- waitForAnimationToEnd:
+    timeout: 5000
+- takeScreenshot: "207-bang-chia-se"
+- back
+- extendedWaitUntil:
+    visible: "Lần sao lưu gần nhất.*"
+    timeout: 15000
+- takeScreenshot: "208-da-sao-luu"
+- tapOn: "Cài đặt"
+- scrollUntilVisible:
+    element: "Đăng xuất khỏi máy này"
+    visibilityPercentage: 100
+- tapOn: "Đăng xuất khỏi máy này"
+- runFlow: subflows/login.yaml
+- runFlow:
+    when:
+      visible: "QuickPOS dùng thông tin của quán thế nào"
+    commands:
+      - tapOn: "Tôi đã đọc và đồng ý"
+      - tapOn: "Đồng ý và tiếp tục"
+- runFlow:
+    when:
+      visible: "Tạo mã PIN 4 số cho chủ quán"
+    commands:
+      - runFlow: subflows/enter-pin.yaml
+      - runFlow: subflows/enter-pin.yaml
+- extendedWaitUntil:
+    visible: "Hôm nay đã thu.*"
+    timeout: 20000
+- assertVisible: "Tap hoa Co Tu"
+- assertVisible: ".*25.000 đ.*"
+- takeScreenshot: "209-dang-nhap-lai-van-con"

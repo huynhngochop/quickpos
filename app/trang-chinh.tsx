@@ -11,6 +11,7 @@ import { useDebtors, useExpenses } from '../src/features/books/hooks';
 import { useExpiringLots, useProducts } from '../src/features/shop/hooks';
 import { isLowStock } from '../src/features/shop/inventory';
 import { syncExpiryReminder } from '../src/features/notifications/expiryReminder';
+import { lastBackupAt } from '../src/lib/localStore';
 import { useSession, useBusinessId } from '../src/features/session/store';
 import { openOwnerScreen, useCanReview, useMainAccount } from '../src/features/session/hooks';
 import { useDayTotals } from '../src/features/journal/hooks';
@@ -19,6 +20,7 @@ import { useQueue } from '../src/features/offline/useQueue';
 import { formatVND } from '../src/lib/money';
 import { formatDayLong, monthStart, vnDay } from '../src/lib/time';
 import { colors, font, radius, space } from '../src/theme/tokens';
+import { ENV } from '../src/lib/env';
 import { vi } from '../src/i18n/vi';
 
 /**
@@ -48,6 +50,10 @@ export default function TrangChinh() {
   useEffect(() => {
     if (expiring.data) void syncExpiryReminder(expiring.data.length);
   }, [expiring.data]);
+  // Lưu trên máy: nhắc sao lưu khi chưa từng sao lưu (-1) hoặc đã quá 7 ngày; null = không nhắc
+  const lastBackup = ENV.localOnly ? lastBackupAt() : null;
+  const backupAge = lastBackup ? Math.floor((Date.now() - Date.parse(lastBackup)) / 86_400_000) : -1;
+  const backupDays = !ENV.localOnly ? null : backupAge < 0 ? -1 : backupAge >= 7 ? backupAge : null;
   const [askExit, setAskExit] = useState(false);
   // Thoát = đóng app, vẫn giữ đăng nhập (đăng xuất nằm cuối Cài đặt). iOS không cho app tự đóng nên không hiện nút.
   const canExit = Platform.OS === 'android';
@@ -140,8 +146,17 @@ export default function TrangChinh() {
         </Card>
       ) : null}
 
-      {/* Bản dùng thử: để cuối trang để các ô việc nằm gọn trong màn hình đầu tiên */}
+      {/* Bản dùng thử / nhắc sao lưu: để cuối trang để các ô việc nằm gọn trong màn hình đầu tiên */}
       <DemoBanner />
+      {backupDays !== null ? (
+        <Pressable accessibilityRole="button" onPress={() => openOwnerScreen('/sao-luu')}>
+          <Card tone="warn">
+            <Txt tone="warn" variant="bodyStrong">
+              {backupDays < 0 ? vi.local.reminderNever : vi.local.reminderOld(backupDays)}
+            </Txt>
+          </Card>
+        </Pressable>
+      ) : null}
       <ConfirmSheet
         visible={askExit}
         title={vi.main.exitAsk}

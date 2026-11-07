@@ -7,7 +7,8 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { createClient } from '@supabase/supabase-js';
 import { AppState, Platform } from 'react-native';
 import { ENV } from './env';
-import { createDemoClient } from './demoClient';
+import { attachStorage, createDemoClient, persistNow } from './demoClient';
+import { localStore } from './localStore';
 
 const realClient = () => createClient(ENV.supabaseUrl, ENV.supabaseAnonKey, {
   auth: {
@@ -19,10 +20,18 @@ const realClient = () => createClient(ENV.supabaseUrl, ENV.supabaseAnonKey, {
   realtime: { params: { eventsPerSecond: 5 } },
 });
 
-// Thiếu địa chỉ máy chủ (APK xem thử) → chế độ dùng thử với dữ liệu mẫu trong máy
+// Thiếu địa chỉ máy chủ → dữ liệu nằm trên máy (src/lib/demoClient.ts), lưu bền trong SQLite của app
+if (ENV.demo) attachStorage(localStore);
 export const supabase: ReturnType<typeof realClient> = ENV.demo
   ? (createDemoClient() as unknown as ReturnType<typeof realClient>)
   : realClient();
+
+// App vào nền / bị tắt: ghi ngay phần chưa lưu
+if (ENV.demo && Platform.OS !== 'web') {
+  AppState.addEventListener('change', (state) => {
+    if (state !== 'active') persistNow(true);
+  });
+}
 
 // Chỉ làm mới token khi app đang mở (theo hướng dẫn Supabase cho React Native)
 if (Platform.OS !== 'web') {

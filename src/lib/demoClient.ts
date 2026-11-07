@@ -1,10 +1,18 @@
 /**
- * Chế độ DÙNG THỬ: giả lập Supabase trong bộ nhớ máy khi bản build chưa có địa chỉ máy chủ.
- * Chỉ cài đặt đúng những lời gọi app đang dùng (docs/api.md). Không dùng cho bản thật:
- * supabase.ts chỉ chọn client này khi thiếu EXPO_PUBLIC_SUPABASE_URL / ANON_KEY.
- * Có giả lập "khách chuyển khoản" 12 giây sau khi hiện mã QR để xem màn hình báo tiền.
+ * Bộ máy dữ liệu TRÊN MÁY: thay Supabase khi bản build chưa có địa chỉ máy chủ.
+ * Chỉ cài đặt đúng những lời gọi app đang dùng (docs/api.md). supabase.ts chỉ chọn client này khi thiếu
+ * EXPO_PUBLIC_SUPABASE_URL / ANON_KEY.
+ *
+ * Hai kiểu chạy:
+ *  - Dữ liệu mẫu (EXPO_PUBLIC_DEMO_SAMPLE khác "0", dùng cho QA/xem thử): quán mới có sẵn đơn, hàng, sổ nợ mẫu,
+ *    tài khoản ngân hàng giả, và giả lập "khách chuyển khoản" sau khi hiện mã QR.
+ *  - Lưu trên máy (EXPO_PUBLIC_DEMO_SAMPLE=0, bản phát hành chưa có máy chủ): quán trống, chủ quán tự nhập
+ *    tài khoản nhận tiền, tiền chuyển khoản xác nhận bằng tay ("Tôi đã thấy tiền về").
+ * Cả hai đều lưu dữ liệu xuống máy (attachStorage) để đăng xuất / tắt app / cập nhật app không mất,
+ * và sao lưu / khôi phục bằng file (exportBackup / restoreBackup).
  */
 import { buildVietQr } from '../../supabase/functions/_shared/vietqr';
+import { bankDisplayName } from '../../supabase/functions/_shared/banks';
 import { addDays, vnDay, vnDayRange } from './time';
 
 type Row = Record<string, any>;
@@ -14,6 +22,13 @@ const DEMO_BIN = '970422';
 const DEMO_ACCOUNT = '0903456789';
 // Bản kiểm thử tự động đặt dài hơn để kịp thử "xác nhận tay" và "hủy đơn" trước khi khách "chuyển"
 const CUSTOMER_PAYS_AFTER_MS = Number(process.env.EXPO_PUBLIC_DEMO_PAY_MS ?? 12000) || 12000;
+/** Có dữ liệu mẫu + giả lập khách chuyển khoản. Bản phát hành chưa có máy chủ đặt EXPO_PUBLIC_DEMO_SAMPLE=0. */
+let SAMPLE = process.env.EXPO_PUBLIC_DEMO_SAMPLE !== '0';
+export const isSampleMode = () => SAMPLE;
+/** Chỉ cho test: đổi kiểu chạy. */
+export function setSampleMode(on: boolean) {
+  SAMPLE = on;
+}
 
 const uid = () =>
   'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, (c) => {
@@ -144,6 +159,122 @@ const db: Record<string, Row[]> = {
   invoice_lines: [],
 };
 let user: { id: string; phone: string } | null = null;
+
+// ---------------- Lưu xuống máy ----------------
+export interface LocalStorageAdapter {
+  load(): string | null;
+  save(json: string): void;
+}
+const SNAPSHOT_VERSION = 1;
+let storage: LocalStorageAdapter | null = null;
+let saveTimer: ReturnType<typeof setTimeout> | null = null;
+
+function snapshot(): string {
+  return JSON.stringify({ v: SNAPSHOT_VERSION, user, db });
+}
+
+function applyTables(tables: Record<string, Row[]>) {
+  for (const k of Object.keys(db)) db[k] = Array.isArray(tables[k]) ? tables[k]!.map((r) => ({ ...r })) : [];
+}
+
+/** Gắn nơi lưu (SQLite trên máy) và nạp lại dữ liệu đã lưu. Gọi một lần lúc mở app. */
+export function attachStorage(s: LocalStorageAdapter) {
+  storage = s;
+  try {
+    const raw = s.load();
+    if (raw) {
+      const snap = JSON.parse(raw) as { v: number; user: typeof user; db: Record<string, Row[]> };
+      if (snap && snap.v === SNAPSHOT_VERSION && snap.db) {
+        applyTables(snap.db);
+        user = snap.user ?? null;
+      }
+    }
+  } catch {
+    // Dữ liệu lưu hỏng: giữ nguyên bản trong máy, không ghi đè cho tới lần ghi kế tiếp
+  }
+}
+
+/** Ghi xuống máy (gộp nhiều thay đổi liên tiếp). flush=true: ghi ngay (app sắp vào nền). */
+export function persistNow(flush = false) {
+  if (!storage) return;
+  if (saveTimer) clearTimeout(saveTimer);
+  saveTimer = null;
+  const write = () => {
+    try {
+      storage?.save(snapshot());
+    } catch {
+      // Hết chỗ trống / lỗi ghi: lần sau thử lại
+    }
+  };
+  if (flush) write();
+  else saveTimer = setTimeout(write, 300);
+}
+
+// ---------------- Sao lưu / khôi phục bằng file ----------------
+export interface BackupFile {
+  app: 'QuickPOS';
+  kind: 'backup';
+  version: number;
+  created_at: string;
+  business_id: string;
+  business_name: string;
+  orders: number;
+  tables: Record<string, Row[]>;
+}
+
+/** Bản sao lưu một quán: mọi bảng của quán đó (dòng đơn, dòng hóa đơn theo đơn/hóa đơn của quán). */
+export function exportBackup(bizId: string): BackupFile {
+  const b = db.businesses!.find((x) => x.id === bizId);
+  if (!b) throw new Error('QP_NOT_FOUND');
+  const tables: Record<string, Row[]> = {};
+  const orderIds = new Set(db.orders!.filter((o) => o.business_id === bizId).map((o) => o.id));
+  const invoiceIds = new Set(db.invoices!.filter((i) => i.business_id === bizId).map((i) => i.id));
+  for (const [k, rows] of Object.entries(db)) {
+    if (k === 'user_consents') continue;
+    if (k === 'order_items') tables[k] = rows.filter((r) => orderIds.has(r.order_id));
+    else if (k === 'invoice_lines') tables[k] = rows.filter((r) => invoiceIds.has(r.invoice_id));
+    else if (k === 'businesses') tables[k] = rows.filter((r) => r.id === bizId);
+    else tables[k] = rows.filter((r) => r.business_id === bizId);
+  }
+  return {
+    app: 'QuickPOS', kind: 'backup', version: SNAPSHOT_VERSION, created_at: nowIso(), business_id: bizId,
+    business_name: b.business_name, orders: orderIds.size, tables: JSON.parse(JSON.stringify(tables)),
+  };
+}
+
+/** Đọc và kiểm tra file sao lưu; sai định dạng → null. */
+export function parseBackup(text: string): BackupFile | null {
+  try {
+    const f = JSON.parse(text) as BackupFile;
+    if (f?.app !== 'QuickPOS' || f.kind !== 'backup' || f.version !== SNAPSHOT_VERSION || !f.tables?.businesses?.length) return null;
+    if (!f.tables.businesses.some((b) => b.id === f.business_id)) return null;
+    return f;
+  } catch {
+    return null;
+  }
+}
+
+/**
+ * Khôi phục: thay TOÀN BỘ dữ liệu trên máy bằng bản sao lưu; người đang đăng nhập thành chủ quán
+ * (máy mới có thể đăng nhập bằng số điện thoại khác). Ghi xuống máy ngay.
+ */
+export function restoreBackup(f: BackupFile): { businessId: string } {
+  if (!user) throw new Error('QP_UNAUTHENTICATED');
+  const consents = db.user_consents!.filter((c) => c.user_id === user!.id);
+  applyTables(f.tables);
+  db.user_consents = consents;
+  const b = db.businesses!.find((x) => x.id === f.business_id)!;
+  const oldOwner = b.owner_id;
+  b.owner_id = user.id;
+  // Nhân viên của máy cũ không có trên máy này: chỉ giữ chủ quán (là người đang đăng nhập)
+  db.business_members = [{ business_id: b.id, user_id: user.id, role: 'OWNER', created_at: nowIso() }];
+  for (const t of ['orders', 'debt_entries', 'journal_entries', 'cash_shifts']) {
+    for (const r of db[t] ?? []) if (r.created_by && r.created_by === oldOwner) r.created_by = user.id;
+  }
+  persistNow(true);
+  return { businessId: b.id };
+}
+
 const authListeners = new Set<(event: string, session: unknown) => void>();
 const orderListeners = new Set<(payload: { new: Row }) => void>();
 
@@ -175,6 +306,7 @@ function updateOrder(o: Row, patch: Row) {
   o.overpaid_amount = Math.max(o.amount_received - o.total_amount, 0);
   if (!wasPaid && o.payment_status === 'PAID') onPaid(o);
   emitOrder(o);
+  persistNow();
 }
 
 function saveItems(orderId: string, items: Row[]) {
@@ -445,14 +577,33 @@ function rpcImpl(name: string, a: Row): Result {
       if (!/^[0-9]{10}([0-9]{2}|-[0-9]{3})?$/.test(a.p_tax_code ?? '')) return fail('QP_INVALID_INPUT');
       const b = {
         id: a.p_business_id, owner_id: user!.id, business_name: String(a.p_business_name).trim(), tax_code: a.p_tax_code,
-        address: String(a.p_address).trim(), allow_cashier_manual_confirm: true, tax_industry: 'GOODS', loyalty_vnd_per_point: 10000, einvoice_provider: 'NONE', invoice_form_no: '2', invoice_symbol: null, bank_account_name: 'NGUYEN THI BA',
+        address: String(a.p_address).trim(), allow_cashier_manual_confirm: true, tax_industry: 'GOODS', loyalty_vnd_per_point: 10000, einvoice_provider: 'NONE', invoice_form_no: '2', invoice_symbol: null,
+        bank_account_name: SAMPLE ? 'NGUYEN THI BA' : null,
       };
       db.businesses!.push(b);
       db.business_members!.push({ business_id: b.id, user_id: user!.id, role: 'OWNER', created_at: nowIso() });
-      seedBusiness(b.id);
-      seedBooks(b.id);
-      seedShop(b.id);
+      if (SAMPLE) {
+        seedBusiness(b.id);
+        seedBooks(b.id);
+        seedShop(b.id);
+      }
       return ok(b);
+    }
+
+    // Chỉ có ở chế độ lưu trên máy (không có cổng thanh toán xác minh tài khoản): chủ quán tự nhập tài khoản nhận tiền
+    case 'set_local_payment_account_v1': {
+      const m = member(a.p_business_id);
+      if (!m || m.role !== 'OWNER') return fail('QP_FORBIDDEN');
+      const accountNo = String(a.p_account_no ?? '').replace(/\s+/g, '');
+      const name = String(a.p_account_name ?? '').trim().toUpperCase();
+      if (!/^[0-9]{6}$/.test(String(a.p_bank_bin ?? '')) || !/^[0-9A-Za-z]{4,19}$/.test(accountNo) || name.length < 2 || name.length > 50)
+        return fail('QP_INVALID_INPUT');
+      for (const pa of db.payment_accounts!) if (pa.business_id === a.p_business_id) pa.is_active = false;
+      db.payment_accounts!.push({ id: uid(), business_id: a.p_business_id, provider: 'LOCAL', bank_bin: a.p_bank_bin, account_no: accountNo,
+        kind: 'MAIN', label: null, is_active: true });
+      const b = db.businesses!.find((x) => x.id === a.p_business_id)!;
+      b.bank_account_name = name;
+      return ok({ bank_bin: a.p_bank_bin, account_no: accountNo });
     }
 
     case 'update_business_settings_v1': {
@@ -484,7 +635,7 @@ function rpcImpl(name: string, a: Row): Result {
       db.orders!.push(o);
       saveItems(o.id, items);
       if (cash) onPaid(o);
-      if (!cash) {
+      if (!cash && SAMPLE) {
         // Giả lập khách quét mã và chuyển đủ tiền
         setTimeout(() => {
           if (o.payment_status === 'UNPAID' && o.amount_received === 0) {
@@ -509,7 +660,9 @@ function rpcImpl(name: string, a: Row): Result {
       if (!o) return fail('QP_NOT_FOUND');
       if (o.payment_status === 'PAID') return ok({ ...o });
       if (o.payment_status !== 'UNPAID') return fail('QP_ORDER_NOT_CONFIRMABLE');
-      updateOrder(o, { payment_status: 'PAID', paid_at: nowIso(), manual_confirmed_by: user?.id, manual_confirmed_at: nowIso(), manual_note: a.p_note ?? null });
+      // Lưu trên máy không có ngân hàng báo về: xác nhận tay là cách duy nhất → coi như đã nhận đủ (không vào mục "chưa thấy tiền")
+      updateOrder(o, { payment_status: 'PAID', paid_at: nowIso(), manual_confirmed_by: user?.id, manual_confirmed_at: nowIso(), manual_note: a.p_note ?? null,
+        ...(SAMPLE ? {} : { amount_received: o.total_amount }) });
       return ok({ ...o });
     }
 
@@ -1013,7 +1166,13 @@ class RpcCall implements PromiseLike<Result> {
   constructor(private name: string, private args: Row) {}
   abortSignal() { return this; }
   then<A = Result, B = never>(ok?: ((v: Result) => A | PromiseLike<A>) | null, no?: ((e: unknown) => B | PromiseLike<B>) | null): PromiseLike<A | B> {
-    return new Promise<Result>((r) => setTimeout(() => r(rpcImpl(this.name, this.args)), 250)).then(ok, no);
+    return new Promise<Result>((r) =>
+      setTimeout(() => {
+        const res = rpcImpl(this.name, this.args);
+        if (!res.error) persistNow();
+        r(res);
+      }, 250),
+    ).then(ok, no);
   }
 }
 
@@ -1029,6 +1188,7 @@ export function createDemoClient() {
       async verifyOtp({ phone, token }: { phone: string; token: string }) {
         if (!/^[0-9]{6}$/.test(token)) return { data: { user: null }, error: { message: 'Mã sai' } };
         user = { id: 'demo-user-' + phone.replace(/\D/g, ''), phone };
+        persistNow(true);
         for (const l of authListeners) l('SIGNED_IN', session());
         return { data: { user: session()!.user, session: session() }, error: null };
       },
@@ -1039,7 +1199,9 @@ export function createDemoClient() {
         return { data: { user: session()?.user ?? null }, error: null };
       },
       async signOut() {
+        // Đăng xuất chỉ bỏ phiên: dữ liệu quán vẫn nằm trên máy, đăng nhập lại cùng số điện thoại là thấy lại
         user = null;
+        persistNow(true);
         for (const l of authListeners) l('SIGNED_OUT', null);
         return { error: null };
       },
@@ -1070,10 +1232,14 @@ export function createDemoClient() {
         const o = db.orders!.find((x) => x.id === opts.body.order_id);
         if (!o) return { data: null, error: { message: 'QP_NOT_FOUND' } };
         const amount = o.total_amount - o.amount_received;
+        const acc = db.payment_accounts!.find((x) => x.business_id === o.business_id && x.is_active && x.kind === 'MAIN');
+        if (!acc) return { data: null, error: { message: 'QP_NO_PAYMENT_ACCOUNT' } };
+        const biz = db.businesses!.find((x) => x.id === o.business_id);
         return {
           data: {
-            qr_payload: buildVietQr({ bankBin: DEMO_BIN, accountNo: DEMO_ACCOUNT, amount, content: o.order_code }),
-            bank_name: 'MB Bank (dùng thử)', account_name: 'NGUYEN THI BA', amount,
+            qr_payload: buildVietQr({ bankBin: acc.bank_bin, accountNo: acc.account_no, amount, content: o.order_code }),
+            bank_name: acc.provider === 'DEMO' ? 'MB Bank (dùng thử)' : bankDisplayName(acc.bank_bin),
+            account_name: biz?.bank_account_name ?? '', amount,
             uses_order_code: true, order_code: o.order_code, expires_at: null,
           },
           error: null,

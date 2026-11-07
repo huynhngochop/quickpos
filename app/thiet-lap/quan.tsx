@@ -12,6 +12,7 @@ import { createBusiness } from '../../src/features/session/api';
 import { useSession } from '../../src/features/session/store';
 import { newId } from '../../src/lib/device';
 import { colors, font, radius, space } from '../../src/theme/tokens';
+import { ENV } from '../../src/lib/env';
 import { vi } from '../../src/i18n/vi';
 
 const schema = z.object({
@@ -73,6 +74,7 @@ export default function ThietLapQuan() {
       />
       <Field control={control} name="address" label={vi.setup.address} multiline error={formState.errors.address?.message} />
       {error ? <ErrorView error={error} /> : null}
+      {ENV.demo ? <Button kind="link" label={vi.local.haveBackup} onPress={() => router.push('/sao-luu')} /> : null}
     </Screen>
   );
 }

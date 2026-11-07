@@ -18,6 +18,8 @@ import { bankDisplayName } from '../src/lib/banks';
 import { readNumber } from '../src/lib/money';
 import { getDeviceId } from '../src/lib/device';
 import { ENV } from '../src/lib/env';
+import { lastBackupAt } from '../src/lib/localStore';
+import { formatDateVN } from '../src/lib/time';
 import { colors, space } from '../src/theme/tokens';
 import { vi } from '../src/i18n/vi';
 
@@ -69,6 +71,16 @@ export default function CaiDat() {
             <Txt tone="warn">{vi.settings.accountNone}</Txt>
           )}
         </Row>
+        {ENV.localOnly ? (
+          <LinkRow label={vi.local.accountChange} onPress={() => router.push({ pathname: '/thiet-lap/tai-khoan', params: { from: 'settings' } })} />
+        ) : null}
+        {ENV.demo ? (
+          <LinkRow
+            label={vi.local.title}
+            sub={lastBackupAt() ? vi.local.last(formatDateVN(lastBackupAt()!)) : vi.local.lastNever}
+            onPress={() => router.push('/sao-luu')}
+          />
+        ) : null}
         <LinkRow label={vi.settings.staff} sub={members.data ? vi.settings.staffCount(members.data.length) : undefined} onPress={() => router.push('/nhan-vien')} last />
       </Card>
 
