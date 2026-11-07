@@ -51,7 +51,12 @@ export default function TrangChinh() {
   const staff = isStaffDevice();
   const plan = usePlan(staff ? '' : businessId);
   useEffect(() => {
-    if (ENV.demo && !staff && plan.data && businessId) syncHost({ businessId, name }, plan.data);
+    // Máy chủ quán không được làm hỏng trang chính
+    try {
+      if (ENV.demo && !staff && plan.data && businessId) syncHost({ businessId, name }, plan.data);
+    } catch (e) {
+      console.warn('[lan] syncHost', e);
+    }
   }, [plan.data, businessId, name, staff]);
   const expiring = useExpiringLots(businessId);
   const products = useProducts(businessId);

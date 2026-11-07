@@ -9,6 +9,7 @@ import { AppState, Platform } from 'react-native';
 import { ENV } from './env';
 import { attachStorage, createDemoClient, persistNow } from './demoClient';
 import { localStore } from './localStore';
+import '../features/lan/prng';
 import { LanClient } from '../features/lan/client';
 import { createLanSupabase } from '../features/lan/lanSupabase';
 import { connect, scanForHost } from '../features/lan/tcp';
