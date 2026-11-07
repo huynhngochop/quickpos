@@ -110,3 +110,8 @@ tới đó. Như vậy không có chuyện hai bản dữ liệu ghi đè nhau, 
 ### Ước lượng
 Khoảng 2–3 tuần cho cách A: máy chủ trong app, LanClient, ghép máy, đẩy tin, mất kết nối, QA hai máy.
 Không đổi màn hình bán hàng.
+
+## Việc còn chờ trước bản final
+- Giá Pro: **599.000 đ / năm** (chốt 07/11/2026, `EXPO_PUBLIC_PRO_PRICE_YEAR`, mặc định trong `src/lib/env.ts`).
+- Chờ người dùng gửi: số điện thoại hỗ trợ (`EXPO_PUBLIC_SUPPORT_PHONE`), Zalo (`EXPO_PUBLIC_VENDOR_ZALO`),
+  tài khoản nhận tiền bán gói (`EXPO_PUBLIC_VENDOR_BANK_BIN`, `EXPO_PUBLIC_VENDOR_ACCOUNT_NO`, `EXPO_PUBLIC_VENDOR_ACCOUNT_NAME`).
