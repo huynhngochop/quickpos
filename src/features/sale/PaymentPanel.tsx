@@ -78,15 +78,6 @@ export function PaymentPanel({ orderId, qrSize, onNewSale }: { orderId: string; 
     setUndoLeft(0);
   };
 
-  if (undoLeft > 0) {
-    return (
-      <Card tone="warn" style={{ gap: space.md }}>
-        <Txt variant="title" tone="warn">{`${vi.sale.cancelled} · ${undoLeft}`}</Txt>
-        <Button big label={vi.sale.undo} onPress={undo} />
-      </Card>
-    );
-  }
-
   const manualSheet = (
     <ConfirmSheet
       visible={askManual}
@@ -104,7 +95,31 @@ export function PaymentPanel({ orderId, qrSize, onNewSale }: { orderId: string; 
       onNo={() => setAskManual(false)}
     />
   );
+  const cancelSheet = (
+    <ConfirmSheet
+      visible={askCancel}
+      title={vi.sale.cancelAsk}
+      body={vi.sale.cancelAskBody}
+      yes={vi.sale.cancelYes}
+      no={vi.sale.cancelNo}
+      danger
+      onYes={startCancel}
+      onNo={() => setAskCancel(false)}
+    />
+  );
 
+  // Hai hộp hỏi (Modal) luôn được vẽ ở mọi trạng thái: đơn đổi trạng thái ngay khi bấm (bản lưu trên máy trả lời tức thì),
+  // nếu nhánh mới không vẽ hộp thì Modal bị gỡ khi đang chạy hiệu ứng đóng → Android để lại lớp trong suốt chặn mọi lần bấm
+  // ("Đơn mới", "Hoàn tác" không ăn — lỗi QA 08/11/2026).
+  const content = (() => {
+  if (undoLeft > 0) {
+    return (
+      <Card tone="warn" style={{ gap: space.md }}>
+        <Txt variant="title" tone="warn">{`${vi.sale.cancelled} · ${undoLeft}`}</Txt>
+        <Button big label={vi.sale.undo} onPress={undo} />
+      </Card>
+    );
+  }
   switch (view.kind) {
     case 'PAID':
     case 'OVERPAID': {
@@ -187,7 +202,6 @@ export function PaymentPanel({ orderId, qrSize, onNewSale }: { orderId: string; 
           </Txt>
           {manualAllowed ? <Button kind="success" label={vi.sale.iSawFullMoney} onPress={() => setAskManual(true)} /> : null}
           {manual.error ? <ErrorView error={manual.error} /> : null}
-          {manualSheet}
         </View>
       );
 
@@ -241,21 +255,18 @@ export function PaymentPanel({ orderId, qrSize, onNewSale }: { orderId: string; 
           {manual.error ? <ErrorView error={manual.error} /> : null}
           {cancel.error ? <ErrorView error={cancel.error} /> : null}
           <Button kind="dangerOutline" label={vi.sale.cancelOrder} onPress={() => setAskCancel(true)} />
-          <ConfirmSheet
-            visible={askCancel}
-            title={vi.sale.cancelAsk}
-            body={vi.sale.cancelAskBody}
-            yes={vi.sale.cancelYes}
-            no={vi.sale.cancelNo}
-            danger
-            onYes={startCancel}
-            onNo={() => setAskCancel(false)}
-          />
-          {manualSheet}
         </View>
       );
     }
   }
+  })();
+  return (
+    <>
+      {content}
+      {manualSheet}
+      {cancelSheet}
+    </>
+  );
 }
 
 /** Đặt lại để bán đơn tiếp theo */

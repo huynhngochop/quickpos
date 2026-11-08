@@ -123,7 +123,7 @@ export default function BanHang() {
         <Button kind="secondary" label={vi.catalog.scan} onPress={() => router.push({ pathname: '/quet-ma', params: { mode: 'sell' } })} />
       </View>
       {cats.length > 2 ? (
-        <ChoiceGrid options={cats.map((c) => ({ key: c, label: c === 'ALL' ? vi.catalog.all : c }))} value={cat} onChange={setCat} columns={3} />
+        <ChoiceGrid options={cats} value={cat} onChange={setCat} columns={3} />
       ) : null}
       {products.isLoading ? <Loading /> : null}
       {products.error ? <ErrorView error={products.error} onRetry={() => void products.refetch()} /> : null}

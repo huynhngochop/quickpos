@@ -28,7 +28,7 @@ export function ConfirmSheet({
 }) {
   const insets = useSafeAreaInsets();
   return (
-    <Modal visible={visible} transparent animationType="fade" onRequestClose={onNo} statusBarTranslucent>
+    <Modal visible={visible} transparent animationType="none" onRequestClose={onNo} statusBarTranslucent>
       <View style={{ flex: 1, backgroundColor: 'rgba(22,25,29,0.55)', justifyContent: 'flex-end' }}>
         <View
           style={{

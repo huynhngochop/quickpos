@@ -58,9 +58,11 @@ appId: vn.quickpos.app
 - scrollUntilVisible:
     element: "Lưu nhập hàng"
 - tapOn: "Lưu nhập hàng"
-- extendedWaitUntil:
-    visible: ".*Đã nhập hàng"
-    timeout: 10000
+# Máy tính bảng: thông báo nằm trên đầu thẻ, có thể đã cuộn khỏi màn hình
+- scrollUntilVisible:
+    element: ".*Đã nhập hàng.*"
+    direction: UP
+    timeout: 15000
 - scrollUntilVisible:
     element: "30 ổ"
     direction: UP
