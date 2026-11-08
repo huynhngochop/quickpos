@@ -1,0 +1,775 @@
+19:05:13.512 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandStart: Define variables RUNNING
+19:05:13.518 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandFinished: Define variables COMPLETED
+19:05:13.522 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandStart: Apply configuration RUNNING
+19:05:13.522 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandFinished: Apply configuration COMPLETED
+19:05:13.523 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandStart: Run subflows/dismiss-system-dialogs.yaml RUNNING
+19:05:13.549 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandStart: Apply configuration RUNNING
+19:05:13.550 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandFinished: Apply configuration COMPLETED
+19:05:13.551 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandStart: Run flow when ".*isn't responding.*" is visible RUNNING
+19:05:20.688 [ INFO] maestro.orchestra.Orchestra.executeSubflowCommands: [Command execution subflow] CommandSkipped: null
+19:05:20.692 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandFinished: Run flow when ".*isn't responding.*" is visible SKIPPED
+19:05:20.692 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandStart: Run flow when ".*không phản hồi.*" is visible RUNNING
+19:05:21.619 [ INFO] maestro.orchestra.Orchestra.executeSubflowCommands: [Command execution subflow] CommandSkipped: null
+19:05:21.620 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandFinished: Run flow when ".*không phản hồi.*" is visible SKIPPED
+19:05:21.621 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandFinished: Run subflows/dismiss-system-dialogs.yaml COMPLETED
+19:05:21.621 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandStart: Assert that "Hôm nay đã thu.*" is visible RUNNING
+19:05:21.960 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandFinished: Assert that "Hôm nay đã thu.*" is visible COMPLETED
+19:05:21.960 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandStart: Scrolling DOWN until "Sổ nợ.*" is visible with speed 40, visibility percentage 100%, timeout 20000 ms, with centering disabled RUNNING
+19:05:22.267 [ INFO] maestro.orchestra.Orchestra.scrollUntilVisible: Scrolling try count: 0, DeviceWidth: 420, DeviceWidth: 912
+19:05:22.267 [ INFO] maestro.orchestra.Orchestra.scrollUntilVisible: Element bounds: Bounds(x=20, y=420, width=184, height=76)
+19:05:22.269 [ INFO] maestro.orchestra.Orchestra.scrollUntilVisible: Visibility Percent: 1.0
+19:05:22.302 [ INFO] maestro.orchestra.Orchestra.scrollUntilVisible: Command centerElement: ScrollUntilVisibleCommand(selector=ElementSelector(textRegex=Sổ nợ.*, idRegex=null, size=null, below=null, above=null, leftOf=null, rightOf=null, containsChild=null, containsDescendants=null, traits=null, index=null, enabled=null, optional=false, selected=null, checked=null, focused=null, childOf=null, css=null), direction=DOWN, scrollDuration=601, visibilityPercentage=100, timeout=20000, waitToSettleTimeoutMs=null, centerElement=false, originalSpeedValue=40, label=null, optional=false).centerElement
+19:05:22.302 [ INFO] maestro.orchestra.Orchestra.scrollUntilVisible: visibilityPercentageNormalized: 1.0
+19:05:22.303 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandFinished: Scrolling DOWN until "Sổ nợ.*" is visible with speed 40, visibility percentage 100%, timeout 20000 ms, with centering disabled COMPLETED
+19:05:22.303 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandStart: Retry 2 times RUNNING
+19:05:22.304 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandStart: Tap on "Sổ nợ.*" RUNNING
+19:05:22.547 [ INFO] maestro.Maestro.tap-HgV9Ck0: Tapping on element:  UiElement(treeNode=TreeNode(attributes={accessibilityText=Sổ nợ, Đang nợ 125.000 đ, title=, value=, text=, hintText=, resource-id=, bounds=[20,420][204,496], enabled=true, focused=false, selected=false, checked=false}, children=[], clickable=null, enabled=true, focused=false, checked=false, selected=false), bounds=Bounds(x=20, y=420, width=184, height=76))
+19:05:22.913 [ INFO] maestro.Maestro.tap-HgV9Ck0: Tap aimed via trusted pre-wait hierarchy (null settle, no recent scroll)
+19:05:22.919 [ INFO] maestro.Maestro.screenshotBasedTap-ogj28Uc: Try tapping at (112, 458) using hierarchy based logic for wait
+19:05:22.925 [TRACE] maestro.utils.ScreenshotUtils.takeScreenshot: Taking screenshot to byte array
+19:05:22.925 [TRACE] maestro.utils.ScreenshotUtils.takeScreenshot: Taking screenshot to output sink
+19:05:25.188 [ INFO] maestro.Maestro.screenshotBasedTap-ogj28Uc: Something have changed in the UI judging by view hierarchy. Proceed.
+19:05:25.189 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandFinished: Tap on "Sổ nợ.*" COMPLETED
+19:05:25.190 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandStart: Assert that "Khách đang nợ tổng cộng" is visible RUNNING
+19:05:25.551 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandFinished: Assert that "Khách đang nợ tổng cộng" is visible COMPLETED
+19:05:25.551 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandFinished: Retry 2 times COMPLETED
+19:05:25.551 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandStart: Assert that "125.000 đ" is visible RUNNING
+19:05:25.792 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandFinished: Assert that "125.000 đ" is visible COMPLETED
+19:05:25.792 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandStart: Assert that "2 khách" is visible RUNNING
+19:05:26.030 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandFinished: Assert that "2 khách" is visible COMPLETED
+19:05:26.031 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandStart: Take screenshot 80-so-no RUNNING
+19:05:26.041 [ INFO] maestro.Maestro.takeScreenshot: Taking screenshot
+19:05:26.067 [TRACE] maestro.utils.ScreenshotUtils.takeScreenshot: Taking screenshot to output sink
+19:05:26.218 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandFinished: Take screenshot 80-so-no COMPLETED
+19:05:26.219 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandStart: Tap on "Chị Hoa.*" RUNNING
+19:05:26.491 [ INFO] maestro.Maestro.tap-HgV9Ck0: Tapping on element:  UiElement(treeNode=TreeNode(attributes={accessibilityText=Chị Hoa, Đang nợ 85.000 đ, title=, value=, text=, hintText=, resource-id=, bounds=[20,463][400,550], enabled=true, focused=false, selected=false, checked=false}, children=[], clickable=null, enabled=true, focused=false, checked=false, selected=false), bounds=Bounds(x=20, y=463, width=380, height=87))
+19:05:26.882 [ INFO] maestro.Maestro.tap-HgV9Ck0: Tap aimed via trusted pre-wait hierarchy (null settle, no recent scroll)
+19:05:26.888 [ INFO] maestro.Maestro.screenshotBasedTap-ogj28Uc: Try tapping at (210, 506) using hierarchy based logic for wait
+19:05:26.889 [TRACE] maestro.utils.ScreenshotUtils.takeScreenshot: Taking screenshot to byte array
+19:05:26.889 [TRACE] maestro.utils.ScreenshotUtils.takeScreenshot: Taking screenshot to output sink
+19:05:28.532 [ INFO] maestro.Maestro.screenshotBasedTap-ogj28Uc: Something have changed in the UI judging by view hierarchy. Proceed.
+19:05:28.533 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandFinished: Tap on "Chị Hoa.*" COMPLETED
+19:05:28.533 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandStart: Assert that "Đang nợ" is visible RUNNING
+19:05:28.906 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandFinished: Assert that "Đang nợ" is visible COMPLETED
+19:05:28.906 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandStart: Assert that "85.000 đ" is visible RUNNING
+19:05:29.308 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandFinished: Assert that "85.000 đ" is visible COMPLETED
+19:05:29.308 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandStart: Tap on id: debt-amount RUNNING
+19:05:29.788 [ INFO] maestro.Maestro.tap-HgV9Ck0: Tapping on element:  UiElement(treeNode=TreeNode(attributes={accessibilityText=Số tiền, title=, value=, text=, hintText=, resource-id=debt-amount, bounds=[40,588][380,644], enabled=true, focused=false, selected=false, checked=false}, children=[], clickable=null, enabled=true, focused=false, checked=false, selected=false), bounds=Bounds(x=40, y=588, width=340, height=56))
+19:05:30.168 [ INFO] maestro.Maestro.tap-HgV9Ck0: Tap aimed via trusted pre-wait hierarchy (null settle, no recent scroll)
+19:05:30.172 [ INFO] maestro.Maestro.screenshotBasedTap-ogj28Uc: Try tapping at (210, 616) using hierarchy based logic for wait
+19:05:30.223 [TRACE] maestro.utils.ScreenshotUtils.takeScreenshot: Taking screenshot to byte array
+19:05:30.224 [TRACE] maestro.utils.ScreenshotUtils.takeScreenshot: Taking screenshot to output sink
+19:05:33.337 [ INFO] maestro.Maestro.screenshotBasedTap-ogj28Uc: Something have changed in the UI judging by view hierarchy. Proceed.
+19:05:33.339 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandFinished: Tap on id: debt-amount COMPLETED
+19:05:33.340 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandStart: Input text 20000 RUNNING
+19:05:33.345 [ INFO] maestro.Maestro.inputText: Inputting text: 20000
+19:05:35.083 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandFinished: Input text 20000 COMPLETED
+19:05:35.083 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandStart: Run subflows/an-ban-phim.yaml RUNNING
+19:05:35.084 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandStart: Apply configuration RUNNING
+19:05:35.084 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandFinished: Apply configuration COMPLETED
+19:05:35.084 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandStart: Run flow when Platform is ANDROID RUNNING
+19:05:35.084 [ INFO] maestro.orchestra.Orchestra.executeSubflowCommands: [Command execution subflow] CommandSkipped: null
+19:05:35.085 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandFinished: Run flow when Platform is ANDROID SKIPPED
+19:05:35.085 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandStart: Run flow when Platform is IOS RUNNING
+19:05:35.085 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandStart: Tap on id: keyboard-done RUNNING
+19:05:35.480 [ INFO] maestro.Maestro.tap-HgV9Ck0: Tapping on element:  UiElement(treeNode=TreeNode(attributes={accessibilityText=Xong, title=, value=, text=, hintText=, resource-id=keyboard-done, bounds=[324,538][420,594], enabled=true, focused=false, selected=false, checked=false}, children=[], clickable=null, enabled=true, focused=false, checked=false, selected=false), bounds=Bounds(x=324, y=538, width=96, height=56))
+19:05:35.845 [ INFO] maestro.Maestro.tap-HgV9Ck0: Tap aimed via trusted pre-wait hierarchy (null settle, no recent scroll)
+19:05:35.847 [ INFO] maestro.Maestro.screenshotBasedTap-ogj28Uc: Try tapping at (372, 566) using hierarchy based logic for wait
+19:05:35.848 [TRACE] maestro.utils.ScreenshotUtils.takeScreenshot: Taking screenshot to byte array
+19:05:35.849 [TRACE] maestro.utils.ScreenshotUtils.takeScreenshot: Taking screenshot to output sink
+19:05:37.282 [ INFO] maestro.Maestro.screenshotBasedTap-ogj28Uc: Something have changed in the UI judging by view hierarchy. Proceed.
+19:05:37.283 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandFinished: Tap on id: keyboard-done COMPLETED
+19:05:37.283 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandFinished: Run flow when Platform is IOS COMPLETED
+19:05:37.283 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandFinished: Run subflows/an-ban-phim.yaml COMPLETED
+19:05:37.283 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandStart: Scrolling DOWN until "Ghi nợ" is visible with speed 40, visibility percentage 100%, timeout 20000 ms, with centering disabled RUNNING
+19:05:37.594 [ INFO] maestro.orchestra.Orchestra.scrollUntilVisible: Scrolling try count: 0, DeviceWidth: 420, DeviceWidth: 912
+19:05:37.594 [ INFO] maestro.orchestra.Orchestra.scrollUntilVisible: Element bounds: Bounds(x=38, y=657, width=344, height=68)
+19:05:37.594 [ INFO] maestro.orchestra.Orchestra.scrollUntilVisible: Visibility Percent: 1.0
+19:05:37.611 [ INFO] maestro.orchestra.Orchestra.scrollUntilVisible: Command centerElement: ScrollUntilVisibleCommand(selector=ElementSelector(textRegex=Ghi nợ, idRegex=null, size=null, below=null, above=null, leftOf=null, rightOf=null, containsChild=null, containsDescendants=null, traits=null, index=null, enabled=null, optional=false, selected=null, checked=null, focused=null, childOf=null, css=null), direction=DOWN, scrollDuration=601, visibilityPercentage=100, timeout=20000, waitToSettleTimeoutMs=null, centerElement=false, originalSpeedValue=40, label=null, optional=false).centerElement
+19:05:37.612 [ INFO] maestro.orchestra.Orchestra.scrollUntilVisible: visibilityPercentageNormalized: 1.0
+19:05:37.612 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandFinished: Scrolling DOWN until "Ghi nợ" is visible with speed 40, visibility percentage 100%, timeout 20000 ms, with centering disabled COMPLETED
+19:05:37.612 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandStart: Tap on "Ghi nợ" RUNNING
+19:05:37.946 [ INFO] maestro.Maestro.tap-HgV9Ck0: Tapping on element:  UiElement(treeNode=TreeNode(attributes={accessibilityText=Ghi nợ, title=, value=, text=, hintText=, resource-id=, bounds=[38,657][382,725], enabled=true, focused=false, selected=false, checked=false}, children=[], clickable=null, enabled=true, focused=false, checked=false, selected=false), bounds=Bounds(x=38, y=657, width=344, height=68))
+19:05:38.286 [ INFO] maestro.Maestro.tap-HgV9Ck0: Tap aimed via trusted pre-wait hierarchy (null settle, no recent scroll)
+19:05:38.288 [ INFO] maestro.Maestro.screenshotBasedTap-ogj28Uc: Try tapping at (210, 691) using hierarchy based logic for wait
+19:05:38.289 [TRACE] maestro.utils.ScreenshotUtils.takeScreenshot: Taking screenshot to byte array
+19:05:38.290 [TRACE] maestro.utils.ScreenshotUtils.takeScreenshot: Taking screenshot to output sink
+19:05:39.596 [ INFO] maestro.Maestro.screenshotBasedTap-ogj28Uc: Something have changed in the UI judging by view hierarchy. Proceed.
+19:05:39.597 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandFinished: Tap on "Ghi nợ" COMPLETED
+19:05:39.597 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandStart: Assert that ".*Lấy nợ 20.000 đ.*" is visible RUNNING
+19:05:39.901 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandFinished: Assert that ".*Lấy nợ 20.000 đ.*" is visible COMPLETED
+19:05:39.902 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandStart: Scrolling UP until "105.000 đ" is visible with speed 40, visibility percentage 100%, timeout 20000 ms, with centering disabled RUNNING
+19:05:40.392 [ INFO] maestro.orchestra.Orchestra.scrollUntilVisible: Scrolling try count: 0, DeviceWidth: 420, DeviceWidth: 912
+19:05:40.397 [ INFO] maestro.orchestra.Orchestra.scrollUntilVisible: Element bounds: Bounds(x=84, y=136, width=251, height=61)
+19:05:40.397 [ INFO] maestro.orchestra.Orchestra.scrollUntilVisible: Visibility Percent: 1.0
+19:05:40.398 [ INFO] maestro.orchestra.Orchestra.scrollUntilVisible: Command centerElement: ScrollUntilVisibleCommand(selector=ElementSelector(textRegex=105.000 đ, idRegex=null, size=null, below=null, above=null, leftOf=null, rightOf=null, containsChild=null, containsDescendants=null, traits=null, index=null, enabled=null, optional=false, selected=null, checked=null, focused=null, childOf=null, css=null), direction=UP, scrollDuration=601, visibilityPercentage=100, timeout=20000, waitToSettleTimeoutMs=null, centerElement=false, originalSpeedValue=40, label=null, optional=false).centerElement
+19:05:40.398 [ INFO] maestro.orchestra.Orchestra.scrollUntilVisible: visibilityPercentageNormalized: 1.0
+19:05:40.398 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandFinished: Scrolling UP until "105.000 đ" is visible with speed 40, visibility percentage 100%, timeout 20000 ms, with centering disabled COMPLETED
+19:05:40.398 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandStart: Take screenshot 81-ghi-no RUNNING
+19:05:40.486 [ INFO] maestro.Maestro.takeScreenshot: Taking screenshot
+19:05:40.511 [TRACE] maestro.utils.ScreenshotUtils.takeScreenshot: Taking screenshot to output sink
+19:05:40.731 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandFinished: Take screenshot 81-ghi-no COMPLETED
+19:05:40.731 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandStart: Tap on id: debt-kind-PAYMENT RUNNING
+19:05:41.334 [ INFO] maestro.Maestro.tap-HgV9Ck0: Tapping on element:  UiElement(treeNode=TreeNode(attributes={accessibilityText=Khách trả tiền, title=, value=radio button, text=radio button, hintText=, resource-id=debt-kind-PAYMENT, bounds=[216,332][382,403], enabled=true, focused=false, selected=false, checked=false}, children=[], clickable=null, enabled=true, focused=false, checked=false, selected=false), bounds=Bounds(x=216, y=332, width=166, height=71))
+19:05:41.753 [ INFO] maestro.Maestro.tap-HgV9Ck0: Tap aimed via trusted pre-wait hierarchy (null settle, no recent scroll)
+19:05:41.755 [ INFO] maestro.Maestro.screenshotBasedTap-ogj28Uc: Try tapping at (299, 367) using hierarchy based logic for wait
+19:05:41.755 [TRACE] maestro.utils.ScreenshotUtils.takeScreenshot: Taking screenshot to byte array
+19:05:41.755 [TRACE] maestro.utils.ScreenshotUtils.takeScreenshot: Taking screenshot to output sink
+19:05:42.814 [ INFO] maestro.Maestro.screenshotBasedTap-ogj28Uc: Something have changed in the UI judging by view hierarchy. Proceed.
+19:05:42.815 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandFinished: Tap on id: debt-kind-PAYMENT COMPLETED
+19:05:42.816 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandStart: Tap on id: debt-amount RUNNING
+19:05:43.174 [ INFO] maestro.Maestro.tap-HgV9Ck0: Tapping on element:  UiElement(treeNode=TreeNode(attributes={accessibilityText=Số tiền, title=, value=, text=, hintText=, resource-id=debt-amount, bounds=[40,447][380,503], enabled=true, focused=false, selected=false, checked=false}, children=[], clickable=null, enabled=true, focused=false, checked=false, selected=false), bounds=Bounds(x=40, y=447, width=340, height=56))
+19:05:43.547 [ INFO] maestro.Maestro.tap-HgV9Ck0: Tap aimed via trusted pre-wait hierarchy (null settle, no recent scroll)
+19:05:43.571 [ INFO] maestro.Maestro.screenshotBasedTap-ogj28Uc: Try tapping at (210, 475) using hierarchy based logic for wait
+19:05:43.572 [TRACE] maestro.utils.ScreenshotUtils.takeScreenshot: Taking screenshot to byte array
+19:05:43.572 [TRACE] maestro.utils.ScreenshotUtils.takeScreenshot: Taking screenshot to output sink
+19:05:45.167 [ INFO] maestro.Maestro.screenshotBasedTap-ogj28Uc: Something have changed in the UI judging by view hierarchy. Proceed.
+19:05:45.204 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandFinished: Tap on id: debt-amount COMPLETED
+19:05:45.205 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandStart: Input text 999000 RUNNING
+19:05:45.205 [ INFO] maestro.Maestro.inputText: Inputting text: 999000
+19:05:46.916 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandFinished: Input text 999000 COMPLETED
+19:05:46.918 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandStart: Run subflows/an-ban-phim.yaml RUNNING
+19:05:46.919 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandStart: Apply configuration RUNNING
+19:05:46.919 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandFinished: Apply configuration COMPLETED
+19:05:46.919 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandStart: Run flow when Platform is ANDROID RUNNING
+19:05:46.919 [ INFO] maestro.orchestra.Orchestra.executeSubflowCommands: [Command execution subflow] CommandSkipped: null
+19:05:46.920 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandFinished: Run flow when Platform is ANDROID SKIPPED
+19:05:46.920 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandStart: Run flow when Platform is IOS RUNNING
+19:05:46.920 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandStart: Tap on id: keyboard-done RUNNING
+19:05:47.378 [ INFO] maestro.Maestro.tap-HgV9Ck0: Tapping on element:  UiElement(treeNode=TreeNode(attributes={accessibilityText=Xong, title=, value=, text=, hintText=, resource-id=keyboard-done, bounds=[324,538][420,594], enabled=true, focused=false, selected=false, checked=false}, children=[], clickable=null, enabled=true, focused=false, checked=false, selected=false), bounds=Bounds(x=324, y=538, width=96, height=56))
+19:05:47.691 [ INFO] maestro.Maestro.tap-HgV9Ck0: Tap aimed via trusted pre-wait hierarchy (null settle, no recent scroll)
+19:05:47.693 [ INFO] maestro.Maestro.screenshotBasedTap-ogj28Uc: Try tapping at (372, 566) using hierarchy based logic for wait
+19:05:47.699 [TRACE] maestro.utils.ScreenshotUtils.takeScreenshot: Taking screenshot to byte array
+19:05:47.700 [TRACE] maestro.utils.ScreenshotUtils.takeScreenshot: Taking screenshot to output sink
+19:05:49.057 [ INFO] maestro.Maestro.screenshotBasedTap-ogj28Uc: Something have changed in the UI judging by view hierarchy. Proceed.
+19:05:49.057 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandFinished: Tap on id: keyboard-done COMPLETED
+19:05:49.057 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandFinished: Run flow when Platform is IOS COMPLETED
+19:05:49.057 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandFinished: Run subflows/an-ban-phim.yaml COMPLETED
+19:05:49.058 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandStart: Scrolling DOWN until "Ghi đã trả" is visible with speed 40, visibility percentage 100%, timeout 20000 ms, with centering disabled RUNNING
+19:05:49.510 [ INFO] maestro.orchestra.Orchestra.scrollUntilVisible: Scrolling try count: 0, DeviceWidth: 420, DeviceWidth: 912
+19:05:49.510 [ INFO] maestro.orchestra.Orchestra.scrollUntilVisible: Element bounds: Bounds(x=38, y=651, width=344, height=68)
+19:05:49.510 [ INFO] maestro.orchestra.Orchestra.scrollUntilVisible: Visibility Percent: 1.0
+19:05:49.510 [ INFO] maestro.orchestra.Orchestra.scrollUntilVisible: Command centerElement: ScrollUntilVisibleCommand(selector=ElementSelector(textRegex=Ghi đã trả, idRegex=null, size=null, below=null, above=null, leftOf=null, rightOf=null, containsChild=null, containsDescendants=null, traits=null, index=null, enabled=null, optional=false, selected=null, checked=null, focused=null, childOf=null, css=null), direction=DOWN, scrollDuration=601, visibilityPercentage=100, timeout=20000, waitToSettleTimeoutMs=null, centerElement=false, originalSpeedValue=40, label=null, optional=false).centerElement
+19:05:49.510 [ INFO] maestro.orchestra.Orchestra.scrollUntilVisible: visibilityPercentageNormalized: 1.0
+19:05:49.511 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandFinished: Scrolling DOWN until "Ghi đã trả" is visible with speed 40, visibility percentage 100%, timeout 20000 ms, with centering disabled COMPLETED
+19:05:49.511 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandStart: Tap on "Ghi đã trả" RUNNING
+19:05:49.828 [ INFO] maestro.Maestro.tap-HgV9Ck0: Tapping on element:  UiElement(treeNode=TreeNode(attributes={accessibilityText=Ghi đã trả, title=, value=, text=, hintText=, resource-id=, bounds=[38,651][382,719], enabled=true, focused=false, selected=false, checked=false}, children=[], clickable=null, enabled=true, focused=false, checked=false, selected=false), bounds=Bounds(x=38, y=651, width=344, height=68))
+19:05:50.159 [ INFO] maestro.Maestro.tap-HgV9Ck0: Tap aimed via trusted pre-wait hierarchy (null settle, no recent scroll)
+19:05:50.160 [ INFO] maestro.Maestro.screenshotBasedTap-ogj28Uc: Try tapping at (210, 685) using hierarchy based logic for wait
+19:05:50.161 [TRACE] maestro.utils.ScreenshotUtils.takeScreenshot: Taking screenshot to byte array
+19:05:50.161 [TRACE] maestro.utils.ScreenshotUtils.takeScreenshot: Taking screenshot to output sink
+19:05:51.385 [ INFO] maestro.Maestro.screenshotBasedTap-ogj28Uc: Something have changed in the UI judging by view hierarchy. Proceed.
+19:05:51.387 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandFinished: Tap on "Ghi đã trả" COMPLETED
+19:05:51.387 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandStart: Assert that "Số tiền trả nhiều hơn số đang nợ.*" is visible RUNNING
+19:05:51.881 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandFinished: Assert that "Số tiền trả nhiều hơn số đang nợ.*" is visible COMPLETED
+19:05:51.883 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandStart: Tap on id: debt-amount RUNNING
+19:05:52.279 [ INFO] maestro.Maestro.tap-HgV9Ck0: Tapping on element:  UiElement(treeNode=TreeNode(attributes={accessibilityText=Số tiền, title=, value=999000, text=999000, hintText=, resource-id=debt-amount, bounds=[40,447][380,503], enabled=true, focused=false, selected=false, checked=false}, children=[], clickable=null, enabled=true, focused=false, checked=false, selected=false), bounds=Bounds(x=40, y=447, width=340, height=56))
+19:05:52.634 [ INFO] maestro.Maestro.tap-HgV9Ck0: Tap aimed via trusted pre-wait hierarchy (null settle, no recent scroll)
+19:05:52.634 [ INFO] maestro.Maestro.screenshotBasedTap-ogj28Uc: Try tapping at (210, 475) using hierarchy based logic for wait
+19:05:52.635 [TRACE] maestro.utils.ScreenshotUtils.takeScreenshot: Taking screenshot to byte array
+19:05:52.636 [TRACE] maestro.utils.ScreenshotUtils.takeScreenshot: Taking screenshot to output sink
+19:05:54.285 [ INFO] maestro.Maestro.screenshotBasedTap-ogj28Uc: Something have changed in the UI judging by view hierarchy. Proceed.
+19:05:54.286 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandFinished: Tap on id: debt-amount COMPLETED
+19:05:54.289 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandStart: Erase 10 characters RUNNING
+19:05:54.319 [ INFO] maestro.Maestro.eraseText$lambda$53: Erasing 10 characters
+19:05:56.038 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandFinished: Erase 10 characters COMPLETED
+19:05:56.039 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandStart: Run subflows/an-ban-phim.yaml RUNNING
+19:05:56.039 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandStart: Apply configuration RUNNING
+19:05:56.039 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandFinished: Apply configuration COMPLETED
+19:05:56.040 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandStart: Run flow when Platform is ANDROID RUNNING
+19:05:56.040 [ INFO] maestro.orchestra.Orchestra.executeSubflowCommands: [Command execution subflow] CommandSkipped: null
+19:05:56.040 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandFinished: Run flow when Platform is ANDROID SKIPPED
+19:05:56.040 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandStart: Run flow when Platform is IOS RUNNING
+19:05:56.040 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandStart: Tap on id: keyboard-done RUNNING
+19:05:56.497 [ INFO] maestro.Maestro.tap-HgV9Ck0: Tapping on element:  UiElement(treeNode=TreeNode(attributes={accessibilityText=Xong, title=, value=, text=, hintText=, resource-id=keyboard-done, bounds=[324,538][420,594], enabled=true, focused=false, selected=false, checked=false}, children=[], clickable=null, enabled=true, focused=false, checked=false, selected=false), bounds=Bounds(x=324, y=538, width=96, height=56))
+19:05:57.294 [ INFO] maestro.Maestro.tap-HgV9Ck0: Tap aimed via trusted pre-wait hierarchy (null settle, no recent scroll)
+19:05:57.297 [ INFO] maestro.Maestro.screenshotBasedTap-ogj28Uc: Try tapping at (372, 566) using hierarchy based logic for wait
+19:05:57.297 [TRACE] maestro.utils.ScreenshotUtils.takeScreenshot: Taking screenshot to byte array
+19:05:57.297 [TRACE] maestro.utils.ScreenshotUtils.takeScreenshot: Taking screenshot to output sink
+19:05:59.265 [ INFO] maestro.Maestro.screenshotBasedTap-ogj28Uc: Something have changed in the UI judging by view hierarchy. Proceed.
+19:05:59.267 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandFinished: Tap on id: keyboard-done COMPLETED
+19:05:59.268 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandFinished: Run flow when Platform is IOS COMPLETED
+19:05:59.268 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandFinished: Run subflows/an-ban-phim.yaml COMPLETED
+19:05:59.268 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandStart: Scrolling DOWN until "Trả hết.*" is visible with speed 40, visibility percentage 100%, timeout 20000 ms, with centering disabled RUNNING
+19:05:59.965 [ INFO] maestro.orchestra.Orchestra.scrollUntilVisible: Scrolling try count: 0, DeviceWidth: 420, DeviceWidth: 912
+19:05:59.966 [ INFO] maestro.orchestra.Orchestra.scrollUntilVisible: Element bounds: Bounds(x=38, y=517, width=344, height=56)
+19:05:59.966 [ INFO] maestro.orchestra.Orchestra.scrollUntilVisible: Visibility Percent: 1.0
+19:06:00.051 [ INFO] maestro.orchestra.Orchestra.scrollUntilVisible: Command centerElement: ScrollUntilVisibleCommand(selector=ElementSelector(textRegex=Trả hết.*, idRegex=null, size=null, below=null, above=null, leftOf=null, rightOf=null, containsChild=null, containsDescendants=null, traits=null, index=null, enabled=null, optional=false, selected=null, checked=null, focused=null, childOf=null, css=null), direction=DOWN, scrollDuration=601, visibilityPercentage=100, timeout=20000, waitToSettleTimeoutMs=null, centerElement=false, originalSpeedValue=40, label=null, optional=false).centerElement
+19:06:00.194 [ INFO] maestro.orchestra.Orchestra.scrollUntilVisible: visibilityPercentageNormalized: 1.0
+19:06:00.195 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandFinished: Scrolling DOWN until "Trả hết.*" is visible with speed 40, visibility percentage 100%, timeout 20000 ms, with centering disabled COMPLETED
+19:06:00.202 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandStart: Tap on "Trả hết.*" RUNNING
+19:06:00.728 [ INFO] maestro.Maestro.tap-HgV9Ck0: Tapping on element:  UiElement(treeNode=TreeNode(attributes={accessibilityText=Trả hết (105.000 đ), title=, value=, text=, hintText=, resource-id=, bounds=[38,517][382,573], enabled=true, focused=false, selected=false, checked=false}, children=[], clickable=null, enabled=true, focused=false, checked=false, selected=false), bounds=Bounds(x=38, y=517, width=344, height=56))
+19:06:01.437 [ INFO] maestro.Maestro.tap-HgV9Ck0: Tap aimed via trusted pre-wait hierarchy (null settle, no recent scroll)
+19:06:01.598 [ INFO] maestro.Maestro.screenshotBasedTap-ogj28Uc: Try tapping at (210, 545) using hierarchy based logic for wait
+19:06:01.654 [TRACE] maestro.utils.ScreenshotUtils.takeScreenshot: Taking screenshot to byte array
+19:06:01.655 [TRACE] maestro.utils.ScreenshotUtils.takeScreenshot: Taking screenshot to output sink
+19:06:04.016 [ INFO] maestro.Maestro.screenshotBasedTap-ogj28Uc: Something have changed in the UI judging by view hierarchy. Proceed.
+19:06:04.022 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandFinished: Tap on "Trả hết.*" COMPLETED
+19:06:04.023 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandStart: Scrolling DOWN until "Ghi đã trả" is visible with speed 40, visibility percentage 100%, timeout 20000 ms, with centering disabled RUNNING
+19:06:04.672 [ INFO] maestro.orchestra.Orchestra.scrollUntilVisible: Scrolling try count: 0, DeviceWidth: 420, DeviceWidth: 912
+19:06:04.673 [ INFO] maestro.orchestra.Orchestra.scrollUntilVisible: Element bounds: Bounds(x=38, y=780, width=344, height=68)
+19:06:04.673 [ INFO] maestro.orchestra.Orchestra.scrollUntilVisible: Visibility Percent: 1.0
+19:06:04.674 [ INFO] maestro.orchestra.Orchestra.scrollUntilVisible: Command centerElement: ScrollUntilVisibleCommand(selector=ElementSelector(textRegex=Ghi đã trả, idRegex=null, size=null, below=null, above=null, leftOf=null, rightOf=null, containsChild=null, containsDescendants=null, traits=null, index=null, enabled=null, optional=false, selected=null, checked=null, focused=null, childOf=null, css=null), direction=DOWN, scrollDuration=601, visibilityPercentage=100, timeout=20000, waitToSettleTimeoutMs=null, centerElement=false, originalSpeedValue=40, label=null, optional=false).centerElement
+19:06:04.675 [ INFO] maestro.orchestra.Orchestra.scrollUntilVisible: visibilityPercentageNormalized: 1.0
+19:06:04.715 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandFinished: Scrolling DOWN until "Ghi đã trả" is visible with speed 40, visibility percentage 100%, timeout 20000 ms, with centering disabled COMPLETED
+19:06:04.716 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandStart: Tap on "Ghi đã trả" RUNNING
+19:06:05.161 [ INFO] maestro.Maestro.tap-HgV9Ck0: Tapping on element:  UiElement(treeNode=TreeNode(attributes={accessibilityText=Ghi đã trả, title=, value=, text=, hintText=, resource-id=, bounds=[38,780][382,848], enabled=true, focused=false, selected=false, checked=false}, children=[], clickable=null, enabled=true, focused=false, checked=false, selected=false), bounds=Bounds(x=38, y=780, width=344, height=68))
+19:06:05.568 [ INFO] maestro.Maestro.tap-HgV9Ck0: Tap aimed via trusted pre-wait hierarchy (null settle, no recent scroll)
+19:06:05.574 [ INFO] maestro.Maestro.screenshotBasedTap-ogj28Uc: Try tapping at (210, 814) using hierarchy based logic for wait
+19:06:05.576 [TRACE] maestro.utils.ScreenshotUtils.takeScreenshot: Taking screenshot to byte array
+19:06:05.576 [TRACE] maestro.utils.ScreenshotUtils.takeScreenshot: Taking screenshot to output sink
+19:06:07.092 [ INFO] maestro.Maestro.screenshotBasedTap-ogj28Uc: Something have changed in the UI judging by view hierarchy. Proceed.
+19:06:07.093 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandFinished: Tap on "Ghi đã trả" COMPLETED
+19:06:07.094 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandStart: Assert that ".*Đã trả 105.000 đ.*" is visible RUNNING
+19:06:07.471 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandFinished: Assert that ".*Đã trả 105.000 đ.*" is visible COMPLETED
+19:06:07.471 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandStart: Scrolling UP until "Đã trả hết" is visible with speed 40, visibility percentage 100%, timeout 20000 ms, with centering disabled RUNNING
+19:06:07.948 [ INFO] maestro.orchestra.Orchestra.scrollUntilVisible: Scrolling try count: 0, DeviceWidth: 420, DeviceWidth: 912
+19:06:07.948 [ INFO] maestro.orchestra.Orchestra.scrollUntilVisible: Element bounds: Bounds(x=161, y=102, width=97, height=26)
+19:06:07.948 [ INFO] maestro.orchestra.Orchestra.scrollUntilVisible: Visibility Percent: 1.0
+19:06:07.948 [ INFO] maestro.orchestra.Orchestra.scrollUntilVisible: Command centerElement: ScrollUntilVisibleCommand(selector=ElementSelector(textRegex=Đã trả hết, idRegex=null, size=null, below=null, above=null, leftOf=null, rightOf=null, containsChild=null, containsDescendants=null, traits=null, index=null, enabled=null, optional=false, selected=null, checked=null, focused=null, childOf=null, css=null), direction=UP, scrollDuration=601, visibilityPercentage=100, timeout=20000, waitToSettleTimeoutMs=null, centerElement=false, originalSpeedValue=40, label=null, optional=false).centerElement
+19:06:07.948 [ INFO] maestro.orchestra.Orchestra.scrollUntilVisible: visibilityPercentageNormalized: 1.0
+19:06:07.948 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandFinished: Scrolling UP until "Đã trả hết" is visible with speed 40, visibility percentage 100%, timeout 20000 ms, with centering disabled COMPLETED
+19:06:07.949 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandStart: Take screenshot 82-tra-het RUNNING
+19:06:07.955 [ INFO] maestro.Maestro.takeScreenshot: Taking screenshot
+19:06:07.957 [TRACE] maestro.utils.ScreenshotUtils.takeScreenshot: Taking screenshot to output sink
+19:06:08.141 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandFinished: Take screenshot 82-tra-het COMPLETED
+19:06:08.141 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandStart: Scrolling DOWN until "Ghi nhầm" is visible with speed 40, visibility percentage 100%, timeout 20000 ms, with centering disabled RUNNING
+19:06:08.533 [ INFO] maestro.orchestra.Orchestra.scrollUntilVisible: Scrolling try count: 0, DeviceWidth: 420, DeviceWidth: 912
+19:06:08.533 [ INFO] maestro.orchestra.Orchestra.scrollUntilVisible: Element bounds: Bounds(x=264, y=587, width=118, height=56)
+19:06:08.533 [ INFO] maestro.orchestra.Orchestra.scrollUntilVisible: Visibility Percent: 1.0
+19:06:08.533 [ INFO] maestro.orchestra.Orchestra.scrollUntilVisible: Command centerElement: ScrollUntilVisibleCommand(selector=ElementSelector(textRegex=Ghi nhầm, idRegex=null, size=null, below=null, above=null, leftOf=null, rightOf=null, containsChild=null, containsDescendants=null, traits=null, index=null, enabled=null, optional=false, selected=null, checked=null, focused=null, childOf=null, css=null), direction=DOWN, scrollDuration=601, visibilityPercentage=100, timeout=20000, waitToSettleTimeoutMs=null, centerElement=false, originalSpeedValue=40, label=null, optional=false).centerElement
+19:06:08.536 [ INFO] maestro.orchestra.Orchestra.scrollUntilVisible: visibilityPercentageNormalized: 1.0
+19:06:08.537 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandFinished: Scrolling DOWN until "Ghi nhầm" is visible with speed 40, visibility percentage 100%, timeout 20000 ms, with centering disabled COMPLETED
+19:06:08.543 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandStart: Tap on "Ghi nhầm", Index: 0 RUNNING
+19:06:08.896 [ INFO] maestro.Maestro.tap-HgV9Ck0: Tapping on element:  UiElement(treeNode=TreeNode(attributes={accessibilityText=Ghi nhầm, title=, value=, text=, hintText=, resource-id=, bounds=[264,587][382,643], enabled=true, focused=false, selected=false, checked=false}, children=[], clickable=null, enabled=true, focused=false, checked=false, selected=false), bounds=Bounds(x=264, y=587, width=118, height=56))
+19:06:09.260 [ INFO] maestro.Maestro.tap-HgV9Ck0: Tap aimed via trusted pre-wait hierarchy (null settle, no recent scroll)
+19:06:09.261 [ INFO] maestro.Maestro.screenshotBasedTap-ogj28Uc: Try tapping at (323, 615) using hierarchy based logic for wait
+19:06:09.264 [TRACE] maestro.utils.ScreenshotUtils.takeScreenshot: Taking screenshot to byte array
+19:06:09.265 [TRACE] maestro.utils.ScreenshotUtils.takeScreenshot: Taking screenshot to output sink
+19:06:10.393 [ INFO] maestro.Maestro.screenshotBasedTap-ogj28Uc: Something have changed in the UI judging by view hierarchy. Proceed.
+19:06:10.393 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandFinished: Tap on "Ghi nhầm", Index: 0 COMPLETED
+19:06:10.394 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandStart: Tap on "Hủy dòng này" RUNNING
+19:06:10.653 [ INFO] maestro.Maestro.tap-HgV9Ck0: Tapping on element:  UiElement(treeNode=TreeNode(attributes={accessibilityText=Hủy dòng này, title=, value=, text=, hintText=, resource-id=, bounds=[20,722][400,790], enabled=true, focused=false, selected=false, checked=false}, children=[], clickable=null, enabled=true, focused=false, checked=false, selected=false), bounds=Bounds(x=20, y=722, width=380, height=68))
+19:06:10.941 [ INFO] maestro.Maestro.tap-HgV9Ck0: Tap aimed via trusted pre-wait hierarchy (null settle, no recent scroll)
+19:06:10.942 [ INFO] maestro.Maestro.screenshotBasedTap-ogj28Uc: Try tapping at (210, 756) using hierarchy based logic for wait
+19:06:10.942 [TRACE] maestro.utils.ScreenshotUtils.takeScreenshot: Taking screenshot to byte array
+19:06:10.942 [TRACE] maestro.utils.ScreenshotUtils.takeScreenshot: Taking screenshot to output sink
+19:06:12.271 [ INFO] maestro.Maestro.screenshotBasedTap-ogj28Uc: Something have changed in the UI judging by view hierarchy. Proceed.
+19:06:12.272 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandFinished: Tap on "Hủy dòng này" COMPLETED
+19:06:12.273 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandStart: Scrolling DOWN until ".*Đã hủy [(]ghi nhầm[)]" is visible with speed 40, visibility percentage 100%, timeout 15000 ms, with centering disabled RUNNING
+19:06:12.672 [ INFO] maestro.orchestra.Orchestra.scrollUntilVisible: Scrolling try count: 0, DeviceWidth: 420, DeviceWidth: 912
+19:06:12.673 [ INFO] maestro.orchestra.Orchestra.scrollUntilVisible: Element bounds: Bounds(x=38, y=767, width=344, height=23)
+19:06:12.673 [ INFO] maestro.orchestra.Orchestra.scrollUntilVisible: Visibility Percent: 1.0
+19:06:12.673 [ INFO] maestro.orchestra.Orchestra.scrollUntilVisible: Command centerElement: ScrollUntilVisibleCommand(selector=ElementSelector(textRegex=.*Đã hủy [(]ghi nhầm[)], idRegex=null, size=null, below=null, above=null, leftOf=null, rightOf=null, containsChild=null, containsDescendants=null, traits=null, index=null, enabled=null, optional=false, selected=null, checked=null, focused=null, childOf=null, css=null), direction=DOWN, scrollDuration=601, visibilityPercentage=100, timeout=15000, waitToSettleTimeoutMs=null, centerElement=false, originalSpeedValue=40, label=null, optional=false).centerElement
+19:06:12.673 [ INFO] maestro.orchestra.Orchestra.scrollUntilVisible: visibilityPercentageNormalized: 1.0
+19:06:12.673 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandFinished: Scrolling DOWN until ".*Đã hủy [(]ghi nhầm[)]" is visible with speed 40, visibility percentage 100%, timeout 15000 ms, with centering disabled COMPLETED
+19:06:12.673 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandStart: Scrolling UP until "Đang nợ" is visible with speed 40, visibility percentage 100%, timeout 20000 ms, with centering disabled RUNNING
+19:06:13.035 [ INFO] maestro.orchestra.Orchestra.scrollUntilVisible: Scrolling try count: 0, DeviceWidth: 420, DeviceWidth: 912
+19:06:13.035 [ INFO] maestro.orchestra.Orchestra.scrollUntilVisible: Element bounds: Bounds(x=170, y=102, width=80, height=26)
+19:06:13.035 [ INFO] maestro.orchestra.Orchestra.scrollUntilVisible: Visibility Percent: 1.0
+19:06:13.035 [ INFO] maestro.orchestra.Orchestra.scrollUntilVisible: Command centerElement: ScrollUntilVisibleCommand(selector=ElementSelector(textRegex=Đang nợ, idRegex=null, size=null, below=null, above=null, leftOf=null, rightOf=null, containsChild=null, containsDescendants=null, traits=null, index=null, enabled=null, optional=false, selected=null, checked=null, focused=null, childOf=null, css=null), direction=UP, scrollDuration=601, visibilityPercentage=100, timeout=20000, waitToSettleTimeoutMs=null, centerElement=false, originalSpeedValue=40, label=null, optional=false).centerElement
+19:06:13.035 [ INFO] maestro.orchestra.Orchestra.scrollUntilVisible: visibilityPercentageNormalized: 1.0
+19:06:13.035 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandFinished: Scrolling UP until "Đang nợ" is visible with speed 40, visibility percentage 100%, timeout 20000 ms, with centering disabled COMPLETED
+19:06:13.036 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandStart: Assert that "105.000 đ" is visible RUNNING
+19:06:13.322 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandFinished: Assert that "105.000 đ" is visible COMPLETED
+19:06:13.322 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandStart: Take screenshot 83-huy-dong-ghi-nham RUNNING
+19:06:13.323 [ INFO] maestro.Maestro.takeScreenshot: Taking screenshot
+19:06:13.323 [TRACE] maestro.utils.ScreenshotUtils.takeScreenshot: Taking screenshot to output sink
+19:06:13.512 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandFinished: Take screenshot 83-huy-dong-ghi-nham COMPLETED
+19:06:13.512 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandStart: Scrolling UP until "Sổ nợ" is visible with speed 40, visibility percentage 100%, timeout 20000 ms, with centering disabled RUNNING
+19:06:14.541 [ WARN] maestro.orchestra.Orchestra.scrollUntilVisible: Error: maestro.MaestroException$ElementNotFound: Element not found: Text matching regex: Sổ nợ
+19:06:14.572 [ INFO] maestro.Maestro.swipeFromCenter: Swiping DOWN from center
+19:06:17.403 [ INFO] maestro.orchestra.Orchestra.scrollUntilVisible: Scrolling try count: 0, DeviceWidth: 420, DeviceWidth: 912
+19:06:17.409 [ INFO] maestro.orchestra.Orchestra.scrollUntilVisible: Element bounds: Bounds(x=20, y=80, width=85, height=48)
+19:06:17.409 [ INFO] maestro.orchestra.Orchestra.scrollUntilVisible: Visibility Percent: 1.0
+19:06:17.409 [ INFO] maestro.orchestra.Orchestra.scrollUntilVisible: Command centerElement: ScrollUntilVisibleCommand(selector=ElementSelector(textRegex=Sổ nợ, idRegex=null, size=null, below=null, above=null, leftOf=null, rightOf=null, containsChild=null, containsDescendants=null, traits=null, index=null, enabled=null, optional=false, selected=null, checked=null, focused=null, childOf=null, css=null), direction=UP, scrollDuration=601, visibilityPercentage=100, timeout=20000, waitToSettleTimeoutMs=null, centerElement=false, originalSpeedValue=40, label=null, optional=false).centerElement
+19:06:17.409 [ INFO] maestro.orchestra.Orchestra.scrollUntilVisible: visibilityPercentageNormalized: 1.0
+19:06:17.409 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandFinished: Scrolling UP until "Sổ nợ" is visible with speed 40, visibility percentage 100%, timeout 20000 ms, with centering disabled COMPLETED
+19:06:17.409 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandStart: Retry 2 times RUNNING
+19:06:17.410 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandStart: Tap on "Sổ nợ" RUNNING
+19:06:17.665 [ INFO] maestro.Maestro.tap-HgV9Ck0: Tapping on element:  UiElement(treeNode=TreeNode(attributes={accessibilityText=Sổ nợ, title=, value=, text=, hintText=, resource-id=, bounds=[20,80][105,128], enabled=true, focused=false, selected=false, checked=false}, children=[], clickable=null, enabled=true, focused=false, checked=false, selected=false), bounds=Bounds(x=20, y=80, width=85, height=48))
+19:06:18.239 [ INFO] maestro.Maestro.tap-HgV9Ck0: Tap aimed via stabilised hierarchy (null settle after a scroll)
+19:06:18.476 [ INFO] maestro.Maestro.refreshElementUntilStable-Hkttul8: Element is still moving (null -> Bounds(x=20, y=80, width=85, height=48)). Waiting for its position to settle.
+19:06:19.094 [ INFO] maestro.Maestro.screenshotBasedTap-ogj28Uc: Try tapping at (62, 104) using hierarchy based logic for wait
+19:06:19.095 [TRACE] maestro.utils.ScreenshotUtils.takeScreenshot: Taking screenshot to byte array
+19:06:19.095 [TRACE] maestro.utils.ScreenshotUtils.takeScreenshot: Taking screenshot to output sink
+19:06:20.880 [ INFO] maestro.Maestro.screenshotBasedTap-ogj28Uc: Something have changed in the UI judging by view hierarchy. Proceed.
+19:06:20.881 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandFinished: Tap on "Sổ nợ" COMPLETED
+19:06:20.881 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandStart: Assert that "Thêm khách nợ" is visible RUNNING
+19:06:21.310 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandFinished: Assert that "Thêm khách nợ" is visible COMPLETED
+19:06:21.311 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandFinished: Retry 2 times COMPLETED
+19:06:21.312 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandStart: Tap on "Thêm khách nợ" RUNNING
+19:06:21.837 [ INFO] maestro.Maestro.tap-HgV9Ck0: Tapping on element:  UiElement(treeNode=TreeNode(attributes={accessibilityText=Thêm khách nợ, title=, value=, text=, hintText=, resource-id=, bounds=[20,383][400,451], enabled=true, focused=false, selected=false, checked=false}, children=[], clickable=null, enabled=true, focused=false, checked=false, selected=false), bounds=Bounds(x=20, y=383, width=380, height=68))
+19:06:22.267 [ INFO] maestro.Maestro.tap-HgV9Ck0: Tap aimed via trusted pre-wait hierarchy (null settle, no recent scroll)
+19:06:22.307 [ INFO] maestro.Maestro.screenshotBasedTap-ogj28Uc: Try tapping at (210, 417) using hierarchy based logic for wait
+19:06:22.309 [TRACE] maestro.utils.ScreenshotUtils.takeScreenshot: Taking screenshot to byte array
+19:06:22.309 [TRACE] maestro.utils.ScreenshotUtils.takeScreenshot: Taking screenshot to output sink
+19:06:23.586 [ INFO] maestro.Maestro.screenshotBasedTap-ogj28Uc: Something have changed in the UI judging by view hierarchy. Proceed.
+19:06:23.586 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandFinished: Tap on "Thêm khách nợ" COMPLETED
+19:06:23.586 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandStart: Tap on id: debtor-name RUNNING
+19:06:23.920 [ INFO] maestro.Maestro.tap-HgV9Ck0: Tapping on element:  UiElement(treeNode=TreeNode(attributes={accessibilityText=Tên khách, title=, value=, text=, hintText=, resource-id=debtor-name, bounds=[40,473][380,529], enabled=true, focused=false, selected=false, checked=false}, children=[], clickable=null, enabled=true, focused=false, checked=false, selected=false), bounds=Bounds(x=40, y=473, width=340, height=56))
+19:06:24.254 [ INFO] maestro.Maestro.tap-HgV9Ck0: Tap aimed via trusted pre-wait hierarchy (null settle, no recent scroll)
+19:06:24.258 [ INFO] maestro.Maestro.screenshotBasedTap-ogj28Uc: Try tapping at (210, 501) using hierarchy based logic for wait
+19:06:24.261 [TRACE] maestro.utils.ScreenshotUtils.takeScreenshot: Taking screenshot to byte array
+19:06:24.261 [TRACE] maestro.utils.ScreenshotUtils.takeScreenshot: Taking screenshot to output sink
+19:06:27.076 [ INFO] maestro.Maestro.screenshotBasedTap-ogj28Uc: Something have changed in the UI judging by view hierarchy. Proceed.
+19:06:27.078 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandFinished: Tap on id: debtor-name COMPLETED
+19:06:27.082 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandStart: Input text Co Nam RUNNING
+19:06:27.084 [ INFO] maestro.Maestro.inputText: Inputting text: Co Nam
+19:06:30.056 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandFinished: Input text Co Nam COMPLETED
+19:06:30.057 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandStart: Run subflows/an-ban-phim.yaml RUNNING
+19:06:30.058 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandStart: Apply configuration RUNNING
+19:06:30.058 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandFinished: Apply configuration COMPLETED
+19:06:30.059 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandStart: Run flow when Platform is ANDROID RUNNING
+19:06:30.062 [ INFO] maestro.orchestra.Orchestra.executeSubflowCommands: [Command execution subflow] CommandSkipped: null
+19:06:30.062 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandFinished: Run flow when Platform is ANDROID SKIPPED
+19:06:30.062 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandStart: Run flow when Platform is IOS RUNNING
+19:06:30.063 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandStart: Tap on id: keyboard-done RUNNING
+19:06:30.908 [ INFO] maestro.Maestro.tap-HgV9Ck0: Tapping on element:  UiElement(treeNode=TreeNode(attributes={accessibilityText=Xong, title=, value=, text=, hintText=, resource-id=keyboard-done, bounds=[324,511][420,567], enabled=true, focused=false, selected=false, checked=false}, children=[], clickable=null, enabled=true, focused=false, checked=false, selected=false), bounds=Bounds(x=324, y=511, width=96, height=56))
+19:06:33.869 [ INFO] maestro.Maestro.tap-HgV9Ck0: Tap aimed via trusted pre-wait hierarchy (null settle, no recent scroll)
+19:06:33.899 [ INFO] maestro.Maestro.screenshotBasedTap-ogj28Uc: Try tapping at (372, 539) using hierarchy based logic for wait
+19:06:33.900 [TRACE] maestro.utils.ScreenshotUtils.takeScreenshot: Taking screenshot to byte array
+19:06:33.900 [TRACE] maestro.utils.ScreenshotUtils.takeScreenshot: Taking screenshot to output sink
+19:06:35.627 [ INFO] maestro.Maestro.screenshotBasedTap-ogj28Uc: Something have changed in the UI judging by view hierarchy. Proceed.
+19:06:35.628 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandFinished: Tap on id: keyboard-done COMPLETED
+19:06:35.628 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandFinished: Run flow when Platform is IOS COMPLETED
+19:06:35.628 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandFinished: Run subflows/an-ban-phim.yaml COMPLETED
+19:06:35.629 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandStart: Tap on id: debtor-phone RUNNING
+19:06:36.081 [ INFO] maestro.Maestro.tap-HgV9Ck0: Tapping on element:  UiElement(treeNode=TreeNode(attributes={accessibilityText=Số điện thoại (không bắt buộc), title=, value=, text=, hintText=, resource-id=debtor-phone, bounds=[40,521][380,577], enabled=true, focused=false, selected=false, checked=false}, children=[], clickable=null, enabled=true, focused=false, checked=false, selected=false), bounds=Bounds(x=40, y=521, width=340, height=56))
+19:06:36.488 [ INFO] maestro.Maestro.tap-HgV9Ck0: Tap aimed via trusted pre-wait hierarchy (null settle, no recent scroll)
+19:06:36.495 [ INFO] maestro.Maestro.screenshotBasedTap-ogj28Uc: Try tapping at (210, 549) using hierarchy based logic for wait
+19:06:36.503 [TRACE] maestro.utils.ScreenshotUtils.takeScreenshot: Taking screenshot to byte array
+19:06:36.503 [TRACE] maestro.utils.ScreenshotUtils.takeScreenshot: Taking screenshot to output sink
+19:06:39.370 [ INFO] maestro.Maestro.screenshotBasedTap-ogj28Uc: Something have changed in the UI judging by view hierarchy. Proceed.
+19:06:39.371 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandFinished: Tap on id: debtor-phone COMPLETED
+19:06:39.371 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandStart: Input text 0909000111 RUNNING
+19:06:39.371 [ INFO] maestro.Maestro.inputText: Inputting text: 0909000111
+19:06:41.156 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandFinished: Input text 0909000111 COMPLETED
+19:06:41.157 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandStart: Run subflows/an-ban-phim.yaml RUNNING
+19:06:41.157 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandStart: Apply configuration RUNNING
+19:06:41.158 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandFinished: Apply configuration COMPLETED
+19:06:41.158 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandStart: Run flow when Platform is ANDROID RUNNING
+19:06:41.158 [ INFO] maestro.orchestra.Orchestra.executeSubflowCommands: [Command execution subflow] CommandSkipped: null
+19:06:41.158 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandFinished: Run flow when Platform is ANDROID SKIPPED
+19:06:41.158 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandStart: Run flow when Platform is IOS RUNNING
+19:06:41.159 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandStart: Tap on id: keyboard-done RUNNING
+19:06:41.765 [ INFO] maestro.Maestro.tap-HgV9Ck0: Tapping on element:  UiElement(treeNode=TreeNode(attributes={accessibilityText=Xong, title=, value=, text=, hintText=, resource-id=keyboard-done, bounds=[324,538][420,594], enabled=true, focused=false, selected=false, checked=false}, children=[], clickable=null, enabled=true, focused=false, checked=false, selected=false), bounds=Bounds(x=324, y=538, width=96, height=56))
+19:06:43.139 [ INFO] maestro.Maestro.tap-HgV9Ck0: Tap aimed via trusted pre-wait hierarchy (null settle, no recent scroll)
+19:06:43.169 [ INFO] maestro.Maestro.screenshotBasedTap-ogj28Uc: Try tapping at (372, 566) using hierarchy based logic for wait
+19:06:43.171 [TRACE] maestro.utils.ScreenshotUtils.takeScreenshot: Taking screenshot to byte array
+19:06:43.175 [TRACE] maestro.utils.ScreenshotUtils.takeScreenshot: Taking screenshot to output sink
+19:06:45.011 [ INFO] maestro.Maestro.screenshotBasedTap-ogj28Uc: Something have changed in the UI judging by view hierarchy. Proceed.
+19:06:45.012 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandFinished: Tap on id: keyboard-done COMPLETED
+19:06:45.014 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandFinished: Run flow when Platform is IOS COMPLETED
+19:06:45.015 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandFinished: Run subflows/an-ban-phim.yaml COMPLETED
+19:06:45.016 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandStart: Tap on "Lưu khách" RUNNING
+19:06:45.500 [ INFO] maestro.Maestro.tap-HgV9Ck0: Tapping on element:  UiElement(treeNode=TreeNode(attributes={accessibilityText=Lưu khách, title=, value=, text=, hintText=, resource-id=, bounds=[38,604][382,672], enabled=true, focused=false, selected=false, checked=false}, children=[], clickable=null, enabled=true, focused=false, checked=false, selected=false), bounds=Bounds(x=38, y=604, width=344, height=68))
+19:06:45.951 [ INFO] maestro.Maestro.tap-HgV9Ck0: Tap aimed via trusted pre-wait hierarchy (null settle, no recent scroll)
+19:06:45.998 [ INFO] maestro.Maestro.screenshotBasedTap-ogj28Uc: Try tapping at (210, 638) using hierarchy based logic for wait
+19:06:46.016 [TRACE] maestro.utils.ScreenshotUtils.takeScreenshot: Taking screenshot to byte array
+19:06:46.018 [TRACE] maestro.utils.ScreenshotUtils.takeScreenshot: Taking screenshot to output sink
+19:06:47.531 [ INFO] maestro.Maestro.screenshotBasedTap-ogj28Uc: Something have changed in the UI judging by view hierarchy. Proceed.
+19:06:47.540 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandFinished: Tap on "Lưu khách" COMPLETED
+19:06:47.541 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandStart: Assert that "Hỏi khách trước khi lưu số điện thoại" is visible RUNNING
+19:06:48.152 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandFinished: Assert that "Hỏi khách trước khi lưu số điện thoại" is visible COMPLETED
+19:06:48.152 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandStart: Tap on "Khách đồng ý cho quán lưu số điện thoại" RUNNING
+19:06:49.026 [ INFO] maestro.Maestro.tap-HgV9Ck0: Tapping on element:  UiElement(treeNode=TreeNode(attributes={accessibilityText=Khách đồng ý cho quán lưu số điện thoại, title=, value=checkbox, unchecked, text=checkbox, unchecked, hintText=, resource-id=, bounds=[38,517][382,592], enabled=true, focused=false, selected=false, checked=false}, children=[], clickable=null, enabled=true, focused=false, checked=false, selected=false), bounds=Bounds(x=38, y=517, width=344, height=75))
+19:06:49.493 [ INFO] maestro.Maestro.tap-HgV9Ck0: Tap aimed via trusted pre-wait hierarchy (null settle, no recent scroll)
+19:06:49.506 [ INFO] maestro.Maestro.screenshotBasedTap-ogj28Uc: Try tapping at (210, 554) using hierarchy based logic for wait
+19:06:49.507 [TRACE] maestro.utils.ScreenshotUtils.takeScreenshot: Taking screenshot to byte array
+19:06:49.507 [TRACE] maestro.utils.ScreenshotUtils.takeScreenshot: Taking screenshot to output sink
+19:06:50.993 [ INFO] maestro.Maestro.screenshotBasedTap-ogj28Uc: Something have changed in the UI judging by view hierarchy. Proceed.
+19:06:50.994 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandFinished: Tap on "Khách đồng ý cho quán lưu số điện thoại" COMPLETED
+19:06:50.995 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandStart: Tap on "Lưu khách" RUNNING
+19:06:51.298 [ INFO] maestro.Maestro.tap-HgV9Ck0: Tapping on element:  UiElement(treeNode=TreeNode(attributes={accessibilityText=Lưu khách, title=, value=, text=, hintText=, resource-id=, bounds=[38,669][382,737], enabled=true, focused=false, selected=false, checked=false}, children=[], clickable=null, enabled=true, focused=false, checked=false, selected=false), bounds=Bounds(x=38, y=669, width=344, height=68))
+19:06:51.610 [ INFO] maestro.Maestro.tap-HgV9Ck0: Tap aimed via trusted pre-wait hierarchy (null settle, no recent scroll)
+19:06:51.611 [ INFO] maestro.Maestro.screenshotBasedTap-ogj28Uc: Try tapping at (210, 703) using hierarchy based logic for wait
+19:06:51.612 [TRACE] maestro.utils.ScreenshotUtils.takeScreenshot: Taking screenshot to byte array
+19:06:51.613 [TRACE] maestro.utils.ScreenshotUtils.takeScreenshot: Taking screenshot to output sink
+19:06:53.418 [ INFO] maestro.Maestro.screenshotBasedTap-ogj28Uc: Something have changed in the UI judging by view hierarchy. Proceed.
+19:06:53.418 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandFinished: Tap on "Lưu khách" COMPLETED
+19:06:53.418 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandStart: Assert that "Co Nam" is visible RUNNING
+19:06:53.699 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandFinished: Assert that "Co Nam" is visible COMPLETED
+19:06:53.699 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandStart: Assert that "0909000111" is visible RUNNING
+19:06:54.042 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandFinished: Assert that "0909000111" is visible COMPLETED
+19:06:54.043 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandStart: Take screenshot 84-khach-moi RUNNING
+19:06:54.048 [ INFO] maestro.Maestro.takeScreenshot: Taking screenshot
+19:06:54.049 [TRACE] maestro.utils.ScreenshotUtils.takeScreenshot: Taking screenshot to output sink
+19:06:54.199 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandFinished: Take screenshot 84-khach-moi COMPLETED
+19:06:54.199 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandStart: Retry 2 times RUNNING
+19:06:54.199 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandStart: Tap on "Sổ nợ" RUNNING
+19:06:54.402 [ INFO] maestro.Maestro.tap-HgV9Ck0: Tapping on element:  UiElement(treeNode=TreeNode(attributes={accessibilityText=Sổ nợ, title=, value=, text=, hintText=, resource-id=, bounds=[20,80][105,128], enabled=true, focused=false, selected=false, checked=false}, children=[], clickable=null, enabled=true, focused=false, checked=false, selected=false), bounds=Bounds(x=20, y=80, width=85, height=48))
+19:06:54.675 [ INFO] maestro.Maestro.tap-HgV9Ck0: Tap aimed via trusted pre-wait hierarchy (null settle, no recent scroll)
+19:06:54.675 [ INFO] maestro.Maestro.screenshotBasedTap-ogj28Uc: Try tapping at (62, 104) using hierarchy based logic for wait
+19:06:54.676 [TRACE] maestro.utils.ScreenshotUtils.takeScreenshot: Taking screenshot to byte array
+19:06:54.676 [TRACE] maestro.utils.ScreenshotUtils.takeScreenshot: Taking screenshot to output sink
+19:06:55.945 [ INFO] maestro.Maestro.screenshotBasedTap-ogj28Uc: Something have changed in the UI judging by view hierarchy. Proceed.
+19:06:55.945 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandFinished: Tap on "Sổ nợ" COMPLETED
+19:06:55.945 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandStart: Assert that "Khách đang nợ tổng cộng" is visible RUNNING
+19:06:56.244 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandFinished: Assert that "Khách đang nợ tổng cộng" is visible COMPLETED
+19:06:56.245 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandFinished: Retry 2 times COMPLETED
+19:06:56.245 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandStart: Tap on "Trang chính" RUNNING
+19:06:56.464 [ INFO] maestro.Maestro.tap-HgV9Ck0: Tapping on element:  UiElement(treeNode=TreeNode(attributes={accessibilityText=Trang chính, title=, value=, text=, hintText=, resource-id=, bounds=[20,80][165,128], enabled=true, focused=false, selected=false, checked=false}, children=[], clickable=null, enabled=true, focused=false, checked=false, selected=false), bounds=Bounds(x=20, y=80, width=145, height=48))
+19:06:56.741 [ INFO] maestro.Maestro.tap-HgV9Ck0: Tap aimed via trusted pre-wait hierarchy (null settle, no recent scroll)
+19:06:56.742 [ INFO] maestro.Maestro.screenshotBasedTap-ogj28Uc: Try tapping at (92, 104) using hierarchy based logic for wait
+19:06:56.744 [TRACE] maestro.utils.ScreenshotUtils.takeScreenshot: Taking screenshot to byte array
+19:06:56.744 [TRACE] maestro.utils.ScreenshotUtils.takeScreenshot: Taking screenshot to output sink
+19:06:58.305 [ INFO] maestro.Maestro.screenshotBasedTap-ogj28Uc: Something have changed in the UI judging by view hierarchy. Proceed.
+19:06:58.306 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandFinished: Tap on "Trang chính" COMPLETED
+19:06:58.306 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandStart: Assert that "Hôm nay đã thu.*" is visible RUNNING
+19:06:58.553 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandFinished: Assert that "Hôm nay đã thu.*" is visible COMPLETED
+19:06:58.555 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandStart: Scrolling DOWN until "Chi tiêu.*" is visible with speed 40, visibility percentage 100%, timeout 20000 ms, with centering disabled RUNNING
+19:06:58.827 [ INFO] maestro.orchestra.Orchestra.scrollUntilVisible: Scrolling try count: 0, DeviceWidth: 420, DeviceWidth: 912
+19:06:58.827 [ INFO] maestro.orchestra.Orchestra.scrollUntilVisible: Element bounds: Bounds(x=20, y=508, width=184, height=92)
+19:06:58.827 [ INFO] maestro.orchestra.Orchestra.scrollUntilVisible: Visibility Percent: 1.0
+19:06:58.828 [ INFO] maestro.orchestra.Orchestra.scrollUntilVisible: Command centerElement: ScrollUntilVisibleCommand(selector=ElementSelector(textRegex=Chi tiêu.*, idRegex=null, size=null, below=null, above=null, leftOf=null, rightOf=null, containsChild=null, containsDescendants=null, traits=null, index=null, enabled=null, optional=false, selected=null, checked=null, focused=null, childOf=null, css=null), direction=DOWN, scrollDuration=601, visibilityPercentage=100, timeout=20000, waitToSettleTimeoutMs=null, centerElement=false, originalSpeedValue=40, label=null, optional=false).centerElement
+19:06:58.828 [ INFO] maestro.orchestra.Orchestra.scrollUntilVisible: visibilityPercentageNormalized: 1.0
+19:06:58.828 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandFinished: Scrolling DOWN until "Chi tiêu.*" is visible with speed 40, visibility percentage 100%, timeout 20000 ms, with centering disabled COMPLETED
+19:06:58.828 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandStart: Tap on "Chi tiêu.*" RUNNING
+19:06:59.046 [ INFO] maestro.Maestro.tap-HgV9Ck0: Tapping on element:  UiElement(treeNode=TreeNode(attributes={accessibilityText=Chi tiêu, Chi tháng này: 485.000 đ, title=, value=, text=, hintText=, resource-id=, bounds=[20,508][204,600], enabled=true, focused=false, selected=false, checked=false}, children=[], clickable=null, enabled=true, focused=false, checked=false, selected=false), bounds=Bounds(x=20, y=508, width=184, height=92))
+19:06:59.365 [ INFO] maestro.Maestro.tap-HgV9Ck0: Tap aimed via trusted pre-wait hierarchy (null settle, no recent scroll)
+19:06:59.366 [ INFO] maestro.Maestro.screenshotBasedTap-ogj28Uc: Try tapping at (112, 554) using hierarchy based logic for wait
+19:06:59.367 [TRACE] maestro.utils.ScreenshotUtils.takeScreenshot: Taking screenshot to byte array
+19:06:59.367 [TRACE] maestro.utils.ScreenshotUtils.takeScreenshot: Taking screenshot to output sink
+19:07:00.812 [ INFO] maestro.Maestro.screenshotBasedTap-ogj28Uc: Something have changed in the UI judging by view hierarchy. Proceed.
+19:07:00.816 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandFinished: Tap on "Chi tiêu.*" COMPLETED
+19:07:00.816 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandStart: Assert that "Chi tháng này" is visible RUNNING
+19:07:01.136 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandFinished: Assert that "Chi tháng này" is visible COMPLETED
+19:07:01.137 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandStart: Scrolling DOWN until "Lưu khoản chi" is visible with speed 40, visibility percentage 100%, timeout 20000 ms, with centering disabled RUNNING
+19:07:01.566 [ INFO] maestro.orchestra.Orchestra.scrollUntilVisible: Scrolling try count: 0, DeviceWidth: 420, DeviceWidth: 912
+19:07:01.566 [ INFO] maestro.orchestra.Orchestra.scrollUntilVisible: Element bounds: Bounds(x=38, y=879, width=344, height=68)
+19:07:01.567 [ INFO] maestro.orchestra.Orchestra.scrollUntilVisible: Visibility Percent: 0.4852941176470588
+19:07:01.567 [ INFO] maestro.orchestra.Orchestra.scrollUntilVisible: Command centerElement: ScrollUntilVisibleCommand(selector=ElementSelector(textRegex=Lưu khoản chi, idRegex=null, size=null, below=null, above=null, leftOf=null, rightOf=null, containsChild=null, containsDescendants=null, traits=null, index=null, enabled=null, optional=false, selected=null, checked=null, focused=null, childOf=null, css=null), direction=DOWN, scrollDuration=601, visibilityPercentage=100, timeout=20000, waitToSettleTimeoutMs=null, centerElement=false, originalSpeedValue=40, label=null, optional=false).centerElement
+19:07:01.567 [ INFO] maestro.orchestra.Orchestra.scrollUntilVisible: visibilityPercentageNormalized: 1.0
+19:07:01.582 [ INFO] maestro.Maestro.swipeFromCenter: Swiping UP from center
+19:07:03.897 [ INFO] maestro.orchestra.Orchestra.scrollUntilVisible: Scrolling try count: 0, DeviceWidth: 420, DeviceWidth: 912
+19:07:03.898 [ INFO] maestro.orchestra.Orchestra.scrollUntilVisible: Element bounds: Bounds(x=38, y=504, width=344, height=68)
+19:07:03.898 [ INFO] maestro.orchestra.Orchestra.scrollUntilVisible: Visibility Percent: 1.0
+19:07:03.898 [ INFO] maestro.orchestra.Orchestra.scrollUntilVisible: Command centerElement: ScrollUntilVisibleCommand(selector=ElementSelector(textRegex=Lưu khoản chi, idRegex=null, size=null, below=null, above=null, leftOf=null, rightOf=null, containsChild=null, containsDescendants=null, traits=null, index=null, enabled=null, optional=false, selected=null, checked=null, focused=null, childOf=null, css=null), direction=DOWN, scrollDuration=601, visibilityPercentage=100, timeout=20000, waitToSettleTimeoutMs=null, centerElement=false, originalSpeedValue=40, label=null, optional=false).centerElement
+19:07:03.898 [ INFO] maestro.orchestra.Orchestra.scrollUntilVisible: visibilityPercentageNormalized: 1.0
+19:07:03.898 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandFinished: Scrolling DOWN until "Lưu khoản chi" is visible with speed 40, visibility percentage 100%, timeout 20000 ms, with centering disabled COMPLETED
+19:07:03.899 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandStart: Tap on "Lưu khoản chi" RUNNING
+19:07:04.102 [ INFO] maestro.Maestro.tap-HgV9Ck0: Tapping on element:  UiElement(treeNode=TreeNode(attributes={accessibilityText=Lưu khoản chi, title=, value=, text=, hintText=, resource-id=, bounds=[38,504][382,572], enabled=true, focused=false, selected=false, checked=false}, children=[], clickable=null, enabled=true, focused=false, checked=false, selected=false), bounds=Bounds(x=38, y=504, width=344, height=68))
+19:07:04.964 [ INFO] maestro.Maestro.tap-HgV9Ck0: Tap aimed via stabilised hierarchy (null settle after a scroll)
+19:07:05.272 [ INFO] maestro.Maestro.refreshElementUntilStable-Hkttul8: Element is still moving (null -> Bounds(x=38, y=504, width=344, height=68)). Waiting for its position to settle.
+19:07:05.671 [ INFO] maestro.Maestro.screenshotBasedTap-ogj28Uc: Try tapping at (210, 538) using hierarchy based logic for wait
+19:07:05.673 [TRACE] maestro.utils.ScreenshotUtils.takeScreenshot: Taking screenshot to byte array
+19:07:05.673 [TRACE] maestro.utils.ScreenshotUtils.takeScreenshot: Taking screenshot to output sink
+19:07:06.635 [ INFO] maestro.Maestro.screenshotBasedTap-ogj28Uc: Something have changed in the UI judging by view hierarchy. Proceed.
+19:07:06.636 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandFinished: Tap on "Lưu khoản chi" COMPLETED
+19:07:06.636 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandStart: Assert that "Nhập số tiền chi" is visible RUNNING
+19:07:06.891 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandFinished: Assert that "Nhập số tiền chi" is visible COMPLETED
+19:07:06.892 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandStart: Scrolling UP until id: expense-amount is visible with speed 40, visibility percentage 100%, timeout 20000 ms, with centering disabled RUNNING
+19:07:07.169 [ INFO] maestro.orchestra.Orchestra.scrollUntilVisible: Scrolling try count: 0, DeviceWidth: 420, DeviceWidth: 912
+19:07:07.170 [ INFO] maestro.orchestra.Orchestra.scrollUntilVisible: Element bounds: Bounds(x=40, y=91, width=340, height=56)
+19:07:07.170 [ INFO] maestro.orchestra.Orchestra.scrollUntilVisible: Visibility Percent: 1.0
+19:07:07.170 [ INFO] maestro.orchestra.Orchestra.scrollUntilVisible: Command centerElement: ScrollUntilVisibleCommand(selector=ElementSelector(textRegex=null, idRegex=expense-amount, size=null, below=null, above=null, leftOf=null, rightOf=null, containsChild=null, containsDescendants=null, traits=null, index=null, enabled=null, optional=false, selected=null, checked=null, focused=null, childOf=null, css=null), direction=UP, scrollDuration=601, visibilityPercentage=100, timeout=20000, waitToSettleTimeoutMs=null, centerElement=false, originalSpeedValue=40, label=null, optional=false).centerElement
+19:07:07.170 [ INFO] maestro.orchestra.Orchestra.scrollUntilVisible: visibilityPercentageNormalized: 1.0
+19:07:07.170 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandFinished: Scrolling UP until id: expense-amount is visible with speed 40, visibility percentage 100%, timeout 20000 ms, with centering disabled COMPLETED
+19:07:07.170 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandStart: Tap on id: expense-amount RUNNING
+19:07:07.420 [ INFO] maestro.Maestro.tap-HgV9Ck0: Tapping on element:  UiElement(treeNode=TreeNode(attributes={accessibilityText=Số tiền chi, title=, value=, text=, hintText=, resource-id=expense-amount, bounds=[40,91][380,147], enabled=true, focused=false, selected=false, checked=false}, children=[], clickable=null, enabled=true, focused=false, checked=false, selected=false), bounds=Bounds(x=40, y=91, width=340, height=56))
+19:07:07.709 [ INFO] maestro.Maestro.tap-HgV9Ck0: Tap aimed via trusted pre-wait hierarchy (null settle, no recent scroll)
+19:07:07.710 [ INFO] maestro.Maestro.screenshotBasedTap-ogj28Uc: Try tapping at (210, 119) using hierarchy based logic for wait
+19:07:07.711 [TRACE] maestro.utils.ScreenshotUtils.takeScreenshot: Taking screenshot to byte array
+19:07:07.711 [TRACE] maestro.utils.ScreenshotUtils.takeScreenshot: Taking screenshot to output sink
+19:07:09.309 [ INFO] maestro.Maestro.screenshotBasedTap-ogj28Uc: Something have changed in the UI judging by view hierarchy. Proceed.
+19:07:09.309 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandFinished: Tap on id: expense-amount COMPLETED
+19:07:09.309 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandStart: Input text 120000 RUNNING
+19:07:09.310 [ INFO] maestro.Maestro.inputText: Inputting text: 120000
+19:07:10.676 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandFinished: Input text 120000 COMPLETED
+19:07:10.677 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandStart: Run subflows/an-ban-phim.yaml RUNNING
+19:07:10.677 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandStart: Apply configuration RUNNING
+19:07:10.677 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandFinished: Apply configuration COMPLETED
+19:07:10.677 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandStart: Run flow when Platform is ANDROID RUNNING
+19:07:10.678 [ INFO] maestro.orchestra.Orchestra.executeSubflowCommands: [Command execution subflow] CommandSkipped: null
+19:07:10.678 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandFinished: Run flow when Platform is ANDROID SKIPPED
+19:07:10.678 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandStart: Run flow when Platform is IOS RUNNING
+19:07:10.678 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandStart: Tap on id: keyboard-done RUNNING
+19:07:10.977 [ INFO] maestro.Maestro.tap-HgV9Ck0: Tapping on element:  UiElement(treeNode=TreeNode(attributes={accessibilityText=Xong, title=, value=, text=, hintText=, resource-id=keyboard-done, bounds=[324,538][420,594], enabled=true, focused=false, selected=false, checked=false}, children=[], clickable=null, enabled=true, focused=false, checked=false, selected=false), bounds=Bounds(x=324, y=538, width=96, height=56))
+19:07:11.254 [ INFO] maestro.Maestro.tap-HgV9Ck0: Tap aimed via trusted pre-wait hierarchy (null settle, no recent scroll)
+19:07:11.255 [ INFO] maestro.Maestro.screenshotBasedTap-ogj28Uc: Try tapping at (372, 566) using hierarchy based logic for wait
+19:07:11.256 [TRACE] maestro.utils.ScreenshotUtils.takeScreenshot: Taking screenshot to byte array
+19:07:11.256 [TRACE] maestro.utils.ScreenshotUtils.takeScreenshot: Taking screenshot to output sink
+19:07:12.485 [ INFO] maestro.Maestro.screenshotBasedTap-ogj28Uc: Something have changed in the UI judging by view hierarchy. Proceed.
+19:07:12.485 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandFinished: Tap on id: keyboard-done COMPLETED
+19:07:12.485 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandFinished: Run flow when Platform is IOS COMPLETED
+19:07:12.485 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandFinished: Run subflows/an-ban-phim.yaml COMPLETED
+19:07:12.486 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandStart: Tap on id: cat-Điện nước RUNNING
+19:07:12.841 [ INFO] maestro.Maestro.tap-HgV9Ck0: Tapping on element:  UiElement(treeNode=TreeNode(attributes={accessibilityText=Điện nước, title=, value=radio button, text=radio button, hintText=, resource-id=cat-Điện nước, bounds=[38,333][204,389], enabled=true, focused=false, selected=false, checked=false}, children=[], clickable=null, enabled=true, focused=false, checked=false, selected=false), bounds=Bounds(x=38, y=333, width=166, height=56))
+19:07:13.161 [ INFO] maestro.Maestro.tap-HgV9Ck0: Tap aimed via trusted pre-wait hierarchy (null settle, no recent scroll)
+19:07:13.163 [ INFO] maestro.Maestro.screenshotBasedTap-ogj28Uc: Try tapping at (121, 361) using hierarchy based logic for wait
+19:07:13.174 [TRACE] maestro.utils.ScreenshotUtils.takeScreenshot: Taking screenshot to byte array
+19:07:13.174 [TRACE] maestro.utils.ScreenshotUtils.takeScreenshot: Taking screenshot to output sink
+19:07:13.977 [ INFO] maestro.Maestro.screenshotBasedTap-ogj28Uc: Something have changed in the UI judging by view hierarchy. Proceed.
+19:07:13.977 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandFinished: Tap on id: cat-Điện nước COMPLETED
+19:07:13.977 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandStart: Scrolling DOWN until "Lưu khoản chi" is visible with speed 40, visibility percentage 100%, timeout 20000 ms, with centering disabled RUNNING
+19:07:14.256 [ INFO] maestro.orchestra.Orchestra.scrollUntilVisible: Scrolling try count: 0, DeviceWidth: 420, DeviceWidth: 912
+19:07:14.256 [ INFO] maestro.orchestra.Orchestra.scrollUntilVisible: Element bounds: Bounds(x=38, y=608, width=344, height=68)
+19:07:14.256 [ INFO] maestro.orchestra.Orchestra.scrollUntilVisible: Visibility Percent: 1.0
+19:07:14.256 [ INFO] maestro.orchestra.Orchestra.scrollUntilVisible: Command centerElement: ScrollUntilVisibleCommand(selector=ElementSelector(textRegex=Lưu khoản chi, idRegex=null, size=null, below=null, above=null, leftOf=null, rightOf=null, containsChild=null, containsDescendants=null, traits=null, index=null, enabled=null, optional=false, selected=null, checked=null, focused=null, childOf=null, css=null), direction=DOWN, scrollDuration=601, visibilityPercentage=100, timeout=20000, waitToSettleTimeoutMs=null, centerElement=false, originalSpeedValue=40, label=null, optional=false).centerElement
+19:07:14.257 [ INFO] maestro.orchestra.Orchestra.scrollUntilVisible: visibilityPercentageNormalized: 1.0
+19:07:14.257 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandFinished: Scrolling DOWN until "Lưu khoản chi" is visible with speed 40, visibility percentage 100%, timeout 20000 ms, with centering disabled COMPLETED
+19:07:14.257 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandStart: Tap on "Lưu khoản chi" RUNNING
+19:07:14.519 [ INFO] maestro.Maestro.tap-HgV9Ck0: Tapping on element:  UiElement(treeNode=TreeNode(attributes={accessibilityText=Lưu khoản chi, title=, value=, text=, hintText=, resource-id=, bounds=[38,608][382,676], enabled=true, focused=false, selected=false, checked=false}, children=[], clickable=null, enabled=true, focused=false, checked=false, selected=false), bounds=Bounds(x=38, y=608, width=344, height=68))
+19:07:14.768 [ INFO] maestro.Maestro.tap-HgV9Ck0: Tap aimed via trusted pre-wait hierarchy (null settle, no recent scroll)
+19:07:14.769 [ INFO] maestro.Maestro.screenshotBasedTap-ogj28Uc: Try tapping at (210, 642) using hierarchy based logic for wait
+19:07:14.770 [TRACE] maestro.utils.ScreenshotUtils.takeScreenshot: Taking screenshot to byte array
+19:07:14.770 [TRACE] maestro.utils.ScreenshotUtils.takeScreenshot: Taking screenshot to output sink
+19:07:15.897 [ INFO] maestro.Maestro.screenshotBasedTap-ogj28Uc: Something have changed in the UI judging by view hierarchy. Proceed.
+19:07:15.898 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandFinished: Tap on "Lưu khoản chi" COMPLETED
+19:07:15.898 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandStart: Assert that "✓ Đã lưu khoản chi" is visible RUNNING
+19:07:16.325 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandFinished: Assert that "✓ Đã lưu khoản chi" is visible COMPLETED
+19:07:16.325 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandStart: Scrolling DOWN until "120.000 đ · Điện nước" is visible with speed 40, visibility percentage 100%, timeout 20000 ms, with centering disabled RUNNING
+19:07:17.169 [ INFO] maestro.orchestra.Orchestra.scrollUntilVisible: Scrolling try count: 0, DeviceWidth: 420, DeviceWidth: 912
+19:07:17.169 [ INFO] maestro.orchestra.Orchestra.scrollUntilVisible: Element bounds: Bounds(x=38, y=806, width=214, height=26)
+19:07:17.169 [ INFO] maestro.orchestra.Orchestra.scrollUntilVisible: Visibility Percent: 1.0
+19:07:17.169 [ INFO] maestro.orchestra.Orchestra.scrollUntilVisible: Command centerElement: ScrollUntilVisibleCommand(selector=ElementSelector(textRegex=120.000 đ · Điện nước, idRegex=null, size=null, below=null, above=null, leftOf=null, rightOf=null, containsChild=null, containsDescendants=null, traits=null, index=null, enabled=null, optional=false, selected=null, checked=null, focused=null, childOf=null, css=null), direction=DOWN, scrollDuration=601, visibilityPercentage=100, timeout=20000, waitToSettleTimeoutMs=null, centerElement=false, originalSpeedValue=40, label=null, optional=false).centerElement
+19:07:17.169 [ INFO] maestro.orchestra.Orchestra.scrollUntilVisible: visibilityPercentageNormalized: 1.0
+19:07:17.169 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandFinished: Scrolling DOWN until "120.000 đ · Điện nước" is visible with speed 40, visibility percentage 100%, timeout 20000 ms, with centering disabled COMPLETED
+19:07:17.170 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandStart: Take screenshot 85-chi-tieu RUNNING
+19:07:17.171 [ INFO] maestro.Maestro.takeScreenshot: Taking screenshot
+19:07:17.298 [TRACE] maestro.utils.ScreenshotUtils.takeScreenshot: Taking screenshot to output sink
+19:07:17.476 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandFinished: Take screenshot 85-chi-tieu COMPLETED
+19:07:17.476 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandStart: Scrolling UP until "Trang chính" is visible with speed 40, visibility percentage 100%, timeout 20000 ms, with centering disabled RUNNING
+19:07:18.500 [ WARN] maestro.orchestra.Orchestra.scrollUntilVisible: Error: maestro.MaestroException$ElementNotFound: Element not found: Text matching regex: Trang chính
+19:07:18.578 [ INFO] maestro.Maestro.swipeFromCenter: Swiping DOWN from center
+19:07:21.261 [ INFO] maestro.orchestra.Orchestra.scrollUntilVisible: Scrolling try count: 0, DeviceWidth: 420, DeviceWidth: 912
+19:07:21.263 [ INFO] maestro.orchestra.Orchestra.scrollUntilVisible: Element bounds: Bounds(x=20, y=80, width=145, height=48)
+19:07:21.263 [ INFO] maestro.orchestra.Orchestra.scrollUntilVisible: Visibility Percent: 1.0
+19:07:21.263 [ INFO] maestro.orchestra.Orchestra.scrollUntilVisible: Command centerElement: ScrollUntilVisibleCommand(selector=ElementSelector(textRegex=Trang chính, idRegex=null, size=null, below=null, above=null, leftOf=null, rightOf=null, containsChild=null, containsDescendants=null, traits=null, index=null, enabled=null, optional=false, selected=null, checked=null, focused=null, childOf=null, css=null), direction=UP, scrollDuration=601, visibilityPercentage=100, timeout=20000, waitToSettleTimeoutMs=null, centerElement=false, originalSpeedValue=40, label=null, optional=false).centerElement
+19:07:21.263 [ INFO] maestro.orchestra.Orchestra.scrollUntilVisible: visibilityPercentageNormalized: 1.0
+19:07:21.263 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandFinished: Scrolling UP until "Trang chính" is visible with speed 40, visibility percentage 100%, timeout 20000 ms, with centering disabled COMPLETED
+19:07:21.263 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandStart: Tap on "Trang chính" RUNNING
+19:07:21.628 [ INFO] maestro.Maestro.tap-HgV9Ck0: Tapping on element:  UiElement(treeNode=TreeNode(attributes={accessibilityText=Trang chính, title=, value=, text=, hintText=, resource-id=, bounds=[20,80][165,128], enabled=true, focused=false, selected=false, checked=false}, children=[], clickable=null, enabled=true, focused=false, checked=false, selected=false), bounds=Bounds(x=20, y=80, width=145, height=48))
+19:07:22.278 [ INFO] maestro.Maestro.tap-HgV9Ck0: Tap aimed via stabilised hierarchy (null settle after a scroll)
+19:07:22.694 [ INFO] maestro.Maestro.refreshElementUntilStable-Hkttul8: Element is still moving (null -> Bounds(x=20, y=80, width=145, height=48)). Waiting for its position to settle.
+19:07:23.297 [ INFO] maestro.Maestro.screenshotBasedTap-ogj28Uc: Try tapping at (92, 104) using hierarchy based logic for wait
+19:07:23.536 [TRACE] maestro.utils.ScreenshotUtils.takeScreenshot: Taking screenshot to byte array
+19:07:23.536 [TRACE] maestro.utils.ScreenshotUtils.takeScreenshot: Taking screenshot to output sink
+19:07:26.079 [ INFO] maestro.Maestro.screenshotBasedTap-ogj28Uc: Something have changed in the UI judging by view hierarchy. Proceed.
+19:07:26.079 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandFinished: Tap on "Trang chính" COMPLETED
+19:07:26.079 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandStart: Assert that "Hôm nay đã thu.*" is visible RUNNING
+19:07:26.545 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandFinished: Assert that "Hôm nay đã thu.*" is visible COMPLETED
+19:07:26.738 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandStart: Scrolling DOWN until "Báo cáo" is visible with speed 40, visibility percentage 100%, timeout 20000 ms, with centering disabled RUNNING
+19:07:27.130 [ INFO] maestro.orchestra.Orchestra.scrollUntilVisible: Scrolling try count: 0, DeviceWidth: 420, DeviceWidth: 912
+19:07:27.130 [ INFO] maestro.orchestra.Orchestra.scrollUntilVisible: Element bounds: Bounds(x=216, y=332, width=184, height=76)
+19:07:27.130 [ INFO] maestro.orchestra.Orchestra.scrollUntilVisible: Visibility Percent: 1.0
+19:07:27.130 [ INFO] maestro.orchestra.Orchestra.scrollUntilVisible: Command centerElement: ScrollUntilVisibleCommand(selector=ElementSelector(textRegex=Báo cáo, idRegex=null, size=null, below=null, above=null, leftOf=null, rightOf=null, containsChild=null, containsDescendants=null, traits=null, index=null, enabled=null, optional=false, selected=null, checked=null, focused=null, childOf=null, css=null), direction=DOWN, scrollDuration=601, visibilityPercentage=100, timeout=20000, waitToSettleTimeoutMs=null, centerElement=false, originalSpeedValue=40, label=null, optional=false).centerElement
+19:07:27.130 [ INFO] maestro.orchestra.Orchestra.scrollUntilVisible: visibilityPercentageNormalized: 1.0
+19:07:27.130 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandFinished: Scrolling DOWN until "Báo cáo" is visible with speed 40, visibility percentage 100%, timeout 20000 ms, with centering disabled COMPLETED
+19:07:27.131 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandStart: Tap on "Báo cáo" RUNNING
+19:07:27.465 [ INFO] maestro.Maestro.tap-HgV9Ck0: Tapping on element:  UiElement(treeNode=TreeNode(attributes={accessibilityText=Báo cáo, title=, value=, text=, hintText=, resource-id=, bounds=[216,332][400,408], enabled=true, focused=false, selected=false, checked=false}, children=[], clickable=null, enabled=true, focused=false, checked=false, selected=false), bounds=Bounds(x=216, y=332, width=184, height=76))
+19:07:27.812 [ INFO] maestro.Maestro.tap-HgV9Ck0: Tap aimed via trusted pre-wait hierarchy (null settle, no recent scroll)
+19:07:27.813 [ INFO] maestro.Maestro.screenshotBasedTap-ogj28Uc: Try tapping at (308, 370) using hierarchy based logic for wait
+19:07:27.814 [TRACE] maestro.utils.ScreenshotUtils.takeScreenshot: Taking screenshot to byte array
+19:07:27.814 [TRACE] maestro.utils.ScreenshotUtils.takeScreenshot: Taking screenshot to output sink
+19:07:29.203 [ INFO] maestro.Maestro.screenshotBasedTap-ogj28Uc: Something have changed in the UI judging by view hierarchy. Proceed.
+19:07:29.206 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandFinished: Tap on "Báo cáo" COMPLETED
+19:07:29.206 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandStart: Run subflows/enter-pin.yaml when "Mã PIN chủ quán" is visible RUNNING
+19:07:29.492 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandStart: Apply configuration RUNNING
+19:07:29.492 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandFinished: Apply configuration COMPLETED
+19:07:29.493 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandStart: Tap on id: key-2 RUNNING
+19:07:29.755 [ INFO] maestro.Maestro.tap-HgV9Ck0: Tapping on element:  UiElement(treeNode=TreeNode(attributes={accessibilityText=2, title=, value=, text=, hintText=, resource-id=key-2, bounds=[149,268][270,332], enabled=true, focused=false, selected=false, checked=false}, children=[], clickable=null, enabled=true, focused=false, checked=false, selected=false), bounds=Bounds(x=149, y=268, width=121, height=64))
+19:07:30.068 [ INFO] maestro.Maestro.tap-HgV9Ck0: Tap aimed via trusted pre-wait hierarchy (null settle, no recent scroll)
+19:07:30.077 [ INFO] maestro.Maestro.screenshotBasedTap-ogj28Uc: Try tapping at (209, 300) using hierarchy based logic for wait
+19:07:30.078 [TRACE] maestro.utils.ScreenshotUtils.takeScreenshot: Taking screenshot to byte array
+19:07:30.078 [TRACE] maestro.utils.ScreenshotUtils.takeScreenshot: Taking screenshot to output sink
+19:07:31.158 [ INFO] maestro.Maestro.screenshotBasedTap-ogj28Uc: Something have changed in the UI judging by view hierarchy. Proceed.
+19:07:31.159 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandFinished: Tap on id: key-2 COMPLETED
+19:07:31.159 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandStart: Tap on id: key-5 RUNNING
+19:07:31.384 [ INFO] maestro.Maestro.tap-HgV9Ck0: Tapping on element:  UiElement(treeNode=TreeNode(attributes={accessibilityText=5, title=, value=, text=, hintText=, resource-id=key-5, bounds=[149,340][270,404], enabled=true, focused=false, selected=false, checked=false}, children=[], clickable=null, enabled=true, focused=false, checked=false, selected=false), bounds=Bounds(x=149, y=340, width=121, height=64))
+19:07:31.668 [ INFO] maestro.Maestro.tap-HgV9Ck0: Tap aimed via trusted pre-wait hierarchy (null settle, no recent scroll)
+19:07:31.670 [ INFO] maestro.Maestro.screenshotBasedTap-ogj28Uc: Try tapping at (209, 372) using hierarchy based logic for wait
+19:07:31.671 [TRACE] maestro.utils.ScreenshotUtils.takeScreenshot: Taking screenshot to byte array
+19:07:31.671 [TRACE] maestro.utils.ScreenshotUtils.takeScreenshot: Taking screenshot to output sink
+19:07:32.640 [ INFO] maestro.Maestro.screenshotBasedTap-ogj28Uc: Something have changed in the UI judging by view hierarchy. Proceed.
+19:07:32.641 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandFinished: Tap on id: key-5 COMPLETED
+19:07:32.641 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandStart: Tap on id: key-8 RUNNING
+19:07:32.895 [ INFO] maestro.Maestro.tap-HgV9Ck0: Tapping on element:  UiElement(treeNode=TreeNode(attributes={accessibilityText=8, title=, value=, text=, hintText=, resource-id=key-8, bounds=[149,412][270,476], enabled=true, focused=false, selected=false, checked=false}, children=[], clickable=null, enabled=true, focused=false, checked=false, selected=false), bounds=Bounds(x=149, y=412, width=121, height=64))
+19:07:33.171 [ INFO] maestro.Maestro.tap-HgV9Ck0: Tap aimed via trusted pre-wait hierarchy (null settle, no recent scroll)
+19:07:33.172 [ INFO] maestro.Maestro.screenshotBasedTap-ogj28Uc: Try tapping at (209, 444) using hierarchy based logic for wait
+19:07:33.174 [TRACE] maestro.utils.ScreenshotUtils.takeScreenshot: Taking screenshot to byte array
+19:07:33.174 [TRACE] maestro.utils.ScreenshotUtils.takeScreenshot: Taking screenshot to output sink
+19:07:34.105 [ INFO] maestro.Maestro.screenshotBasedTap-ogj28Uc: Something have changed in the UI judging by view hierarchy. Proceed.
+19:07:34.105 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandFinished: Tap on id: key-8 COMPLETED
+19:07:34.106 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandStart: Tap on id: key-0 RUNNING
+19:07:34.415 [ INFO] maestro.Maestro.tap-HgV9Ck0: Tapping on element:  UiElement(treeNode=TreeNode(attributes={accessibilityText=0, title=, value=, text=, hintText=, resource-id=key-0, bounds=[149,484][270,548], enabled=true, focused=false, selected=false, checked=false}, children=[], clickable=null, enabled=true, focused=false, checked=false, selected=false), bounds=Bounds(x=149, y=484, width=121, height=64))
+19:07:34.742 [ INFO] maestro.Maestro.tap-HgV9Ck0: Tap aimed via trusted pre-wait hierarchy (null settle, no recent scroll)
+19:07:34.743 [ INFO] maestro.Maestro.screenshotBasedTap-ogj28Uc: Try tapping at (209, 516) using hierarchy based logic for wait
+19:07:34.743 [TRACE] maestro.utils.ScreenshotUtils.takeScreenshot: Taking screenshot to byte array
+19:07:34.743 [TRACE] maestro.utils.ScreenshotUtils.takeScreenshot: Taking screenshot to output sink
+19:07:36.439 [ INFO] maestro.Maestro.screenshotBasedTap-ogj28Uc: Something have changed in the UI judging by view hierarchy. Proceed.
+19:07:36.441 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandFinished: Tap on id: key-0 COMPLETED
+19:07:36.442 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandFinished: Run subflows/enter-pin.yaml when "Mã PIN chủ quán" is visible COMPLETED
+19:07:36.453 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandStart: Assert that "Báo cáo bán hàng" is visible RUNNING
+19:07:36.923 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandFinished: Assert that "Báo cáo bán hàng" is visible COMPLETED
+19:07:36.923 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandStart: Assert that "Doanh thu" is visible RUNNING
+19:07:37.355 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandFinished: Assert that "Doanh thu" is visible COMPLETED
+19:07:37.356 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandStart: Assert that "Lãi ước tính" is visible RUNNING
+19:07:37.783 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandFinished: Assert that "Lãi ước tính" is visible COMPLETED
+19:07:37.784 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandStart: Take screenshot 86-bao-cao-7-ngay RUNNING
+19:07:37.785 [ INFO] maestro.Maestro.takeScreenshot: Taking screenshot
+19:07:37.787 [TRACE] maestro.utils.ScreenshotUtils.takeScreenshot: Taking screenshot to output sink
+19:07:37.968 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandFinished: Take screenshot 86-bao-cao-7-ngay COMPLETED
+19:07:37.968 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandStart: Tap on id: period-month RUNNING
+19:07:38.418 [ INFO] maestro.Maestro.tap-HgV9Ck0: Tapping on element:  UiElement(treeNode=TreeNode(attributes={accessibilityText=Tháng này, title=, value=radio button, text=radio button, hintText=, resource-id=period-month, bounds=[281,187][400,258], enabled=true, focused=false, selected=false, checked=false}, children=[], clickable=null, enabled=true, focused=false, checked=false, selected=false), bounds=Bounds(x=281, y=187, width=119, height=71))
+19:07:38.718 [ INFO] maestro.Maestro.tap-HgV9Ck0: Tap aimed via trusted pre-wait hierarchy (null settle, no recent scroll)
+19:07:38.718 [ INFO] maestro.Maestro.screenshotBasedTap-ogj28Uc: Try tapping at (340, 222) using hierarchy based logic for wait
+19:07:38.729 [TRACE] maestro.utils.ScreenshotUtils.takeScreenshot: Taking screenshot to byte array
+19:07:38.730 [TRACE] maestro.utils.ScreenshotUtils.takeScreenshot: Taking screenshot to output sink
+19:07:40.048 [ INFO] maestro.Maestro.screenshotBasedTap-ogj28Uc: Something have changed in the UI judging by view hierarchy. Proceed.
+19:07:40.049 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandFinished: Tap on id: period-month COMPLETED
+19:07:40.049 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandStart: Assert that "Tháng này" is visible RUNNING
+19:07:40.534 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandFinished: Assert that "Tháng này" is visible COMPLETED
+19:07:40.534 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandStart: Take screenshot 87-bao-cao-thang RUNNING
+19:07:40.541 [ INFO] maestro.Maestro.takeScreenshot: Taking screenshot
+19:07:40.544 [TRACE] maestro.utils.ScreenshotUtils.takeScreenshot: Taking screenshot to output sink
+19:07:40.712 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandFinished: Take screenshot 87-bao-cao-thang COMPLETED
+19:07:40.713 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandStart: Tap on id: period-year RUNNING
+19:07:41.095 [ INFO] maestro.Maestro.tap-HgV9Ck0: Tapping on element:  UiElement(treeNode=TreeNode(attributes={accessibilityText=Năm nay, title=, value=radio button, text=radio button, hintText=, resource-id=period-year, bounds=[281,270][400,341], enabled=true, focused=false, selected=false, checked=false}, children=[], clickable=null, enabled=true, focused=false, checked=false, selected=false), bounds=Bounds(x=281, y=270, width=119, height=71))
+19:07:41.390 [ INFO] maestro.Maestro.tap-HgV9Ck0: Tap aimed via trusted pre-wait hierarchy (null settle, no recent scroll)
+19:07:41.391 [ INFO] maestro.Maestro.screenshotBasedTap-ogj28Uc: Try tapping at (340, 305) using hierarchy based logic for wait
+19:07:41.392 [TRACE] maestro.utils.ScreenshotUtils.takeScreenshot: Taking screenshot to byte array
+19:07:41.392 [TRACE] maestro.utils.ScreenshotUtils.takeScreenshot: Taking screenshot to output sink
+19:07:42.513 [ INFO] maestro.Maestro.screenshotBasedTap-ogj28Uc: Something have changed in the UI judging by view hierarchy. Proceed.
+19:07:42.513 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandFinished: Tap on id: period-year COMPLETED
+19:07:42.513 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandStart: Scrolling DOWN until "Doanh thu theo (ngày|tháng)" is visible with speed 40, visibility percentage 100%, timeout 20000 ms, with centering disabled RUNNING
+19:07:43.217 [ INFO] maestro.orchestra.Orchestra.scrollUntilVisible: Scrolling try count: 0, DeviceWidth: 420, DeviceWidth: 912
+19:07:43.217 [ INFO] maestro.orchestra.Orchestra.scrollUntilVisible: Element bounds: Bounds(x=38, y=792, width=344, height=29)
+19:07:43.217 [ INFO] maestro.orchestra.Orchestra.scrollUntilVisible: Visibility Percent: 1.0
+19:07:43.217 [ INFO] maestro.orchestra.Orchestra.scrollUntilVisible: Command centerElement: ScrollUntilVisibleCommand(selector=ElementSelector(textRegex=Doanh thu theo (ngày|tháng), idRegex=null, size=null, below=null, above=null, leftOf=null, rightOf=null, containsChild=null, containsDescendants=null, traits=null, index=null, enabled=null, optional=false, selected=null, checked=null, focused=null, childOf=null, css=null), direction=DOWN, scrollDuration=601, visibilityPercentage=100, timeout=20000, waitToSettleTimeoutMs=null, centerElement=false, originalSpeedValue=40, label=null, optional=false).centerElement
+19:07:43.217 [ INFO] maestro.orchestra.Orchestra.scrollUntilVisible: visibilityPercentageNormalized: 1.0
+19:07:43.218 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandFinished: Scrolling DOWN until "Doanh thu theo (ngày|tháng)" is visible with speed 40, visibility percentage 100%, timeout 20000 ms, with centering disabled COMPLETED
+19:07:43.218 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandStart: Take screenshot 88-bao-cao-nam RUNNING
+19:07:43.218 [ INFO] maestro.Maestro.takeScreenshot: Taking screenshot
+19:07:43.218 [TRACE] maestro.utils.ScreenshotUtils.takeScreenshot: Taking screenshot to output sink
+19:07:43.412 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandFinished: Take screenshot 88-bao-cao-nam COMPLETED
+19:07:43.412 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandStart: Scrolling DOWN until "Gửi sổ doanh thu.*" is visible with speed 40, visibility percentage 100%, timeout 20000 ms, with centering disabled RUNNING
+19:07:45.441 [ WARN] maestro.orchestra.Orchestra.scrollUntilVisible: Error: maestro.MaestroException$ElementNotFound: Element not found: Text matching regex: Gửi sổ doanh thu.*
+19:07:45.563 [ INFO] maestro.Maestro.swipeFromCenter: Swiping UP from center
+19:07:49.786 [ INFO] maestro.orchestra.Orchestra.scrollUntilVisible: Scrolling try count: 0, DeviceWidth: 420, DeviceWidth: 912
+19:07:49.788 [ INFO] maestro.orchestra.Orchestra.scrollUntilVisible: Element bounds: Bounds(x=20, y=743, width=380, height=56)
+19:07:49.788 [ INFO] maestro.orchestra.Orchestra.scrollUntilVisible: Visibility Percent: 1.0
+19:07:49.788 [ INFO] maestro.orchestra.Orchestra.scrollUntilVisible: Command centerElement: ScrollUntilVisibleCommand(selector=ElementSelector(textRegex=Gửi sổ doanh thu.*, idRegex=null, size=null, below=null, above=null, leftOf=null, rightOf=null, containsChild=null, containsDescendants=null, traits=null, index=null, enabled=null, optional=false, selected=null, checked=null, focused=null, childOf=null, css=null), direction=DOWN, scrollDuration=601, visibilityPercentage=100, timeout=20000, waitToSettleTimeoutMs=null, centerElement=false, originalSpeedValue=40, label=null, optional=false).centerElement
+19:07:49.788 [ INFO] maestro.orchestra.Orchestra.scrollUntilVisible: visibilityPercentageNormalized: 1.0
+19:07:49.788 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandFinished: Scrolling DOWN until "Gửi sổ doanh thu.*" is visible with speed 40, visibility percentage 100%, timeout 20000 ms, with centering disabled COMPLETED
+19:07:49.789 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandStart: Scrolling UP until "Trang chính" is visible with speed 40, visibility percentage 100%, timeout 20000 ms, with centering disabled RUNNING
+19:07:50.687 [ WARN] maestro.orchestra.Orchestra.scrollUntilVisible: Error: maestro.MaestroException$ElementNotFound: Element not found: Text matching regex: Trang chính
+19:07:50.697 [ INFO] maestro.Maestro.swipeFromCenter: Swiping DOWN from center
+19:07:55.103 [ INFO] maestro.orchestra.Orchestra.scrollUntilVisible: Scrolling try count: 0, DeviceWidth: 420, DeviceWidth: 912
+19:07:55.390 [ INFO] maestro.orchestra.Orchestra.scrollUntilVisible: Element bounds: Bounds(x=20, y=80, width=145, height=48)
+19:07:55.390 [ INFO] maestro.orchestra.Orchestra.scrollUntilVisible: Visibility Percent: 1.0
+19:07:55.390 [ INFO] maestro.orchestra.Orchestra.scrollUntilVisible: Command centerElement: ScrollUntilVisibleCommand(selector=ElementSelector(textRegex=Trang chính, idRegex=null, size=null, below=null, above=null, leftOf=null, rightOf=null, containsChild=null, containsDescendants=null, traits=null, index=null, enabled=null, optional=false, selected=null, checked=null, focused=null, childOf=null, css=null), direction=UP, scrollDuration=601, visibilityPercentage=100, timeout=20000, waitToSettleTimeoutMs=null, centerElement=false, originalSpeedValue=40, label=null, optional=false).centerElement
+19:07:55.390 [ INFO] maestro.orchestra.Orchestra.scrollUntilVisible: visibilityPercentageNormalized: 1.0
+19:07:55.535 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandFinished: Scrolling UP until "Trang chính" is visible with speed 40, visibility percentage 100%, timeout 20000 ms, with centering disabled COMPLETED
+19:07:55.536 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandStart: Tap on "Trang chính" RUNNING
+19:07:56.910 [ INFO] maestro.Maestro.tap-HgV9Ck0: Tapping on element:  UiElement(treeNode=TreeNode(attributes={accessibilityText=Trang chính, title=, value=, text=, hintText=, resource-id=, bounds=[20,80][165,128], enabled=true, focused=false, selected=false, checked=false}, children=[], clickable=null, enabled=true, focused=false, checked=false, selected=false), bounds=Bounds(x=20, y=80, width=145, height=48))
+19:07:57.364 [ INFO] maestro.Maestro.tap-HgV9Ck0: Tap aimed via stabilised hierarchy (null settle after a scroll)
+19:07:57.674 [ INFO] maestro.Maestro.refreshElementUntilStable-Hkttul8: Element is still moving (null -> Bounds(x=20, y=80, width=145, height=48)). Waiting for its position to settle.
+19:07:58.097 [ INFO] maestro.Maestro.screenshotBasedTap-ogj28Uc: Try tapping at (92, 104) using hierarchy based logic for wait
+19:07:58.097 [TRACE] maestro.utils.ScreenshotUtils.takeScreenshot: Taking screenshot to byte array
+19:07:58.097 [TRACE] maestro.utils.ScreenshotUtils.takeScreenshot: Taking screenshot to output sink
+19:07:59.839 [ INFO] maestro.Maestro.screenshotBasedTap-ogj28Uc: Something have changed in the UI judging by view hierarchy. Proceed.
+19:07:59.839 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandFinished: Tap on "Trang chính" COMPLETED
+19:07:59.839 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandStart: Assert that "Hôm nay đã thu.*" is visible RUNNING
+19:08:00.888 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandFinished: Assert that "Hôm nay đã thu.*" is visible COMPLETED
+19:08:00.890 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandStart: Scrolling DOWN until "Việc khác.*" is visible with speed 40, visibility percentage 100%, timeout 20000 ms, with centering disabled RUNNING
+19:08:01.404 [ INFO] maestro.orchestra.Orchestra.scrollUntilVisible: Scrolling try count: 0, DeviceWidth: 420, DeviceWidth: 912
+19:08:01.404 [ INFO] maestro.orchestra.Orchestra.scrollUntilVisible: Element bounds: Bounds(x=216, y=508, width=184, height=92)
+19:08:01.405 [ INFO] maestro.orchestra.Orchestra.scrollUntilVisible: Visibility Percent: 1.0
+19:08:01.405 [ INFO] maestro.orchestra.Orchestra.scrollUntilVisible: Command centerElement: ScrollUntilVisibleCommand(selector=ElementSelector(textRegex=Việc khác.*, idRegex=null, size=null, below=null, above=null, leftOf=null, rightOf=null, containsChild=null, containsDescendants=null, traits=null, index=null, enabled=null, optional=false, selected=null, checked=null, focused=null, childOf=null, css=null), direction=DOWN, scrollDuration=601, visibilityPercentage=100, timeout=20000, waitToSettleTimeoutMs=null, centerElement=false, originalSpeedValue=40, label=null, optional=false).centerElement
+19:08:01.405 [ INFO] maestro.orchestra.Orchestra.scrollUntilVisible: visibilityPercentageNormalized: 1.0
+19:08:01.405 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandFinished: Scrolling DOWN until "Việc khác.*" is visible with speed 40, visibility percentage 100%, timeout 20000 ms, with centering disabled COMPLETED
+19:08:01.405 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandStart: Tap on "Việc khác.*" RUNNING
+19:08:01.629 [ INFO] maestro.Maestro.tap-HgV9Ck0: Tapping on element:  UiElement(treeNode=TreeNode(attributes={accessibilityText=Việc khác, Khách quen, ca bán, thuế, hóa đơn…, title=, value=, text=, hintText=, resource-id=, bounds=[216,508][400,600], enabled=true, focused=false, selected=false, checked=false}, children=[], clickable=null, enabled=true, focused=false, checked=false, selected=false), bounds=Bounds(x=216, y=508, width=184, height=92))
+19:08:01.909 [ INFO] maestro.Maestro.tap-HgV9Ck0: Tap aimed via trusted pre-wait hierarchy (null settle, no recent scroll)
+19:08:01.910 [ INFO] maestro.Maestro.screenshotBasedTap-ogj28Uc: Try tapping at (308, 554) using hierarchy based logic for wait
+19:08:01.912 [TRACE] maestro.utils.ScreenshotUtils.takeScreenshot: Taking screenshot to byte array
+19:08:01.912 [TRACE] maestro.utils.ScreenshotUtils.takeScreenshot: Taking screenshot to output sink
+19:08:03.328 [ INFO] maestro.Maestro.screenshotBasedTap-ogj28Uc: Something have changed in the UI judging by view hierarchy. Proceed.
+19:08:03.329 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandFinished: Tap on "Việc khác.*" COMPLETED
+19:08:03.329 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandStart: Assert that "Ca bán và két tiền.*" is visible RUNNING
+19:08:03.556 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandFinished: Assert that "Ca bán và két tiền.*" is visible COMPLETED
+19:08:03.556 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandStart: Tap on "Thuế.*" RUNNING
+19:08:03.752 [ INFO] maestro.Maestro.tap-HgV9Ck0: Tapping on element:  UiElement(treeNode=TreeNode(attributes={accessibilityText=Thuế, Ngưỡng 1 tỷ, thuế ước tính, hạn nộp, title=, value=, text=, hintText=, resource-id=, bounds=[20,421][400,513], enabled=true, focused=false, selected=false, checked=false}, children=[TreeNode(attributes={accessibilityText=, title=, value=, text=, hintText=, resource-id=, bounds=[20,421][400,513], enabled=true, focused=false, selected=false, checked=false}, children=[], clickable=null, enabled=true, focused=false, checked=false, selected=false)], clickable=null, enabled=true, focused=false, checked=false, selected=false), bounds=Bounds(x=20, y=421, width=380, height=92))
+19:08:04.021 [ INFO] maestro.Maestro.tap-HgV9Ck0: Tap aimed via trusted pre-wait hierarchy (null settle, no recent scroll)
+19:08:04.022 [ INFO] maestro.Maestro.screenshotBasedTap-ogj28Uc: Try tapping at (210, 467) using hierarchy based logic for wait
+19:08:04.023 [TRACE] maestro.utils.ScreenshotUtils.takeScreenshot: Taking screenshot to byte array
+19:08:04.023 [TRACE] maestro.utils.ScreenshotUtils.takeScreenshot: Taking screenshot to output sink
+19:08:05.427 [ INFO] maestro.Maestro.screenshotBasedTap-ogj28Uc: Something have changed in the UI judging by view hierarchy. Proceed.
+19:08:05.427 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandFinished: Tap on "Thuế.*" COMPLETED
+19:08:05.429 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandStart: Run subflows/enter-pin.yaml when "Mã PIN chủ quán" is visible RUNNING
+19:08:12.765 [ INFO] maestro.orchestra.Orchestra.executeCommands: [Command execution] CommandSkipped: null
+19:08:12.766 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandFinished: Run subflows/enter-pin.yaml when "Mã PIN chủ quán" is visible SKIPPED
+19:08:12.766 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandStart: Assert that "Thuế của quán" is visible RUNNING
+19:08:13.002 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandFinished: Assert that "Thuế của quán" is visible COMPLETED
+19:08:13.002 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandStart: Assert that "Số liệu tham khảo.*" is visible RUNNING
+19:08:13.213 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandFinished: Assert that "Số liệu tham khảo.*" is visible COMPLETED
+19:08:13.213 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandStart: Assert that "Ngưỡng không phải nộp thuế: 1 tỷ đồng/năm" is visible RUNNING
+19:08:13.436 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandFinished: Assert that "Ngưỡng không phải nộp thuế: 1 tỷ đồng/năm" is visible COMPLETED
+19:08:13.436 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandStart: Take screenshot 89-thue RUNNING
+19:08:13.438 [ INFO] maestro.Maestro.takeScreenshot: Taking screenshot
+19:08:13.439 [TRACE] maestro.utils.ScreenshotUtils.takeScreenshot: Taking screenshot to output sink
+19:08:13.603 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandFinished: Take screenshot 89-thue COMPLETED
+19:08:13.603 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandStart: Scrolling DOWN until "Việc cần làm sắp tới" is visible with speed 40, visibility percentage 100%, timeout 20000 ms, with centering disabled RUNNING
+19:08:14.488 [ WARN] maestro.orchestra.Orchestra.scrollUntilVisible: Error: maestro.MaestroException$ElementNotFound: Element not found: Text matching regex: Việc cần làm sắp tới
+19:08:14.499 [ INFO] maestro.Maestro.swipeFromCenter: Swiping UP from center
+19:08:18.092 [ INFO] maestro.orchestra.Orchestra.scrollUntilVisible: Scrolling try count: 0, DeviceWidth: 420, DeviceWidth: 912
+19:08:18.093 [ INFO] maestro.orchestra.Orchestra.scrollUntilVisible: Element bounds: Bounds(x=38, y=453, width=344, height=28)
+19:08:18.093 [ INFO] maestro.orchestra.Orchestra.scrollUntilVisible: Visibility Percent: 1.0
+19:08:18.093 [ INFO] maestro.orchestra.Orchestra.scrollUntilVisible: Command centerElement: ScrollUntilVisibleCommand(selector=ElementSelector(textRegex=Việc cần làm sắp tới, idRegex=null, size=null, below=null, above=null, leftOf=null, rightOf=null, containsChild=null, containsDescendants=null, traits=null, index=null, enabled=null, optional=false, selected=null, checked=null, focused=null, childOf=null, css=null), direction=DOWN, scrollDuration=601, visibilityPercentage=100, timeout=20000, waitToSettleTimeoutMs=null, centerElement=false, originalSpeedValue=40, label=null, optional=false).centerElement
+19:08:18.093 [ INFO] maestro.orchestra.Orchestra.scrollUntilVisible: visibilityPercentageNormalized: 1.0
+19:08:18.094 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandFinished: Scrolling DOWN until "Việc cần làm sắp tới" is visible with speed 40, visibility percentage 100%, timeout 20000 ms, with centering disabled COMPLETED
+19:08:18.094 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandStart: Take screenshot 90-thue-han-nop RUNNING
+19:08:18.095 [ INFO] maestro.Maestro.takeScreenshot: Taking screenshot
+19:08:18.095 [TRACE] maestro.utils.ScreenshotUtils.takeScreenshot: Taking screenshot to output sink
+19:08:18.244 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandFinished: Take screenshot 90-thue-han-nop COMPLETED
+19:08:18.244 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandStart: Scrolling DOWN until id: industry-PRODUCTION is visible with speed 40, visibility percentage 100%, timeout 20000 ms, with centering disabled RUNNING
+19:08:19.222 [ WARN] maestro.orchestra.Orchestra.scrollUntilVisible: Error: maestro.MaestroException$ElementNotFound: Element not found: Id matching regex: industry-PRODUCTION
+19:08:19.232 [ INFO] maestro.Maestro.swipeFromCenter: Swiping UP from center
+19:08:21.565 [ INFO] maestro.orchestra.Orchestra.scrollUntilVisible: Scrolling try count: 0, DeviceWidth: 420, DeviceWidth: 912
+19:08:21.565 [ INFO] maestro.orchestra.Orchestra.scrollUntilVisible: Element bounds: Bounds(x=20, y=598, width=380, height=56)
+19:08:21.565 [ INFO] maestro.orchestra.Orchestra.scrollUntilVisible: Visibility Percent: 1.0
+19:08:21.565 [ INFO] maestro.orchestra.Orchestra.scrollUntilVisible: Command centerElement: ScrollUntilVisibleCommand(selector=ElementSelector(textRegex=null, idRegex=industry-PRODUCTION, size=null, below=null, above=null, leftOf=null, rightOf=null, containsChild=null, containsDescendants=null, traits=null, index=null, enabled=null, optional=false, selected=null, checked=null, focused=null, childOf=null, css=null), direction=DOWN, scrollDuration=601, visibilityPercentage=100, timeout=20000, waitToSettleTimeoutMs=null, centerElement=false, originalSpeedValue=40, label=null, optional=false).centerElement
+19:08:21.565 [ INFO] maestro.orchestra.Orchestra.scrollUntilVisible: visibilityPercentageNormalized: 1.0
+19:08:21.565 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandFinished: Scrolling DOWN until id: industry-PRODUCTION is visible with speed 40, visibility percentage 100%, timeout 20000 ms, with centering disabled COMPLETED
+19:08:21.565 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandStart: Tap on id: industry-PRODUCTION RUNNING
+19:08:21.820 [ INFO] maestro.Maestro.tap-HgV9Ck0: Tapping on element:  UiElement(treeNode=TreeNode(attributes={accessibilityText=Ăn uống, sản xuất, vận tải, title=, value=radio button, text=radio button, hintText=, resource-id=industry-PRODUCTION, bounds=[20,598][400,654], enabled=true, focused=false, selected=false, checked=false}, children=[], clickable=null, enabled=true, focused=false, checked=false, selected=false), bounds=Bounds(x=20, y=598, width=380, height=56))
+19:08:22.417 [ INFO] maestro.Maestro.tap-HgV9Ck0: Tap aimed via stabilised hierarchy (null settle after a scroll)
+19:08:22.670 [ INFO] maestro.Maestro.refreshElementUntilStable-Hkttul8: Element is still moving (null -> Bounds(x=20, y=598, width=380, height=56)). Waiting for its position to settle.
+19:08:23.155 [ INFO] maestro.Maestro.screenshotBasedTap-ogj28Uc: Try tapping at (210, 626) using hierarchy based logic for wait
+19:08:23.155 [TRACE] maestro.utils.ScreenshotUtils.takeScreenshot: Taking screenshot to byte array
+19:08:23.155 [TRACE] maestro.utils.ScreenshotUtils.takeScreenshot: Taking screenshot to output sink
+19:08:24.489 [ INFO] maestro.Maestro.screenshotBasedTap-ogj28Uc: Something have changed in the UI judging by view hierarchy. Proceed.
+19:08:24.489 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandFinished: Tap on id: industry-PRODUCTION COMPLETED
+19:08:24.490 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandStart: Assert that "Ăn uống, sản xuất, vận tải" is visible RUNNING
+19:08:24.802 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandFinished: Assert that "Ăn uống, sản xuất, vận tải" is visible COMPLETED
+19:08:24.803 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandStart: Take screenshot 91-thue-nganh-nghe RUNNING
+19:08:24.804 [ INFO] maestro.Maestro.takeScreenshot: Taking screenshot
+19:08:24.805 [TRACE] maestro.utils.ScreenshotUtils.takeScreenshot: Taking screenshot to output sink
+19:08:24.963 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandFinished: Take screenshot 91-thue-nganh-nghe COMPLETED
+19:08:24.963 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandStart: Scrolling UP until "Trang chính" is visible with speed 40, visibility percentage 100%, timeout 20000 ms, with centering disabled RUNNING
+19:08:26.188 [ WARN] maestro.orchestra.Orchestra.scrollUntilVisible: Error: maestro.MaestroException$ElementNotFound: Element not found: Text matching regex: Trang chính
+19:08:26.199 [ INFO] maestro.Maestro.swipeFromCenter: Swiping DOWN from center
+19:08:30.347 [ WARN] maestro.orchestra.Orchestra.scrollUntilVisible: Error: maestro.MaestroException$ElementNotFound: Element not found: Text matching regex: Trang chính
+19:08:30.405 [ INFO] maestro.Maestro.swipeFromCenter: Swiping DOWN from center
+19:08:32.815 [ INFO] maestro.orchestra.Orchestra.scrollUntilVisible: Scrolling try count: 0, DeviceWidth: 420, DeviceWidth: 912
+19:08:32.816 [ INFO] maestro.orchestra.Orchestra.scrollUntilVisible: Element bounds: Bounds(x=20, y=80, width=145, height=48)
+19:08:32.816 [ INFO] maestro.orchestra.Orchestra.scrollUntilVisible: Visibility Percent: 1.0
+19:08:32.816 [ INFO] maestro.orchestra.Orchestra.scrollUntilVisible: Command centerElement: ScrollUntilVisibleCommand(selector=ElementSelector(textRegex=Trang chính, idRegex=null, size=null, below=null, above=null, leftOf=null, rightOf=null, containsChild=null, containsDescendants=null, traits=null, index=null, enabled=null, optional=false, selected=null, checked=null, focused=null, childOf=null, css=null), direction=UP, scrollDuration=601, visibilityPercentage=100, timeout=20000, waitToSettleTimeoutMs=null, centerElement=false, originalSpeedValue=40, label=null, optional=false).centerElement
+19:08:32.816 [ INFO] maestro.orchestra.Orchestra.scrollUntilVisible: visibilityPercentageNormalized: 1.0
+19:08:32.816 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandFinished: Scrolling UP until "Trang chính" is visible with speed 40, visibility percentage 100%, timeout 20000 ms, with centering disabled COMPLETED
+19:08:32.816 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandStart: Tap on "Trang chính" RUNNING
+19:08:33.052 [ INFO] maestro.Maestro.tap-HgV9Ck0: Tapping on element:  UiElement(treeNode=TreeNode(attributes={accessibilityText=Trang chính, title=, value=, text=, hintText=, resource-id=, bounds=[20,80][165,128], enabled=true, focused=false, selected=false, checked=false}, children=[], clickable=null, enabled=true, focused=false, checked=false, selected=false), bounds=Bounds(x=20, y=80, width=145, height=48))
+19:08:33.865 [ INFO] maestro.Maestro.tap-HgV9Ck0: Tap aimed via stabilised hierarchy (null settle after a scroll)
+19:08:34.066 [ INFO] maestro.Maestro.refreshElementUntilStable-Hkttul8: Element is still moving (null -> Bounds(x=20, y=80, width=145, height=48)). Waiting for its position to settle.
+19:08:34.416 [ INFO] maestro.Maestro.screenshotBasedTap-ogj28Uc: Try tapping at (92, 104) using hierarchy based logic for wait
+19:08:34.417 [TRACE] maestro.utils.ScreenshotUtils.takeScreenshot: Taking screenshot to byte array
+19:08:34.417 [TRACE] maestro.utils.ScreenshotUtils.takeScreenshot: Taking screenshot to output sink
+19:08:36.072 [ INFO] maestro.Maestro.screenshotBasedTap-ogj28Uc: Something have changed in the UI judging by view hierarchy. Proceed.
+19:08:36.072 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandFinished: Tap on "Trang chính" COMPLETED
+19:08:36.075 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandStart: Assert that "Hôm nay đã thu.*" is visible RUNNING
+19:08:36.479 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandFinished: Assert that "Hôm nay đã thu.*" is visible COMPLETED
+19:08:36.479 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandStart: Run flow when Platform is ANDROID RUNNING
+19:08:36.479 [ INFO] maestro.orchestra.Orchestra.executeCommands: [Command execution] CommandSkipped: null
+19:08:36.479 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandFinished: Run flow when Platform is ANDROID SKIPPED
