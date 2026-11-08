@@ -234,9 +234,10 @@ appId: vn.quickpos.app
 - scrollUntilVisible:
     element: "Xong"
 - tapOn: "Xong"
-- extendedWaitUntil:
-    visible: "1 × Sữa tươi hộp"
-    timeout: 10000
+# Máy tính bảng: thẻ giỏ hàng nằm dưới danh sách món (có thêm hàng danh mục) → cuộn tới
+- scrollUntilVisible:
+    element: "1 × Sữa tươi hộp"
+    timeout: 15000
 - assertVisible: "9.000 đ"
 - tapOn: "Bỏ hết món đã chọn"
 - scrollUntilVisible:

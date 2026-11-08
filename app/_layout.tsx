@@ -28,6 +28,17 @@ import { vi } from '../src/i18n/vi';
 
 void SplashScreen.preventAutoHideAsync();
 
+// Lỗi JS ngoài lúc vẽ (bấm nút, hẹn giờ): ghi ra nhật ký máy (logcat "[QP]") để QA đọc được, rồi giao lại cho bộ xử lý mặc định
+type ErrorUtilsT = { getGlobalHandler: () => (e: unknown, fatal?: boolean) => void; setGlobalHandler: (h: (e: unknown, fatal?: boolean) => void) => void };
+const EU = (globalThis as { ErrorUtils?: ErrorUtilsT }).ErrorUtils;
+if (EU) {
+  const prev = EU.getGlobalHandler();
+  EU.setGlobalHandler((e, fatal) => {
+    console.warn('[QP] lỗi JS', fatal ? 'fatal' : '', e instanceof Error ? `${e.message}\n${e.stack ?? ''}` : String(e));
+    prev(e, fatal);
+  });
+}
+
 export default function RootLayout() {
   const [fontsLoaded] = useFonts({
     BeVietnamPro_400Regular,

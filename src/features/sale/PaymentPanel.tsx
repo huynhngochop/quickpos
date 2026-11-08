@@ -149,7 +149,7 @@ export function PaymentPanel({ orderId, qrSize, onNewSale }: { orderId: string; 
               <Txt tone="warn">{vi.paid.overHint(formatVND(view.over))}</Txt>
             </Card>
           ) : null}
-          <Button big label={view.kind === 'OVERPAID' ? vi.paid.doneNew : vi.paid.newOrder} onPress={onNewSale} />
+          <Button big label={view.kind === 'OVERPAID' ? vi.paid.doneNew : vi.paid.newOrder} onPress={onNewSale} testID="pay-new-sale" />
           <Button kind="secondary" label={vi.paid.readAgain} onPress={() => speakVi(vi.paid.speakPaid(readNumber(got)))} />
         </View>
       );

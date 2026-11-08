@@ -16,7 +16,9 @@ export default function ChoTien() {
   // (Sổ nợ → Thu nợ bằng mã QR) thì thay màn này bằng Thu tiền. Không suy từ trạng thái ngăn điều hướng (tên tuyến đổi theo
   // cách lồng màn — đã gây lỗi "Đơn mới" không ăn, QA 08/11/2026).
   const toThuTien = () => {
-    if (from === 'thu-tien' && router.canGoBack()) router.back();
+    const back = from === 'thu-tien' && router.canGoBack();
+    console.warn('[QP] đơn mới → thu tiền', back ? 'lùi' : 'thay', from ?? '-');
+    if (back) router.back();
     else router.replace('/thu-tien');
   };
 
@@ -31,6 +33,7 @@ export default function ChoTien() {
   }, [L.kind]);
 
   const newSale = () => {
+    console.warn('[QP] bấm đơn mới');
     useSale.getState().newSale();
     toThuTien();
   };
