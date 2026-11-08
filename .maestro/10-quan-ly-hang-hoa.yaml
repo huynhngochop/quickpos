@@ -132,7 +132,13 @@ appId: vn.quickpos.app
 - extendedWaitUntil:
     visible: "Thêm món mới"
     timeout: 10000
-- assertVisible: "TEST-123"
+# Ô mã vạch nằm dưới danh mục / nhà cung cấp: cuộn xuống kiểm tra mã đã điền sẵn, rồi cuộn lên điền tên
+- scrollUntilVisible:
+    element: "TEST-123"
+- scrollUntilVisible:
+    element:
+      id: "product-name"
+    direction: UP
 - tapOn: { id: "product-name" }
 - inputText: "Mon thu"
 - runFlow: subflows/an-ban-phim.yaml

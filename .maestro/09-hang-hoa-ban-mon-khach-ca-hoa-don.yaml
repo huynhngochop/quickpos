@@ -9,8 +9,9 @@ appId: vn.quickpos.app
 # ---------- Hàng hóa: thêm món, nhập hàng ----------
 # Ô "Hàng hóa" có dòng phụ cảnh báo (sắp hết hạn) nên khớp theo đầu chữ
 - scrollUntilVisible:
-    element: "Hàng hóa.*"
-- tapOn: "Hàng hóa.*"
+    element:
+      id: "tile-products"
+- tapOn: { id: "tile-products" }
 - extendedWaitUntil:
     visible: "Thêm món"
     timeout: 10000
@@ -58,10 +59,9 @@ appId: vn.quickpos.app
 - scrollUntilVisible:
     element: "Lưu nhập hàng"
 - tapOn: "Lưu nhập hàng"
-# Máy tính bảng: thông báo nằm trên đầu thẻ, có thể đã cuộn khỏi màn hình
+# Máy tính bảng: thông báo nằm ngay trên nút lưu, có thể bị thanh tác vụ che → cuộn xuống tìm
 - scrollUntilVisible:
     element: ".*Đã nhập hàng.*"
-    direction: UP
     timeout: 15000
 - scrollUntilVisible:
     element: "30 ổ"

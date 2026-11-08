@@ -16,8 +16,9 @@ appId: vn.quickpos.app
     visible: "Hôm nay đã thu.*"
     timeout: 10000
 - scrollUntilVisible:
-    element: "Hàng hóa.*"
-- tapOn: "Hàng hóa.*"
+    element:
+      id: "tile-products"
+- tapOn: { id: "tile-products" }
 - extendedWaitUntil:
     visible: "Món bán, giá, tồn kho.*"
     timeout: 10000
@@ -226,8 +227,9 @@ appId: vn.quickpos.app
     visible: "Hôm nay đã thu.*"
     timeout: 10000
 - scrollUntilVisible:
-    element: "Hàng hóa.*"
-- tapOn: "Hàng hóa.*"
+    element:
+      id: "tile-products"
+- tapOn: { id: "tile-products" }
 - scrollUntilVisible:
     element:
       id: "open-counts"

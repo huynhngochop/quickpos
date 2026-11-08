@@ -73,7 +73,7 @@ export default function ThuTien() {
       if (sale.customer) await setOrderCustomer(order.id, sale.customer.id).catch(() => undefined);
       sale.setActive(order.id);
       sale.setPending(null);
-      if (L.kind !== 'split') router.push({ pathname: '/cho-tien/[id]', params: { id: order.id } });
+      if (L.kind !== 'split') router.push({ pathname: '/cho-tien/[id]', params: { id: order.id, from: 'thu-tien' } });
     } catch (e) {
       setError(e);
     } finally {
@@ -141,7 +141,7 @@ export default function ThuTien() {
   // Một cột: còn đơn đang chờ (ví dụ vừa gập máy từ hai cột) → nhắc mở lại, không mất đơn
   const resumeBanner =
     L.kind !== 'split' && activeOrderId ? (
-      <Button kind="secondary" label={`${vi.sale.scanToPay} ›`} onPress={() => router.push({ pathname: '/cho-tien/[id]', params: { id: activeOrderId } })} />
+      <Button kind="secondary" label={`${vi.sale.scanToPay} ›`} onPress={() => router.push({ pathname: '/cho-tien/[id]', params: { id: activeOrderId, from: 'thu-tien' } })} />
     ) : null;
 
   const left = (

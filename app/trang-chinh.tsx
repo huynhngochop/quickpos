@@ -147,6 +147,7 @@ export default function TrangChinh() {
           label={vi.main.products}
           sub={expCount > 0 ? vi.catalog.expiringTile(expCount) : lowCount > 0 ? vi.catalog.lowTile(lowCount) : undefined}
           subTone="warn"
+          testID="tile-products"
           onPress={() => router.push({ pathname: '/hang-hoa', params: expCount > 0 ? { filter: 'EXPIRY' } : lowCount > 0 ? { filter: 'LOW' } : {} })}
         />
         <Tile label={vi.main.expenses} sub={spent > 0 ? `${vi.expenses.thisMonth}: ${formatVND(spent)}` : undefined} onPress={() => router.push('/chi-tieu')} />
@@ -187,9 +188,12 @@ export default function TrangChinh() {
 }
 
 /** Ô việc trên trang chính: chữ to, cả ô bấm được, cao ≥ 72dp; hai ô một hàng. */
-function Tile({ label, sub, subTone = 'secondary', onPress }: { label: string; sub?: string; subTone?: 'secondary' | 'warn'; onPress: () => void }) {
+function Tile({
+  label, sub, subTone = 'secondary', onPress, testID,
+}: { label: string; sub?: string; subTone?: 'secondary' | 'warn'; onPress: () => void; testID?: string }) {
   return (
     <Pressable
+      testID={testID}
       accessibilityRole="button"
       accessibilityLabel={sub ? `${label}, ${sub}` : label}
       onPress={onPress}
