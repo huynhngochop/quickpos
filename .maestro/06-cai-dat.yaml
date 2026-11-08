@@ -54,8 +54,10 @@ appId: vn.quickpos.app
     when:
       visible: "Mã PIN chủ quán"
     file: subflows/enter-pin.yaml
-- extendedWaitUntil:
-    visible: "Cỡ chữ"
+# Chữ rất lớn + Cài đặt nhiều mục hơn: phần "Cỡ chữ" có thể nằm dưới mép màn hình
+- scrollUntilVisible:
+    element: "Cỡ chữ"
+    timeout: 20000
     timeout: 10000
 - scrollUntilVisible:
     element: "Lớn"

@@ -68,7 +68,9 @@ appId: vn.quickpos.app
           end: 75%, 35%
           duration: 400
 - tapOn: "Hủy đơn này"
-- assertVisible: "Hủy đơn này\\?"
+- scrollUntilVisible:
+    element: "Hủy đơn này\\?"
+    direction: UP
 - runFlow:
     file: subflows/cuon-toi.yaml
     env:

@@ -110,9 +110,13 @@ export function PaymentPanel({ orderId, qrSize, onNewSale }: { orderId: string; 
     />
   );
 
-  // Hai câu hỏi hiện ngay tại chỗ nút bấm (không dùng Modal): đơn đổi trạng thái ngay khi bấm (bản lưu trên máy trả lời tức thì),
+  // Hai câu hỏi thay chỗ cả phần thanh toán (không dùng Modal): đơn đổi trạng thái ngay khi bấm (bản lưu trên máy trả lời tức thì),
   // Modal vừa đóng trên Android làm lần bấm sau không tới được app ("Đơn mới" không ăn — lỗi QA 08/11/2026).
   const content = (() => {
+  // Đang hỏi: cả phần này chỉ còn câu hỏi (một việc một màn, luôn nằm trên cùng, không phải cuộn tìm)
+  const asking = view.kind === 'WAITING' || view.kind === 'PARTIAL';
+  if (askManual && asking) return manualSheet;
+  if (askCancel && asking) return cancelSheet;
   if (undoLeft > 0) {
     return (
       <Card tone="warn" style={{ gap: space.md }}>
@@ -201,7 +205,7 @@ export function PaymentPanel({ orderId, qrSize, onNewSale }: { orderId: string; 
           <Txt tone="secondary" center>
             {vi.paid.qrForMissingHint}
           </Txt>
-          {manualAllowed ? (askManual ? manualSheet : <Button kind="success" label={vi.sale.iSawFullMoney} onPress={() => setAskManual(true)} />) : null}
+          {manualAllowed ? <Button kind="success" label={vi.sale.iSawFullMoney} onPress={() => setAskManual(true)} /> : null}
           {manual.error ? <ErrorView error={manual.error} /> : null}
         </View>
       );
@@ -243,7 +247,7 @@ export function PaymentPanel({ orderId, qrSize, onNewSale }: { orderId: string; 
           ) : null}
           {manualAllowed ? (
             <View style={{ gap: 4 }}>
-              {askManual ? manualSheet : <Button kind="success" label={vi.sale.iSawMoney} onPress={() => setAskManual(true)} />}
+              <Button kind="success" label={vi.sale.iSawMoney} onPress={() => setAskManual(true)} />
               <Txt variant="caption" tone="secondary" center>
                 {vi.sale.iSawMoneyHint}
               </Txt>
@@ -255,7 +259,7 @@ export function PaymentPanel({ orderId, qrSize, onNewSale }: { orderId: string; 
           )}
           {manual.error ? <ErrorView error={manual.error} /> : null}
           {cancel.error ? <ErrorView error={cancel.error} /> : null}
-          {askCancel ? cancelSheet : <Button kind="dangerOutline" label={vi.sale.cancelOrder} onPress={() => setAskCancel(true)} />}
+          <Button kind="dangerOutline" label={vi.sale.cancelOrder} onPress={() => setAskCancel(true)} />
         </View>
       );
     }

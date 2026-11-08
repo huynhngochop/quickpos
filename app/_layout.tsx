@@ -25,8 +25,10 @@ import { PaidFlash } from '../src/components/PaidFlash';
 import { Txt } from '../src/components/Txt';
 import { Button } from '../src/components/Button';
 import { vi } from '../src/i18n/vi';
+import { qaLog, startQaHeartbeat } from '../src/lib/qaLog';
 
 void SplashScreen.preventAutoHideAsync();
+startQaHeartbeat();
 
 // Lỗi JS ngoài lúc vẽ (bấm nút, hẹn giờ): ghi ra nhật ký máy (logcat "[QP]") để QA đọc được, rồi giao lại cho bộ xử lý mặc định
 type ErrorUtilsT = { getGlobalHandler: () => (e: unknown, fatal?: boolean) => void; setGlobalHandler: (h: (e: unknown, fatal?: boolean) => void) => void };
@@ -34,7 +36,7 @@ const EU = (globalThis as { ErrorUtils?: ErrorUtilsT }).ErrorUtils;
 if (EU) {
   const prev = EU.getGlobalHandler();
   EU.setGlobalHandler((e, fatal) => {
-    console.warn('[QP] lỗi JS', fatal ? 'fatal' : '', e instanceof Error ? `${e.message}\n${e.stack ?? ''}` : String(e));
+    qaLog('lỗi JS', fatal ? 'fatal' : '', e instanceof Error ? `${e.message}\n${e.stack ?? ''}` : String(e));
     prev(e, fatal);
   });
 }

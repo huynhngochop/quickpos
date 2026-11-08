@@ -1,5 +1,6 @@
 import type { ReactNode } from 'react';
 import { ActivityIndicator, Keyboard, Pressable, View, type ViewStyle } from 'react-native';
+import { qaLog } from '../lib/qaLog';
 import { colors, radius, touch } from '../theme/tokens';
 import { Txt } from './Txt';
 
@@ -44,6 +45,7 @@ export function Button({ label, onPress, kind = 'primary', big, disabled, disabl
       disabled={off}
       // Bấm nút nào cũng cất bàn phím: ô nhập không còn che nút/lịch sử bên dưới (nhất là máy tính bảng nằm ngang)
       onPress={() => {
+        qaLog('bấm', label);
         Keyboard.dismiss();
         onPress();
       }}

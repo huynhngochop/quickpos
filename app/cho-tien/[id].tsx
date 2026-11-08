@@ -1,6 +1,7 @@
 import { useEffect } from 'react';
 import { useWindowDimensions } from 'react-native';
 import { router, useLocalSearchParams } from 'expo-router';
+import { qaLog } from '../../src/lib/qaLog';
 import { Screen } from '../../src/components/Screen';
 import { PaymentPanel } from '../../src/features/sale/PaymentPanel';
 import { useSale } from '../../src/features/sale/store';
@@ -17,7 +18,7 @@ export default function ChoTien() {
   // cách lồng màn — đã gây lỗi "Đơn mới" không ăn, QA 08/11/2026).
   const toThuTien = () => {
     const back = from === 'thu-tien' && router.canGoBack();
-    console.warn('[QP] đơn mới → thu tiền', back ? 'lùi' : 'thay', from ?? '-');
+    qaLog('đơn mới → thu tiền', back ? 'lùi' : 'thay', from ?? '-');
     if (back) router.back();
     else router.replace('/thu-tien');
   };
@@ -33,7 +34,6 @@ export default function ChoTien() {
   }, [L.kind]);
 
   const newSale = () => {
-    console.warn('[QP] bấm đơn mới');
     useSale.getState().newSale();
     toThuTien();
   };
