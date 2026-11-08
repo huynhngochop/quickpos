@@ -5,6 +5,7 @@ import { Screen, Card } from '../src/components/Screen';
 import { Txt } from '../src/components/Txt';
 import { Button } from '../src/components/Button';
 import { DemoBanner, ErrorView, callSupport } from '../src/components/States';
+import { KeyboardDone } from '../src/components/Choice';
 import { sendOtp } from '../src/features/session/api';
 import { useSession } from '../src/features/session/store';
 import { toE164VN } from '../src/lib/money';
@@ -62,6 +63,7 @@ export default function DangNhap() {
         <TextInput
           accessibilityLabelledBy="phoneLabel"
           testID="phone-input"
+          inputAccessoryViewID="login-phone"
           value={phone}
           onChangeText={(t) => {
             setPhone(t);
@@ -87,6 +89,7 @@ export default function DangNhap() {
             color: colors.ink,
           }}
         />
+        <KeyboardDone id="login-phone" />
         {invalid ? (
           <Txt tone="danger" accessibilityLiveRegion="polite">
             {vi.login.phoneInvalid}

@@ -28,6 +28,9 @@ import { vi } from '../src/i18n/vi';
  * Hai cột (≥ 600dp): bàn phím trái, mã QR / kết quả phải (6.5, 6.6) — không chuyển màn hình.
  * Số đang nhập và đơn đang chờ nằm trong store: gập/mở máy không mất.
  */
+/** Máy tính bảng Android có thanh tác vụ ở đáy, không phải lúc nào cũng báo vào vùng an toàn: chừa chỗ để cuộn liên kết lên trên */
+const TASKBAR = 64;
+
 export default function ThuTien() {
   const { width, height, fontScale } = useWindowDimensions();
   const L = layoutFor(width, height, fontScale);
@@ -155,7 +158,7 @@ export default function ThuTien() {
     <View style={{ flex: 1, backgroundColor: colors.ground, paddingTop: insets.top, paddingLeft: insets.left, paddingRight: insets.right }}>
       {L.kind === 'split' ? (
         <View style={{ flex: 1, flexDirection: 'row', gap: space.gutter, padding: space.gutter, paddingTop: space.sm }}>
-          <ScrollView testID="pay-scroll" style={{ flex: 1 }} contentContainerStyle={{ gap: space.md, paddingBottom: insets.bottom + space.lg }}>
+          <ScrollView testID="pay-scroll" style={{ flex: 1 }} contentContainerStyle={{ gap: space.md, paddingBottom: Math.max(insets.bottom, TASKBAR) + space.lg }}>
             <BackLink label={vi.common.home} href="/trang-chinh" />
             {left}
           </ScrollView>

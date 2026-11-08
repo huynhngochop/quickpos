@@ -12,7 +12,7 @@ appId: vn.quickpos.app
 - tapOn: { id: "phone-input" }
 - waitForAnimationToEnd
 - inputText: "12345"
-- tapOn: "Nhập số điện thoại của quán"
+- runFlow: an-ban-phim.yaml
 - tapOn: "Gửi mã xác nhận"
 - assertVisible: "Số điện thoại chưa đúng.*"
 - takeScreenshot: "02-dang-nhap-so-sai"
@@ -20,7 +20,7 @@ appId: vn.quickpos.app
 - waitForAnimationToEnd
 - eraseText: 10
 - inputText: "0903456789"
-- tapOn: "Nhập số điện thoại của quán"
+- runFlow: an-ban-phim.yaml
 - tapOn: "Gửi mã xác nhận"
 - extendedWaitUntil:
     visible: "Nhập mã 6 số"

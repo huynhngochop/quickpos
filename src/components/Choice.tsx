@@ -109,23 +109,7 @@ export function Field({
         }}
       />
       {error ? <Txt tone="danger">{error}</Txt> : null}
-      {ios ? (
-        <InputAccessoryView nativeID={accessoryId}>
-          <View style={{ flexDirection: 'row', justifyContent: 'flex-end', backgroundColor: colors.divider, borderTopWidth: 1, borderTopColor: colors.border }}>
-            <Pressable
-              testID="keyboard-done"
-              accessibilityRole="button"
-              accessibilityLabel={vi.common.done}
-              onPress={() => Keyboard.dismiss()}
-              style={{ minHeight: touch.min, minWidth: 96, paddingHorizontal: space.lg, alignItems: 'center', justifyContent: 'center' }}
-            >
-              <Txt variant="bodyStrong" tone="primary">
-                {vi.common.done}
-              </Txt>
-            </Pressable>
-          </View>
-        </InputAccessoryView>
-      ) : null}
+      {ios ? <KeyboardDone id={accessoryId} /> : null}
     </View>
   );
 }
@@ -162,5 +146,27 @@ export function BarChart({ bars, format }: { bars: { label: string; amount: numb
         ))}
       </View>
     </View>
+  );
+}
+
+/** iOS: thanh "Xong" trên bàn phím (bàn phím số không có nút cất). Gắn ô nhập bằng inputAccessoryViewID={id}. */
+export function KeyboardDone({ id }: { id: string }) {
+  if (Platform.OS !== 'ios') return null;
+  return (
+    <InputAccessoryView nativeID={id}>
+      <View style={{ flexDirection: 'row', justifyContent: 'flex-end', backgroundColor: colors.divider, borderTopWidth: 1, borderTopColor: colors.border }}>
+        <Pressable
+          testID="keyboard-done"
+          accessibilityRole="button"
+          accessibilityLabel={vi.common.done}
+          onPress={() => Keyboard.dismiss()}
+          style={{ minHeight: touch.min, minWidth: 96, paddingHorizontal: space.lg, alignItems: 'center', justifyContent: 'center' }}
+        >
+          <Txt variant="bodyStrong" tone="primary">
+            {vi.common.done}
+          </Txt>
+        </Pressable>
+      </View>
+    </InputAccessoryView>
   );
 }
