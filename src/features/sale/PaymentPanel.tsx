@@ -80,6 +80,7 @@ export function PaymentPanel({ orderId, qrSize, onNewSale }: { orderId: string; 
 
   const manualSheet = (
     <ConfirmSheet
+      inline
       visible={askManual}
       title={vi.sale.manualAsk}
       body={vi.sale.manualAskBody}
@@ -87,8 +88,8 @@ export function PaymentPanel({ orderId, qrSize, onNewSale }: { orderId: string; 
       no={vi.sale.manualNo}
       busy={manual.isPending}
       onYes={() => {
-        // Đóng hộp hỏi TRƯỚC khi đơn chuyển sang "Đã nhận": màn "Đã nhận" không vẽ hộp này, mà gỡ một Modal đang mở
-        // trên Android để lại lớp trong suốt chặn mọi lần bấm (bấm "Đơn mới" không ăn — lỗi QA 08/11/2026)
+        // Hỏi tại chỗ, không dùng Modal: đơn chuyển "Đã nhận" ngay khi bấm (bản lưu trên máy), Modal vừa đóng trên Android
+        // làm lần bấm sau không tới được app (bấm "Đơn mới" không ăn — lỗi QA 08/11/2026)
         setAskManual(false);
         manual.mutate({ orderId: o.id, note: null });
       }}
@@ -97,6 +98,7 @@ export function PaymentPanel({ orderId, qrSize, onNewSale }: { orderId: string; 
   );
   const cancelSheet = (
     <ConfirmSheet
+      inline
       visible={askCancel}
       title={vi.sale.cancelAsk}
       body={vi.sale.cancelAskBody}
@@ -108,9 +110,8 @@ export function PaymentPanel({ orderId, qrSize, onNewSale }: { orderId: string; 
     />
   );
 
-  // Hai hộp hỏi (Modal) luôn được vẽ ở mọi trạng thái: đơn đổi trạng thái ngay khi bấm (bản lưu trên máy trả lời tức thì),
-  // nếu nhánh mới không vẽ hộp thì Modal bị gỡ khi đang chạy hiệu ứng đóng → Android để lại lớp trong suốt chặn mọi lần bấm
-  // ("Đơn mới", "Hoàn tác" không ăn — lỗi QA 08/11/2026).
+  // Hai câu hỏi hiện ngay tại chỗ nút bấm (không dùng Modal): đơn đổi trạng thái ngay khi bấm (bản lưu trên máy trả lời tức thì),
+  // Modal vừa đóng trên Android làm lần bấm sau không tới được app ("Đơn mới" không ăn — lỗi QA 08/11/2026).
   const content = (() => {
   if (undoLeft > 0) {
     return (
@@ -200,7 +201,7 @@ export function PaymentPanel({ orderId, qrSize, onNewSale }: { orderId: string; 
           <Txt tone="secondary" center>
             {vi.paid.qrForMissingHint}
           </Txt>
-          {manualAllowed ? <Button kind="success" label={vi.sale.iSawFullMoney} onPress={() => setAskManual(true)} /> : null}
+          {manualAllowed ? (askManual ? manualSheet : <Button kind="success" label={vi.sale.iSawFullMoney} onPress={() => setAskManual(true)} />) : null}
           {manual.error ? <ErrorView error={manual.error} /> : null}
         </View>
       );
@@ -242,7 +243,7 @@ export function PaymentPanel({ orderId, qrSize, onNewSale }: { orderId: string; 
           ) : null}
           {manualAllowed ? (
             <View style={{ gap: 4 }}>
-              <Button kind="success" label={vi.sale.iSawMoney} onPress={() => setAskManual(true)} />
+              {askManual ? manualSheet : <Button kind="success" label={vi.sale.iSawMoney} onPress={() => setAskManual(true)} />}
               <Txt variant="caption" tone="secondary" center>
                 {vi.sale.iSawMoneyHint}
               </Txt>
@@ -254,7 +255,7 @@ export function PaymentPanel({ orderId, qrSize, onNewSale }: { orderId: string; 
           )}
           {manual.error ? <ErrorView error={manual.error} /> : null}
           {cancel.error ? <ErrorView error={cancel.error} /> : null}
-          <Button kind="dangerOutline" label={vi.sale.cancelOrder} onPress={() => setAskCancel(true)} />
+          {askCancel ? cancelSheet : <Button kind="dangerOutline" label={vi.sale.cancelOrder} onPress={() => setAskCancel(true)} />}
         </View>
       );
     }
@@ -263,8 +264,6 @@ export function PaymentPanel({ orderId, qrSize, onNewSale }: { orderId: string; 
   return (
     <>
       {content}
-      {manualSheet}
-      {cancelSheet}
     </>
   );
 }

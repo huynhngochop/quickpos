@@ -1,0 +1,17 @@
+appId: vn.quickpos.app
+---
+# Cuộn tới khi thấy chữ ${TEXT} (câu hỏi hiện tại chỗ ở màn chờ tiền có thể nằm dưới mép màn hình).
+# Máy tính bảng: giữa màn hình là khe giữa 2 cột nên vuốt ở cột phải.
+- scrollUntilVisible:
+    element: ${TEXT}
+    timeout: 6000
+    optional: true
+- repeat:
+    while:
+      notVisible: ${TEXT}
+    times: 6
+    commands:
+      - swipe:
+          start: 75%, 80%
+          end: 75%, 35%
+          duration: 400

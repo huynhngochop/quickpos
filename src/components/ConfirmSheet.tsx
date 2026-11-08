@@ -15,8 +15,11 @@ export function ConfirmSheet({
   busy,
   onYes,
   onNo,
+  inline,
 }: {
   visible: boolean;
+  /** Hỏi ngay tại chỗ (thẻ trong trang, không mở Modal): dùng khi bấm "Có" làm đổi ngay màn đang mở. */
+  inline?: boolean;
   title: string;
   body?: string;
   yes: string;
@@ -27,6 +30,20 @@ export function ConfirmSheet({
   onNo: () => void;
 }) {
   const insets = useSafeAreaInsets();
+  if (inline) {
+    if (!visible) return null;
+    return (
+      <View
+        style={{ backgroundColor: colors.surface, borderRadius: radius.lg, borderWidth: 2, borderColor: danger ? colors.danger : colors.primary, padding: space.lg, gap: space.md }}
+        accessibilityLiveRegion="polite"
+      >
+        <Txt variant="title">{title}</Txt>
+        {body ? <Txt tone="secondary">{body}</Txt> : null}
+        <Button big kind={danger ? 'danger' : 'primary'} label={yes} onPress={onYes} busy={busy} />
+        <Button kind="secondary" label={no} onPress={onNo} />
+      </View>
+    );
+  }
   return (
     <Modal visible={visible} transparent animationType="none" onRequestClose={onNo} statusBarTranslucent>
       <View style={{ flex: 1, backgroundColor: 'rgba(22,25,29,0.55)', justifyContent: 'flex-end' }}>

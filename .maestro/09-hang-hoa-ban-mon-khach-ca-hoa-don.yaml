@@ -11,7 +11,21 @@ appId: vn.quickpos.app
 - scrollUntilVisible:
     element:
       id: "tile-products"
+- waitForAnimationToEnd
 - tapOn: { id: "tile-products" }
+# iOS: trang chính còn đang vẽ lại dòng cảnh báo thì lần bấm đầu có thể bị bỏ qua → bấm lại
+- repeat:
+    while:
+      notVisible: "Thêm món"
+    times: 3
+    commands:
+      - waitForAnimationToEnd
+      - runFlow:
+          when:
+            visible:
+              id: "tile-products"
+          commands:
+            - tapOn: { id: "tile-products" }
 - extendedWaitUntil:
     visible: "Thêm món"
     timeout: 10000
@@ -221,6 +235,10 @@ appId: vn.quickpos.app
 - scrollUntilVisible:
     element: "Tôi đã thấy tiền về"
 - tapOn: "Tôi đã thấy tiền về"
+- runFlow:
+    file: subflows/cuon-toi.yaml
+    env:
+      TEXT: "Đúng, tiền đã về"
 - tapOn: "Đúng, tiền đã về"
 - extendedWaitUntil:
     visible: "Đơn mới"

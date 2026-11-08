@@ -18,12 +18,22 @@ appId: vn.quickpos.app
 - tapOn: "Tôi đã thấy tiền về"
 - assertVisible: "Bạn đã thấy tiền vào tài khoản của quán\\?"
 - takeScreenshot: "20-hoi-xac-nhan-tay"
+- runFlow:
+    file: subflows/cuon-toi.yaml
+    env:
+      TEXT: "Chưa thấy"
 - tapOn: "Chưa thấy"
-- assertVisible: "Khách quét mã để trả"
+- scrollUntilVisible:
+    element: "Khách quét mã để trả"
+    direction: UP
 - scrollUntilVisible:
     element: "Tôi đã thấy tiền về"
     visibilityPercentage: 100
 - tapOn: "Tôi đã thấy tiền về"
+- runFlow:
+    file: subflows/cuon-toi.yaml
+    env:
+      TEXT: "Đúng, tiền đã về"
 - tapOn: "Đúng, tiền đã về"
 - extendedWaitUntil:
     visible: "Xác nhận tay.*"
@@ -59,6 +69,10 @@ appId: vn.quickpos.app
           duration: 400
 - tapOn: "Hủy đơn này"
 - assertVisible: "Hủy đơn này\\?"
+- runFlow:
+    file: subflows/cuon-toi.yaml
+    env:
+      TEXT: "Không hủy"
 - tapOn: "Không hủy"
 - scrollUntilVisible:
     element: "Hủy đơn này"
@@ -75,6 +89,10 @@ appId: vn.quickpos.app
           end: 75%, 35%
           duration: 400
 - tapOn: "Hủy đơn này"
+- runFlow:
+    file: subflows/cuon-toi.yaml
+    env:
+      TEXT: "Hủy đơn"
 - tapOn: "Hủy đơn"
 - assertVisible: "Đã hủy đơn.*"
 - takeScreenshot: "22-huy-dang-dem-nguoc"
@@ -96,6 +114,10 @@ appId: vn.quickpos.app
           end: 75%, 35%
           duration: 400
 - tapOn: "Hủy đơn này"
+- runFlow:
+    file: subflows/cuon-toi.yaml
+    env:
+      TEXT: "Hủy đơn"
 - tapOn: "Hủy đơn"
 - extendedWaitUntil:
     visible: "Chưa nhập số tiền"
