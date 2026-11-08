@@ -1,11 +1,23 @@
 #!/usr/bin/env bash
 # Chạy một lệnh trong CI; nếu lỗi, đưa phần quan trọng của log thành annotation (đọc được qua API mà không cần tải log).
+# Lỗi mạng tạm thời (máy chủ tải Gradle / Maven trả 502/503/504, hết giờ chờ) thì tự chạy lại tối đa 3 lần, cách 45 giây.
 # Dùng: bash scripts/ci-run.sh <tên bước> <lệnh...>
 set -o pipefail
 name="$1"; shift
 log="$(mktemp)"
-"$@" 2>&1 | tee "$log"
-code=${PIPESTATUS[0]}
+attempt=1
+while :; do
+  "$@" 2>&1 | tee "$log"
+  code=${PIPESTATUS[0]}
+  [ "$code" -eq 0 ] && break
+  if [ "$attempt" -lt 3 ] && grep -qiE "response code: 50[234]|status code 50[234]|Gateway Time-?out|Read timed out|Connection reset|timeout \([0-9]+ms\)|Could not GET|ETIMEDOUT|ECONNRESET|EAI_AGAIN" "$log"; then
+    echo "::warning title=${name}::Lỗi mạng tạm thời, chạy lại lần $((attempt + 1)) sau 45 giây"
+    attempt=$((attempt + 1))
+    sleep 45
+    continue
+  fi
+  break
+done
 if [ "$code" -ne 0 ]; then
   {
     # Gradle: phần "What went wrong" và các dòng "Caused by" là đủ để biết nguyên nhân
