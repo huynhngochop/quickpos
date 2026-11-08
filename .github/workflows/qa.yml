@@ -52,6 +52,14 @@ jobs:
         with: { node-version: 22 }
       - uses: actions/setup-java@v4
         with: { distribution: temurin, java-version: 17 }
+      # Giữ Gradle + thư viện Maven giữa các lần build: đỡ tải lại (máy chủ tải hay lỗi 504)
+      - uses: actions/cache@v4
+        with:
+          path: |
+            ~/.gradle/wrapper/dists
+            ~/.gradle/caches/modules-2
+          key: gradle-${{ runner.os }}-${{ hashFiles('package-lock.json', 'package.json') }}
+          restore-keys: gradle-${{ runner.os }}-
       - run: bash scripts/ci-run.sh setup bash scripts/setup.sh
       - run: bash scripts/ci-run.sh prebuild npx expo prebuild --platform android --clean
       - run: bash ../scripts/ci-run.sh gradle ./gradlew assembleRelease --no-daemon
@@ -90,6 +98,14 @@ jobs:
         with: { node-version: 22 }
       - uses: actions/setup-java@v4
         with: { distribution: temurin, java-version: 17 }
+      # Giữ Gradle + thư viện Maven giữa các lần build: đỡ tải lại (máy chủ tải hay lỗi 504)
+      - uses: actions/cache@v4
+        with:
+          path: |
+            ~/.gradle/wrapper/dists
+            ~/.gradle/caches/modules-2
+          key: gradle-${{ runner.os }}-${{ hashFiles('package-lock.json', 'package.json') }}
+          restore-keys: gradle-${{ runner.os }}-
       - run: bash scripts/ci-run.sh setup bash scripts/setup.sh
       - run: bash scripts/ci-run.sh prebuild-ios npx expo prebuild --platform ios --clean
       - name: Build cho Simulator
