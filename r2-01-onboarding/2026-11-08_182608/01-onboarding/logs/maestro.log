@@ -1,0 +1,858 @@
+18:26:14.191 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandStart: Define variables RUNNING
+18:26:14.195 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandFinished: Define variables COMPLETED
+18:26:14.196 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandStart: Apply configuration RUNNING
+18:26:14.196 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandFinished: Apply configuration COMPLETED
+18:26:14.197 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandStart: Launch app "vn.quickpos.app" with clear state RUNNING
+18:26:14.198 [ INFO] maestro.Maestro.clearAppState$lambda$9: Clearing app state vn.quickpos.app
+18:26:16.650 [DEBUG] maestro.Maestro.setPermissionInternal: Failed to set permission android.permission.READ_EXTERNAL_STORAGE for app vn.quickpos.app: shell command failed (exit -1): 
+Exception occurred while executing 'grant':
+java.lang.SecurityException: Package vn.quickpos.app has not requested permission android.permission.READ_EXTERNAL_STORAGE
+	at com.android.server.pm.permission.PermissionManagerServiceImpl.grantRuntimePermissionInternal(PermissionManagerServiceImpl.java:1423)
+	at com.android.server.pm.permission.PermissionManagerServiceImpl.grantRuntimePermission(PermissionManagerServiceImpl.java:1337)
+	at com.android.server.pm.permission.PermissionManagerService.grantRuntimePermission(PermissionManagerService.java:551)
+	at android.permission.PermissionManager.grantRuntimePermission(PermissionManager.java:609)
+	at com.android.server.pm.PackageManagerShellCommand.runGrantRevokePermission(PackageManagerShellCommand.java:2672)
+	at com.android.server.pm.PackageManagerShellCommand.onCommand(PackageManagerShellCommand.java:291)
+	at com.android.modules.utils.BasicShellCommandHandler.exec(BasicShellCommandHandler.java:97)
+	at android.os.ShellCommand.exec(ShellCommand.java:38)
+	at com.android.server.pm.PackageManagerService$IPackageManagerImpl.onShellCommand(PackageManagerService.java:6350)
+	at android.os.Binder.shellCommand(Binder.java:1068)
+	at android.os.Binder.onTransact(Binder.java:888)
+	at android.content.pm.IPackageManager$Stub.onTransact(IPackageManager.java:4352)
+	at com.android.server.pm.PackageManagerService$IPackageManagerImpl.onTransact(PackageManagerService.java:6334)
+	at android.os.Binder.execTransactInternal(Binder.java:1344)
+	at android.os.Binder.execTransact(Binder.java:1275)
+
+18:26:16.718 [DEBUG] maestro.Maestro.setPermissionInternal: Failed to set permission android.permission.WRITE_EXTERNAL_STORAGE for app vn.quickpos.app: shell command failed (exit -1): 
+Exception occurred while executing 'grant':
+java.lang.SecurityException: Package vn.quickpos.app has not requested permission android.permission.WRITE_EXTERNAL_STORAGE
+	at com.android.server.pm.permission.PermissionManagerServiceImpl.grantRuntimePermissionInternal(PermissionManagerServiceImpl.java:1423)
+	at com.android.server.pm.permission.PermissionManagerServiceImpl.grantRuntimePermission(PermissionManagerServiceImpl.java:1337)
+	at com.android.server.pm.permission.PermissionManagerService.grantRuntimePermission(PermissionManagerService.java:551)
+	at android.permission.PermissionManager.grantRuntimePermission(PermissionManager.java:609)
+	at com.android.server.pm.PackageManagerShellCommand.runGrantRevokePermission(PackageManagerShellCommand.java:2672)
+	at com.android.server.pm.PackageManagerShellCommand.onCommand(PackageManagerShellCommand.java:291)
+	at com.android.modules.utils.BasicShellCommandHandler.exec(BasicShellCommandHandler.java:97)
+	at android.os.ShellCommand.exec(ShellCommand.java:38)
+	at com.android.server.pm.PackageManagerService$IPackageManagerImpl.onShellCommand(PackageManagerService.java:6350)
+	at android.os.Binder.shellCommand(Binder.java:1068)
+	at android.os.Binder.onTransact(Binder.java:888)
+	at android.content.pm.IPackageManager$Stub.onTransact(IPackageManager.java:4352)
+	at com.android.server.pm.PackageManagerService$IPackageManagerImpl.onTransact(PackageManagerService.java:6334)
+	at android.os.Binder.execTransactInternal(Binder.java:1344)
+	at android.os.Binder.execTransact(Binder.java:1275)
+
+18:26:16.861 [DEBUG] maestro.Maestro.setPermissionInternal: Failed to set permission com.google.android.finsky.permission.BIND_GET_INSTALL_REFERRER_SERVICE for app vn.quickpos.app: shell command failed (exit -1): 
+Exception occurred while executing 'grant':
+java.lang.IllegalArgumentException: Unknown permission: com.google.android.finsky.permission.BIND_GET_INSTALL_REFERRER_SERVICE
+	at com.android.server.pm.permission.PermissionManagerServiceImpl.grantRuntimePermissionInternal(PermissionManagerServiceImpl.java:1380)
+	at com.android.server.pm.permission.PermissionManagerServiceImpl.grantRuntimePermission(PermissionManagerServiceImpl.java:1337)
+	at com.android.server.pm.permission.PermissionManagerService.grantRuntimePermission(PermissionManagerService.java:551)
+	at android.permission.PermissionManager.grantRuntimePermission(PermissionManager.java:609)
+	at com.android.server.pm.PackageManagerShellCommand.runGrantRevokePermission(PackageManagerShellCommand.java:2672)
+	at com.android.server.pm.PackageManagerShellCommand.onCommand(PackageManagerShellCommand.java:291)
+	at com.android.modules.utils.BasicShellCommandHandler.exec(BasicShellCommandHandler.java:97)
+	at android.os.ShellCommand.exec(ShellCommand.java:38)
+	at com.android.server.pm.PackageManagerService$IPackageManagerImpl.onShellCommand(PackageManagerService.java:6350)
+	at android.os.Binder.shellCommand(Binder.java:1068)
+	at android.os.Binder.onTransact(Binder.java:888)
+	at android.content.pm.IPackageManager$Stub.onTransact(IPackageManager.java:4352)
+	at com.android.server.pm.PackageManagerService$IPackageManagerImpl.onTransact(PackageManagerService.java:6334)
+	at android.os.Binder.execTransactInternal(Binder.java:1344)
+	at android.os.Binder.execTransact(Binder.java:1275)
+
+18:26:16.879 [DEBUG] maestro.Maestro.setPermissionInternal: Failed to set permission com.sec.android.provider.badge.permission.READ for app vn.quickpos.app: shell command failed (exit -1): 
+Exception occurred while executing 'grant':
+java.lang.IllegalArgumentException: Unknown permission: com.sec.android.provider.badge.permission.READ
+	at com.android.server.pm.permission.PermissionManagerServiceImpl.grantRuntimePermissionInternal(PermissionManagerServiceImpl.java:1380)
+	at com.android.server.pm.permission.PermissionManagerServiceImpl.grantRuntimePermission(PermissionManagerServiceImpl.java:1337)
+	at com.android.server.pm.permission.PermissionManagerService.grantRuntimePermission(PermissionManagerService.java:551)
+	at android.permission.PermissionManager.grantRuntimePermission(PermissionManager.java:609)
+	at com.android.server.pm.PackageManagerShellCommand.runGrantRevokePermission(PackageManagerShellCommand.java:2672)
+	at com.android.server.pm.PackageManagerShellCommand.onCommand(PackageManagerShellCommand.java:291)
+	at com.android.modules.utils.BasicShellCommandHandler.exec(BasicShellCommandHandler.java:97)
+	at android.os.ShellCommand.exec(ShellCommand.java:38)
+	at com.android.server.pm.PackageManagerService$IPackageManagerImpl.onShellCommand(PackageManagerService.java:6350)
+	at android.os.Binder.shellCommand(Binder.java:1068)
+	at android.os.Binder.onTransact(Binder.java:888)
+	at android.content.pm.IPackageManager$Stub.onTransact(IPackageManager.java:4352)
+	at com.android.server.pm.PackageManagerService$IPackageManagerImpl.onTransact(PackageManagerService.java:6334)
+	at android.os.Binder.execTransactInternal(Binder.java:1344)
+	at android.os.Binder.execTransact(Binder.java:1275)
+
+18:26:16.897 [DEBUG] maestro.Maestro.setPermissionInternal: Failed to set permission com.sec.android.provider.badge.permission.WRITE for app vn.quickpos.app: shell command failed (exit -1): 
+Exception occurred while executing 'grant':
+java.lang.IllegalArgumentException: Unknown permission: com.sec.android.provider.badge.permission.WRITE
+	at com.android.server.pm.permission.PermissionManagerServiceImpl.grantRuntimePermissionInternal(PermissionManagerServiceImpl.java:1380)
+	at com.android.server.pm.permission.PermissionManagerServiceImpl.grantRuntimePermission(PermissionManagerServiceImpl.java:1337)
+	at com.android.server.pm.permission.PermissionManagerService.grantRuntimePermission(PermissionManagerService.java:551)
+	at android.permission.PermissionManager.grantRuntimePermission(PermissionManager.java:609)
+	at com.android.server.pm.PackageManagerShellCommand.runGrantRevokePermission(PackageManagerShellCommand.java:2672)
+	at com.android.server.pm.PackageManagerShellCommand.onCommand(PackageManagerShellCommand.java:291)
+	at com.android.modules.utils.BasicShellCommandHandler.exec(BasicShellCommandHandler.java:97)
+	at android.os.ShellCommand.exec(ShellCommand.java:38)
+	at com.android.server.pm.PackageManagerService$IPackageManagerImpl.onShellCommand(PackageManagerService.java:6350)
+	at android.os.Binder.shellCommand(Binder.java:1068)
+	at android.os.Binder.onTransact(Binder.java:888)
+	at android.content.pm.IPackageManager$Stub.onTransact(IPackageManager.java:4352)
+	at com.android.server.pm.PackageManagerService$IPackageManagerImpl.onTransact(PackageManagerService.java:6334)
+	at android.os.Binder.execTransactInternal(Binder.java:1344)
+	at android.os.Binder.execTransact(Binder.java:1275)
+
+18:26:16.915 [DEBUG] maestro.Maestro.setPermissionInternal: Failed to set permission com.htc.launcher.permission.READ_SETTINGS for app vn.quickpos.app: shell command failed (exit -1): 
+Exception occurred while executing 'grant':
+java.lang.IllegalArgumentException: Unknown permission: com.htc.launcher.permission.READ_SETTINGS
+	at com.android.server.pm.permission.PermissionManagerServiceImpl.grantRuntimePermissionInternal(PermissionManagerServiceImpl.java:1380)
+	at com.android.server.pm.permission.PermissionManagerServiceImpl.grantRuntimePermission(PermissionManagerServiceImpl.java:1337)
+	at com.android.server.pm.permission.PermissionManagerService.grantRuntimePermission(PermissionManagerService.java:551)
+	at android.permission.PermissionManager.grantRuntimePermission(PermissionManager.java:609)
+	at com.android.server.pm.PackageManagerShellCommand.runGrantRevokePermission(PackageManagerShellCommand.java:2672)
+	at com.android.server.pm.PackageManagerShellCommand.onCommand(PackageManagerShellCommand.java:291)
+	at com.android.modules.utils.BasicShellCommandHandler.exec(BasicShellCommandHandler.java:97)
+	at android.os.ShellCommand.exec(ShellCommand.java:38)
+	at com.android.server.pm.PackageManagerService$IPackageManagerImpl.onShellCommand(PackageManagerService.java:6350)
+	at android.os.Binder.shellCommand(Binder.java:1068)
+	at android.os.Binder.onTransact(Binder.java:888)
+	at android.content.pm.IPackageManager$Stub.onTransact(IPackageManager.java:4352)
+	at com.android.server.pm.PackageManagerService$IPackageManagerImpl.onTransact(PackageManagerService.java:6334)
+	at android.os.Binder.execTransactInternal(Binder.java:1344)
+	at android.os.Binder.execTransact(Binder.java:1275)
+
+18:26:16.931 [DEBUG] maestro.Maestro.setPermissionInternal: Failed to set permission com.htc.launcher.permission.UPDATE_SHORTCUT for app vn.quickpos.app: shell command failed (exit -1): 
+Exception occurred while executing 'grant':
+java.lang.IllegalArgumentException: Unknown permission: com.htc.launcher.permission.UPDATE_SHORTCUT
+	at com.android.server.pm.permission.PermissionManagerServiceImpl.grantRuntimePermissionInternal(PermissionManagerServiceImpl.java:1380)
+	at com.android.server.pm.permission.PermissionManagerServiceImpl.grantRuntimePermission(PermissionManagerServiceImpl.java:1337)
+	at com.android.server.pm.permission.PermissionManagerService.grantRuntimePermission(PermissionManagerService.java:551)
+	at android.permission.PermissionManager.grantRuntimePermission(PermissionManager.java:609)
+	at com.android.server.pm.PackageManagerShellCommand.runGrantRevokePermission(PackageManagerShellCommand.java:2672)
+	at com.android.server.pm.PackageManagerShellCommand.onCommand(PackageManagerShellCommand.java:291)
+	at com.android.modules.utils.BasicShellCommandHandler.exec(BasicShellCommandHandler.java:97)
+	at android.os.ShellCommand.exec(ShellCommand.java:38)
+	at com.android.server.pm.PackageManagerService$IPackageManagerImpl.onShellCommand(PackageManagerService.java:6350)
+	at android.os.Binder.shellCommand(Binder.java:1068)
+	at android.os.Binder.onTransact(Binder.java:888)
+	at android.content.pm.IPackageManager$Stub.onTransact(IPackageManager.java:4352)
+	at com.android.server.pm.PackageManagerService$IPackageManagerImpl.onTransact(PackageManagerService.java:6334)
+	at android.os.Binder.execTransactInternal(Binder.java:1344)
+	at android.os.Binder.execTransact(Binder.java:1275)
+
+18:26:16.949 [DEBUG] maestro.Maestro.setPermissionInternal: Failed to set permission com.sonyericsson.home.permission.BROADCAST_BADGE for app vn.quickpos.app: shell command failed (exit -1): 
+Exception occurred while executing 'grant':
+java.lang.IllegalArgumentException: Unknown permission: com.sonyericsson.home.permission.BROADCAST_BADGE
+	at com.android.server.pm.permission.PermissionManagerServiceImpl.grantRuntimePermissionInternal(PermissionManagerServiceImpl.java:1380)
+	at com.android.server.pm.permission.PermissionManagerServiceImpl.grantRuntimePermission(PermissionManagerServiceImpl.java:1337)
+	at com.android.server.pm.permission.PermissionManagerService.grantRuntimePermission(PermissionManagerService.java:551)
+	at android.permission.PermissionManager.grantRuntimePermission(PermissionManager.java:609)
+	at com.android.server.pm.PackageManagerShellCommand.runGrantRevokePermission(PackageManagerShellCommand.java:2672)
+	at com.android.server.pm.PackageManagerShellCommand.onCommand(PackageManagerShellCommand.java:291)
+	at com.android.modules.utils.BasicShellCommandHandler.exec(BasicShellCommandHandler.java:97)
+	at android.os.ShellCommand.exec(ShellCommand.java:38)
+	at com.android.server.pm.PackageManagerService$IPackageManagerImpl.onShellCommand(PackageManagerService.java:6350)
+	at android.os.Binder.shellCommand(Binder.java:1068)
+	at android.os.Binder.onTransact(Binder.java:888)
+	at android.content.pm.IPackageManager$Stub.onTransact(IPackageManager.java:4352)
+	at com.android.server.pm.PackageManagerService$IPackageManagerImpl.onTransact(PackageManagerService.java:6334)
+	at android.os.Binder.execTransactInternal(Binder.java:1344)
+	at android.os.Binder.execTransact(Binder.java:1275)
+
+18:26:16.964 [DEBUG] maestro.Maestro.setPermissionInternal: Failed to set permission com.sonymobile.home.permission.PROVIDER_INSERT_BADGE for app vn.quickpos.app: shell command failed (exit -1): 
+Exception occurred while executing 'grant':
+java.lang.IllegalArgumentException: Unknown permission: com.sonymobile.home.permission.PROVIDER_INSERT_BADGE
+	at com.android.server.pm.permission.PermissionManagerServiceImpl.grantRuntimePermissionInternal(PermissionManagerServiceImpl.java:1380)
+	at com.android.server.pm.permission.PermissionManagerServiceImpl.grantRuntimePermission(PermissionManagerServiceImpl.java:1337)
+	at com.android.server.pm.permission.PermissionManagerService.grantRuntimePermission(PermissionManagerService.java:551)
+	at android.permission.PermissionManager.grantRuntimePermission(PermissionManager.java:609)
+	at com.android.server.pm.PackageManagerShellCommand.runGrantRevokePermission(PackageManagerShellCommand.java:2672)
+	at com.android.server.pm.PackageManagerShellCommand.onCommand(PackageManagerShellCommand.java:291)
+	at com.android.modules.utils.BasicShellCommandHandler.exec(BasicShellCommandHandler.java:97)
+	at android.os.ShellCommand.exec(ShellCommand.java:38)
+	at com.android.server.pm.PackageManagerService$IPackageManagerImpl.onShellCommand(PackageManagerService.java:6350)
+	at android.os.Binder.shellCommand(Binder.java:1068)
+	at android.os.Binder.onTransact(Binder.java:888)
+	at android.content.pm.IPackageManager$Stub.onTransact(IPackageManager.java:4352)
+	at com.android.server.pm.PackageManagerService$IPackageManagerImpl.onTransact(PackageManagerService.java:6334)
+	at android.os.Binder.execTransactInternal(Binder.java:1344)
+	at android.os.Binder.execTransact(Binder.java:1275)
+
+18:26:16.980 [DEBUG] maestro.Maestro.setPermissionInternal: Failed to set permission com.anddoes.launcher.permission.UPDATE_COUNT for app vn.quickpos.app: shell command failed (exit -1): 
+Exception occurred while executing 'grant':
+java.lang.IllegalArgumentException: Unknown permission: com.anddoes.launcher.permission.UPDATE_COUNT
+	at com.android.server.pm.permission.PermissionManagerServiceImpl.grantRuntimePermissionInternal(PermissionManagerServiceImpl.java:1380)
+	at com.android.server.pm.permission.PermissionManagerServiceImpl.grantRuntimePermission(PermissionManagerServiceImpl.java:1337)
+	at com.android.server.pm.permission.PermissionManagerService.grantRuntimePermission(PermissionManagerService.java:551)
+	at android.permission.PermissionManager.grantRuntimePermission(PermissionManager.java:609)
+	at com.android.server.pm.PackageManagerShellCommand.runGrantRevokePermission(PackageManagerShellCommand.java:2672)
+	at com.android.server.pm.PackageManagerShellCommand.onCommand(PackageManagerShellCommand.java:291)
+	at com.android.modules.utils.BasicShellCommandHandler.exec(BasicShellCommandHandler.java:97)
+	at android.os.ShellCommand.exec(ShellCommand.java:38)
+	at com.android.server.pm.PackageManagerService$IPackageManagerImpl.onShellCommand(PackageManagerService.java:6350)
+	at android.os.Binder.shellCommand(Binder.java:1068)
+	at android.os.Binder.onTransact(Binder.java:888)
+	at android.content.pm.IPackageManager$Stub.onTransact(IPackageManager.java:4352)
+	at com.android.server.pm.PackageManagerService$IPackageManagerImpl.onTransact(PackageManagerService.java:6334)
+	at android.os.Binder.execTransactInternal(Binder.java:1344)
+	at android.os.Binder.execTransact(Binder.java:1275)
+
+18:26:16.997 [DEBUG] maestro.Maestro.setPermissionInternal: Failed to set permission com.majeur.launcher.permission.UPDATE_BADGE for app vn.quickpos.app: shell command failed (exit -1): 
+Exception occurred while executing 'grant':
+java.lang.IllegalArgumentException: Unknown permission: com.majeur.launcher.permission.UPDATE_BADGE
+	at com.android.server.pm.permission.PermissionManagerServiceImpl.grantRuntimePermissionInternal(PermissionManagerServiceImpl.java:1380)
+	at com.android.server.pm.permission.PermissionManagerServiceImpl.grantRuntimePermission(PermissionManagerServiceImpl.java:1337)
+	at com.android.server.pm.permission.PermissionManagerService.grantRuntimePermission(PermissionManagerService.java:551)
+	at android.permission.PermissionManager.grantRuntimePermission(PermissionManager.java:609)
+	at com.android.server.pm.PackageManagerShellCommand.runGrantRevokePermission(PackageManagerShellCommand.java:2672)
+	at com.android.server.pm.PackageManagerShellCommand.onCommand(PackageManagerShellCommand.java:291)
+	at com.android.modules.utils.BasicShellCommandHandler.exec(BasicShellCommandHandler.java:97)
+	at android.os.ShellCommand.exec(ShellCommand.java:38)
+	at com.android.server.pm.PackageManagerService$IPackageManagerImpl.onShellCommand(PackageManagerService.java:6350)
+	at android.os.Binder.shellCommand(Binder.java:1068)
+	at android.os.Binder.onTransact(Binder.java:888)
+	at android.content.pm.IPackageManager$Stub.onTransact(IPackageManager.java:4352)
+	at com.android.server.pm.PackageManagerService$IPackageManagerImpl.onTransact(PackageManagerService.java:6334)
+	at android.os.Binder.execTransactInternal(Binder.java:1344)
+	at android.os.Binder.execTransact(Binder.java:1275)
+
+18:26:17.014 [DEBUG] maestro.Maestro.setPermissionInternal: Failed to set permission com.huawei.android.launcher.permission.CHANGE_BADGE for app vn.quickpos.app: shell command failed (exit -1): 
+Exception occurred while executing 'grant':
+java.lang.IllegalArgumentException: Unknown permission: com.huawei.android.launcher.permission.CHANGE_BADGE
+	at com.android.server.pm.permission.PermissionManagerServiceImpl.grantRuntimePermissionInternal(PermissionManagerServiceImpl.java:1380)
+	at com.android.server.pm.permission.PermissionManagerServiceImpl.grantRuntimePermission(PermissionManagerServiceImpl.java:1337)
+	at com.android.server.pm.permission.PermissionManagerService.grantRuntimePermission(PermissionManagerService.java:551)
+	at android.permission.PermissionManager.grantRuntimePermission(PermissionManager.java:609)
+	at com.android.server.pm.PackageManagerShellCommand.runGrantRevokePermission(PackageManagerShellCommand.java:2672)
+	at com.android.server.pm.PackageManagerShellCommand.onCommand(PackageManagerShellCommand.java:291)
+	at com.android.modules.utils.BasicShellCommandHandler.exec(BasicShellCommandHandler.java:97)
+	at android.os.ShellCommand.exec(ShellCommand.java:38)
+	at com.android.server.pm.PackageManagerService$IPackageManagerImpl.onShellCommand(PackageManagerService.java:6350)
+	at android.os.Binder.shellCommand(Binder.java:1068)
+	at android.os.Binder.onTransact(Binder.java:888)
+	at android.content.pm.IPackageManager$Stub.onTransact(IPackageManager.java:4352)
+	at com.android.server.pm.PackageManagerService$IPackageManagerImpl.onTransact(PackageManagerService.java:6334)
+	at android.os.Binder.execTransactInternal(Binder.java:1344)
+	at android.os.Binder.execTransact(Binder.java:1275)
+
+18:26:17.031 [DEBUG] maestro.Maestro.setPermissionInternal: Failed to set permission com.huawei.android.launcher.permission.READ_SETTINGS for app vn.quickpos.app: shell command failed (exit -1): 
+Exception occurred while executing 'grant':
+java.lang.IllegalArgumentException: Unknown permission: com.huawei.android.launcher.permission.READ_SETTINGS
+	at com.android.server.pm.permission.PermissionManagerServiceImpl.grantRuntimePermissionInternal(PermissionManagerServiceImpl.java:1380)
+	at com.android.server.pm.permission.PermissionManagerServiceImpl.grantRuntimePermission(PermissionManagerServiceImpl.java:1337)
+	at com.android.server.pm.permission.PermissionManagerService.grantRuntimePermission(PermissionManagerService.java:551)
+	at android.permission.PermissionManager.grantRuntimePermission(PermissionManager.java:609)
+	at com.android.server.pm.PackageManagerShellCommand.runGrantRevokePermission(PackageManagerShellCommand.java:2672)
+	at com.android.server.pm.PackageManagerShellCommand.onCommand(PackageManagerShellCommand.java:291)
+	at com.android.modules.utils.BasicShellCommandHandler.exec(BasicShellCommandHandler.java:97)
+	at android.os.ShellCommand.exec(ShellCommand.java:38)
+	at com.android.server.pm.PackageManagerService$IPackageManagerImpl.onShellCommand(PackageManagerService.java:6350)
+	at android.os.Binder.shellCommand(Binder.java:1068)
+	at android.os.Binder.onTransact(Binder.java:888)
+	at android.content.pm.IPackageManager$Stub.onTransact(IPackageManager.java:4352)
+	at com.android.server.pm.PackageManagerService$IPackageManagerImpl.onTransact(PackageManagerService.java:6334)
+	at android.os.Binder.execTransactInternal(Binder.java:1344)
+	at android.os.Binder.execTransact(Binder.java:1275)
+
+18:26:17.048 [DEBUG] maestro.Maestro.setPermissionInternal: Failed to set permission com.huawei.android.launcher.permission.WRITE_SETTINGS for app vn.quickpos.app: shell command failed (exit -1): 
+Exception occurred while executing 'grant':
+java.lang.IllegalArgumentException: Unknown permission: com.huawei.android.launcher.permission.WRITE_SETTINGS
+	at com.android.server.pm.permission.PermissionManagerServiceImpl.grantRuntimePermissionInternal(PermissionManagerServiceImpl.java:1380)
+	at com.android.server.pm.permission.PermissionManagerServiceImpl.grantRuntimePermission(PermissionManagerServiceImpl.java:1337)
+	at com.android.server.pm.permission.PermissionManagerService.grantRuntimePermission(PermissionManagerService.java:551)
+	at android.permission.PermissionManager.grantRuntimePermission(PermissionManager.java:609)
+	at com.android.server.pm.PackageManagerShellCommand.runGrantRevokePermission(PackageManagerShellCommand.java:2672)
+	at com.android.server.pm.PackageManagerShellCommand.onCommand(PackageManagerShellCommand.java:291)
+	at com.android.modules.utils.BasicShellCommandHandler.exec(BasicShellCommandHandler.java:97)
+	at android.os.ShellCommand.exec(ShellCommand.java:38)
+	at com.android.server.pm.PackageManagerService$IPackageManagerImpl.onShellCommand(PackageManagerService.java:6350)
+	at android.os.Binder.shellCommand(Binder.java:1068)
+	at android.os.Binder.onTransact(Binder.java:888)
+	at android.content.pm.IPackageManager$Stub.onTransact(IPackageManager.java:4352)
+	at com.android.server.pm.PackageManagerService$IPackageManagerImpl.onTransact(PackageManagerService.java:6334)
+	at android.os.Binder.execTransactInternal(Binder.java:1344)
+	at android.os.Binder.execTransact(Binder.java:1275)
+
+18:26:17.066 [DEBUG] maestro.Maestro.setPermissionInternal: Failed to set permission android.permission.READ_APP_BADGE for app vn.quickpos.app: shell command failed (exit -1): 
+Exception occurred while executing 'grant':
+java.lang.IllegalArgumentException: Unknown permission: android.permission.READ_APP_BADGE
+	at com.android.server.pm.permission.PermissionManagerServiceImpl.grantRuntimePermissionInternal(PermissionManagerServiceImpl.java:1380)
+	at com.android.server.pm.permission.PermissionManagerServiceImpl.grantRuntimePermission(PermissionManagerServiceImpl.java:1337)
+	at com.android.server.pm.permission.PermissionManagerService.grantRuntimePermission(PermissionManagerService.java:551)
+	at android.permission.PermissionManager.grantRuntimePermission(PermissionManager.java:609)
+	at com.android.server.pm.PackageManagerShellCommand.runGrantRevokePermission(PackageManagerShellCommand.java:2672)
+	at com.android.server.pm.PackageManagerShellCommand.onCommand(PackageManagerShellCommand.java:291)
+	at com.android.modules.utils.BasicShellCommandHandler.exec(BasicShellCommandHandler.java:97)
+	at android.os.ShellCommand.exec(ShellCommand.java:38)
+	at com.android.server.pm.PackageManagerService$IPackageManagerImpl.onShellCommand(PackageManagerService.java:6350)
+	at android.os.Binder.shellCommand(Binder.java:1068)
+	at android.os.Binder.onTransact(Binder.java:888)
+	at android.content.pm.IPackageManager$Stub.onTransact(IPackageManager.java:4352)
+	at com.android.server.pm.PackageManagerService$IPackageManagerImpl.onTransact(PackageManagerService.java:6334)
+	at android.os.Binder.execTransactInternal(Binder.java:1344)
+	at android.os.Binder.execTransact(Binder.java:1275)
+
+18:26:17.083 [DEBUG] maestro.Maestro.setPermissionInternal: Failed to set permission com.oppo.launcher.permission.READ_SETTINGS for app vn.quickpos.app: shell command failed (exit -1): 
+Exception occurred while executing 'grant':
+java.lang.IllegalArgumentException: Unknown permission: com.oppo.launcher.permission.READ_SETTINGS
+	at com.android.server.pm.permission.PermissionManagerServiceImpl.grantRuntimePermissionInternal(PermissionManagerServiceImpl.java:1380)
+	at com.android.server.pm.permission.PermissionManagerServiceImpl.grantRuntimePermission(PermissionManagerServiceImpl.java:1337)
+	at com.android.server.pm.permission.PermissionManagerService.grantRuntimePermission(PermissionManagerService.java:551)
+	at android.permission.PermissionManager.grantRuntimePermission(PermissionManager.java:609)
+	at com.android.server.pm.PackageManagerShellCommand.runGrantRevokePermission(PackageManagerShellCommand.java:2672)
+	at com.android.server.pm.PackageManagerShellCommand.onCommand(PackageManagerShellCommand.java:291)
+	at com.android.modules.utils.BasicShellCommandHandler.exec(BasicShellCommandHandler.java:97)
+	at android.os.ShellCommand.exec(ShellCommand.java:38)
+	at com.android.server.pm.PackageManagerService$IPackageManagerImpl.onShellCommand(PackageManagerService.java:6350)
+	at android.os.Binder.shellCommand(Binder.java:1068)
+	at android.os.Binder.onTransact(Binder.java:888)
+	at android.content.pm.IPackageManager$Stub.onTransact(IPackageManager.java:4352)
+	at com.android.server.pm.PackageManagerService$IPackageManagerImpl.onTransact(PackageManagerService.java:6334)
+	at android.os.Binder.execTransactInternal(Binder.java:1344)
+	at android.os.Binder.execTransact(Binder.java:1275)
+
+18:26:17.100 [DEBUG] maestro.Maestro.setPermissionInternal: Failed to set permission com.oppo.launcher.permission.WRITE_SETTINGS for app vn.quickpos.app: shell command failed (exit -1): 
+Exception occurred while executing 'grant':
+java.lang.IllegalArgumentException: Unknown permission: com.oppo.launcher.permission.WRITE_SETTINGS
+	at com.android.server.pm.permission.PermissionManagerServiceImpl.grantRuntimePermissionInternal(PermissionManagerServiceImpl.java:1380)
+	at com.android.server.pm.permission.PermissionManagerServiceImpl.grantRuntimePermission(PermissionManagerServiceImpl.java:1337)
+	at com.android.server.pm.permission.PermissionManagerService.grantRuntimePermission(PermissionManagerService.java:551)
+	at android.permission.PermissionManager.grantRuntimePermission(PermissionManager.java:609)
+	at com.android.server.pm.PackageManagerShellCommand.runGrantRevokePermission(PackageManagerShellCommand.java:2672)
+	at com.android.server.pm.PackageManagerShellCommand.onCommand(PackageManagerShellCommand.java:291)
+	at com.android.modules.utils.BasicShellCommandHandler.exec(BasicShellCommandHandler.java:97)
+	at android.os.ShellCommand.exec(ShellCommand.java:38)
+	at com.android.server.pm.PackageManagerService$IPackageManagerImpl.onShellCommand(PackageManagerService.java:6350)
+	at android.os.Binder.shellCommand(Binder.java:1068)
+	at android.os.Binder.onTransact(Binder.java:888)
+	at android.content.pm.IPackageManager$Stub.onTransact(IPackageManager.java:4352)
+	at com.android.server.pm.PackageManagerService$IPackageManagerImpl.onTransact(PackageManagerService.java:6334)
+	at android.os.Binder.execTransactInternal(Binder.java:1344)
+	at android.os.Binder.execTransact(Binder.java:1275)
+
+18:26:17.116 [DEBUG] maestro.Maestro.setPermissionInternal: Failed to set permission me.everything.badger.permission.BADGE_COUNT_READ for app vn.quickpos.app: shell command failed (exit -1): 
+Exception occurred while executing 'grant':
+java.lang.IllegalArgumentException: Unknown permission: me.everything.badger.permission.BADGE_COUNT_READ
+	at com.android.server.pm.permission.PermissionManagerServiceImpl.grantRuntimePermissionInternal(PermissionManagerServiceImpl.java:1380)
+	at com.android.server.pm.permission.PermissionManagerServiceImpl.grantRuntimePermission(PermissionManagerServiceImpl.java:1337)
+	at com.android.server.pm.permission.PermissionManagerService.grantRuntimePermission(PermissionManagerService.java:551)
+	at android.permission.PermissionManager.grantRuntimePermission(PermissionManager.java:609)
+	at com.android.server.pm.PackageManagerShellCommand.runGrantRevokePermission(PackageManagerShellCommand.java:2672)
+	at com.android.server.pm.PackageManagerShellCommand.onCommand(PackageManagerShellCommand.java:291)
+	at com.android.modules.utils.BasicShellCommandHandler.exec(BasicShellCommandHandler.java:97)
+	at android.os.ShellCommand.exec(ShellCommand.java:38)
+	at com.android.server.pm.PackageManagerService$IPackageManagerImpl.onShellCommand(PackageManagerService.java:6350)
+	at android.os.Binder.shellCommand(Binder.java:1068)
+	at android.os.Binder.onTransact(Binder.java:888)
+	at android.content.pm.IPackageManager$Stub.onTransact(IPackageManager.java:4352)
+	at com.android.server.pm.PackageManagerService$IPackageManagerImpl.onTransact(PackageManagerService.java:6334)
+	at android.os.Binder.execTransactInternal(Binder.java:1344)
+	at android.os.Binder.execTransact(Binder.java:1275)
+
+18:26:17.132 [DEBUG] maestro.Maestro.setPermissionInternal: Failed to set permission me.everything.badger.permission.BADGE_COUNT_WRITE for app vn.quickpos.app: shell command failed (exit -1): 
+Exception occurred while executing 'grant':
+java.lang.IllegalArgumentException: Unknown permission: me.everything.badger.permission.BADGE_COUNT_WRITE
+	at com.android.server.pm.permission.PermissionManagerServiceImpl.grantRuntimePermissionInternal(PermissionManagerServiceImpl.java:1380)
+	at com.android.server.pm.permission.PermissionManagerServiceImpl.grantRuntimePermission(PermissionManagerServiceImpl.java:1337)
+	at com.android.server.pm.permission.PermissionManagerService.grantRuntimePermission(PermissionManagerService.java:551)
+	at android.permission.PermissionManager.grantRuntimePermission(PermissionManager.java:609)
+	at com.android.server.pm.PackageManagerShellCommand.runGrantRevokePermission(PackageManagerShellCommand.java:2672)
+	at com.android.server.pm.PackageManagerShellCommand.onCommand(PackageManagerShellCommand.java:291)
+	at com.android.modules.utils.BasicShellCommandHandler.exec(BasicShellCommandHandler.java:97)
+	at android.os.ShellCommand.exec(ShellCommand.java:38)
+	at com.android.server.pm.PackageManagerService$IPackageManagerImpl.onShellCommand(PackageManagerService.java:6350)
+	at android.os.Binder.shellCommand(Binder.java:1068)
+	at android.os.Binder.onTransact(Binder.java:888)
+	at android.content.pm.IPackageManager$Stub.onTransact(IPackageManager.java:4352)
+	at com.android.server.pm.PackageManagerService$IPackageManagerImpl.onTransact(PackageManagerService.java:6334)
+	at android.os.Binder.execTransactInternal(Binder.java:1344)
+	at android.os.Binder.execTransact(Binder.java:1275)
+
+18:26:17.135 [ INFO] maestro.Maestro.launchApp$lambda$6: Launching app vn.quickpos.app
+18:26:17.135 [ INFO] maestro.Maestro.launchApp$lambda$6: Stopping vn.quickpos.app app during launch
+18:26:17.260 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandFinished: Launch app "vn.quickpos.app" with clear state COMPLETED
+18:26:17.261 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandStart: Run subflows/dismiss-system-dialogs.yaml RUNNING
+18:26:17.262 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandStart: Apply configuration RUNNING
+18:26:17.266 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandFinished: Apply configuration COMPLETED
+18:26:17.267 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandStart: Run flow when ".*isn't responding.*" is visible RUNNING
+18:26:24.383 [ INFO] maestro.orchestra.Orchestra.executeSubflowCommands: [Command execution subflow] CommandSkipped: null
+18:26:24.383 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandFinished: Run flow when ".*isn't responding.*" is visible SKIPPED
+18:26:24.383 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandStart: Run flow when ".*không phản hồi.*" is visible RUNNING
+18:26:24.660 [ INFO] maestro.orchestra.Orchestra.executeSubflowCommands: [Command execution subflow] CommandSkipped: null
+18:26:24.660 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandFinished: Run flow when ".*không phản hồi.*" is visible SKIPPED
+18:26:24.661 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandFinished: Run subflows/dismiss-system-dialogs.yaml COMPLETED
+18:26:24.661 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandStart: Run subflows/login.yaml RUNNING
+18:26:24.662 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandStart: Apply configuration RUNNING
+18:26:24.662 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandFinished: Apply configuration COMPLETED
+18:26:24.663 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandStart: Run dismiss-system-dialogs.yaml RUNNING
+18:26:24.663 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandStart: Apply configuration RUNNING
+18:26:24.663 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandFinished: Apply configuration COMPLETED
+18:26:24.664 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandStart: Run flow when ".*isn't responding.*" is visible RUNNING
+18:26:24.887 [ INFO] maestro.orchestra.Orchestra.executeSubflowCommands: [Command execution subflow] CommandSkipped: null
+18:26:24.888 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandFinished: Run flow when ".*isn't responding.*" is visible SKIPPED
+18:26:24.888 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandStart: Run flow when ".*không phản hồi.*" is visible RUNNING
+18:26:25.090 [ INFO] maestro.orchestra.Orchestra.executeSubflowCommands: [Command execution subflow] CommandSkipped: null
+18:26:25.091 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandFinished: Run flow when ".*không phản hồi.*" is visible SKIPPED
+18:26:25.091 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandFinished: Run dismiss-system-dialogs.yaml COMPLETED
+18:26:25.091 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandStart: Assert that "Nhập số điện thoại của quán" is visible RUNNING
+18:26:25.215 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandFinished: Assert that "Nhập số điện thoại của quán" is visible COMPLETED
+18:26:25.215 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandStart: Assert that "Bản dùng thử — dữ liệu mẫu|Dữ liệu lưu trên máy này" is visible RUNNING
+18:26:25.346 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandFinished: Assert that "Bản dùng thử — dữ liệu mẫu|Dữ liệu lưu trên máy này" is visible COMPLETED
+18:26:25.347 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandStart: Take screenshot 01-dang-nhap RUNNING
+18:26:25.349 [ INFO] maestro.Maestro.takeScreenshot: Taking screenshot
+18:26:25.352 [TRACE] maestro.utils.ScreenshotUtils.takeScreenshot: Taking screenshot to output sink
+18:26:25.743 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandFinished: Take screenshot 01-dang-nhap COMPLETED
+18:26:25.744 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandStart: Tap on id: phone-input RUNNING
+18:26:25.836 [ INFO] maestro.Maestro.tap-HgV9Ck0: Tapping on element:  UiElement(treeNode=TreeNode(attributes={text=, accessibilityText=, hintText=0903 456 789, ignoreBoundsFiltering=false, resource-id=phone-input, clickable=true, bounds=[40,645][2520,781], enabled=true, focused=false, checked=false, scrollable=false, selected=false, class=android.widget.EditText, important-for-accessibility=true, error=}, children=[], clickable=true, enabled=true, focused=false, checked=false, selected=false), bounds=Bounds(x=40, y=645, width=2480, height=136))
+18:26:27.115 [ INFO] maestro.Maestro.tap-HgV9Ck0: Tap aimed via settled hierarchy
+18:26:27.119 [ INFO] maestro.Maestro.hierarchyBasedTap-ogj28Uc: Tapping at (1280, 713) using hierarchy based logic for wait
+18:26:28.995 [ INFO] maestro.Maestro.hierarchyBasedTap-ogj28Uc: Something has changed in the UI judging by view hierarchy. Proceed.
+18:26:28.996 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandFinished: Tap on id: phone-input COMPLETED
+18:26:28.996 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandStart: Wait for animation to end RUNNING
+18:26:28.999 [ INFO] maestro.Maestro.waitForAnimationToEnd$lambda$54: Waiting for animation to end with timeout 15000
+18:26:29.000 [TRACE] maestro.utils.ScreenshotUtils.takeScreenshot: Taking screenshot to byte array
+18:26:29.001 [TRACE] maestro.utils.ScreenshotUtils.takeScreenshot: Taking screenshot to output sink
+18:26:29.322 [TRACE] maestro.utils.ScreenshotUtils.takeScreenshot: Taking screenshot to byte array
+18:26:29.322 [TRACE] maestro.utils.ScreenshotUtils.takeScreenshot: Taking screenshot to output sink
+18:26:30.087 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandFinished: Wait for animation to end COMPLETED
+18:26:30.087 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandStart: Input text 12345 RUNNING
+18:26:30.088 [ INFO] maestro.Maestro.inputText: Inputting text: 12345
+18:26:31.758 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandFinished: Input text 12345 COMPLETED
+18:26:31.759 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandStart: Run an-ban-phim.yaml RUNNING
+18:26:31.759 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandStart: Apply configuration RUNNING
+18:26:31.759 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandFinished: Apply configuration COMPLETED
+18:26:31.759 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandStart: Run flow when Platform is ANDROID RUNNING
+18:26:31.760 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandStart: Hide Keyboard RUNNING
+18:26:31.761 [ INFO] maestro.Maestro.hideKeyboard$lambda$13: Hiding Keyboard
+18:26:33.331 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandFinished: Hide Keyboard COMPLETED
+18:26:33.331 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandFinished: Run flow when Platform is ANDROID COMPLETED
+18:26:33.332 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandStart: Run flow when Platform is IOS RUNNING
+18:26:33.332 [ INFO] maestro.orchestra.Orchestra.executeSubflowCommands: [Command execution subflow] CommandSkipped: null
+18:26:33.332 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandFinished: Run flow when Platform is IOS SKIPPED
+18:26:33.332 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandFinished: Run an-ban-phim.yaml COMPLETED
+18:26:33.333 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandStart: Tap on "Gửi mã xác nhận" RUNNING
+18:26:33.432 [ INFO] maestro.Maestro.tap-HgV9Ck0: Tapping on element:  UiElement(treeNode=TreeNode(attributes={text=Gửi mã xác nhận, accessibilityText=, hintText=, ignoreBoundsFiltering=false, resource-id=, clickable=false, bounds=[1111,842][1448,903], enabled=true, focused=false, checked=false, scrollable=false, selected=false, class=android.widget.TextView, important-for-accessibility=true, error=}, children=[], clickable=false, enabled=true, focused=false, checked=false, selected=false), bounds=Bounds(x=1111, y=842, width=337, height=61))
+18:26:34.646 [ INFO] maestro.Maestro.tap-HgV9Ck0: Tap aimed via settled hierarchy
+18:26:34.648 [ INFO] maestro.Maestro.hierarchyBasedTap-ogj28Uc: Tapping at (1279, 872) using hierarchy based logic for wait
+18:26:35.611 [ INFO] maestro.Maestro.hierarchyBasedTap-ogj28Uc: Something has changed in the UI judging by view hierarchy. Proceed.
+18:26:35.611 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandFinished: Tap on "Gửi mã xác nhận" COMPLETED
+18:26:35.612 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandStart: Assert that "Số điện thoại chưa đúng.*" is visible RUNNING
+18:26:35.732 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandFinished: Assert that "Số điện thoại chưa đúng.*" is visible COMPLETED
+18:26:35.733 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandStart: Take screenshot 02-dang-nhap-so-sai RUNNING
+18:26:35.733 [ INFO] maestro.Maestro.takeScreenshot: Taking screenshot
+18:26:35.734 [TRACE] maestro.utils.ScreenshotUtils.takeScreenshot: Taking screenshot to output sink
+18:26:35.955 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandFinished: Take screenshot 02-dang-nhap-so-sai COMPLETED
+18:26:35.955 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandStart: Tap on id: phone-input RUNNING
+18:26:36.079 [ INFO] maestro.Maestro.tap-HgV9Ck0: Tapping on element:  UiElement(treeNode=TreeNode(attributes={text=12345, accessibilityText=, hintText=0903 456 789, ignoreBoundsFiltering=false, resource-id=phone-input, clickable=true, bounds=[40,645][2520,781], enabled=true, focused=false, checked=false, scrollable=false, selected=false, class=android.widget.EditText, important-for-accessibility=true, error=}, children=[], clickable=true, enabled=true, focused=false, checked=false, selected=false), bounds=Bounds(x=40, y=645, width=2480, height=136))
+18:26:37.327 [ INFO] maestro.Maestro.tap-HgV9Ck0: Tap aimed via settled hierarchy
+18:26:37.328 [ INFO] maestro.Maestro.hierarchyBasedTap-ogj28Uc: Tapping at (1280, 713) using hierarchy based logic for wait
+18:26:39.690 [ INFO] maestro.Maestro.hierarchyBasedTap-ogj28Uc: Something has changed in the UI judging by view hierarchy. Proceed.
+18:26:39.691 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandFinished: Tap on id: phone-input COMPLETED
+18:26:39.691 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandStart: Wait for animation to end RUNNING
+18:26:39.692 [ INFO] maestro.Maestro.waitForAnimationToEnd$lambda$54: Waiting for animation to end with timeout 15000
+18:26:39.692 [TRACE] maestro.utils.ScreenshotUtils.takeScreenshot: Taking screenshot to byte array
+18:26:39.692 [TRACE] maestro.utils.ScreenshotUtils.takeScreenshot: Taking screenshot to output sink
+18:26:39.983 [TRACE] maestro.utils.ScreenshotUtils.takeScreenshot: Taking screenshot to byte array
+18:26:39.983 [TRACE] maestro.utils.ScreenshotUtils.takeScreenshot: Taking screenshot to output sink
+18:26:40.540 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandFinished: Wait for animation to end COMPLETED
+18:26:40.540 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandStart: Erase 10 characters RUNNING
+18:26:40.547 [ INFO] maestro.Maestro.eraseText$lambda$53: Erasing 10 characters
+18:26:42.656 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandFinished: Erase 10 characters COMPLETED
+18:26:42.656 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandStart: Input text 0903456789 RUNNING
+18:26:42.657 [ INFO] maestro.Maestro.inputText: Inputting text: 0903456789
+18:26:45.563 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandFinished: Input text 0903456789 COMPLETED
+18:26:45.564 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandStart: Run an-ban-phim.yaml RUNNING
+18:26:45.564 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandStart: Apply configuration RUNNING
+18:26:45.564 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandFinished: Apply configuration COMPLETED
+18:26:45.564 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandStart: Run flow when Platform is ANDROID RUNNING
+18:26:45.565 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandStart: Hide Keyboard RUNNING
+18:26:45.565 [ INFO] maestro.Maestro.hideKeyboard$lambda$13: Hiding Keyboard
+18:26:47.395 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandFinished: Hide Keyboard COMPLETED
+18:26:47.395 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandFinished: Run flow when Platform is ANDROID COMPLETED
+18:26:47.396 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandStart: Run flow when Platform is IOS RUNNING
+18:26:47.396 [ INFO] maestro.orchestra.Orchestra.executeSubflowCommands: [Command execution subflow] CommandSkipped: null
+18:26:47.396 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandFinished: Run flow when Platform is IOS SKIPPED
+18:26:47.396 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandFinished: Run an-ban-phim.yaml COMPLETED
+18:26:47.396 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandStart: Tap on "Gửi mã xác nhận" RUNNING
+18:26:47.476 [ INFO] maestro.Maestro.tap-HgV9Ck0: Tapping on element:  UiElement(treeNode=TreeNode(attributes={text=Gửi mã xác nhận, accessibilityText=, hintText=, ignoreBoundsFiltering=false, resource-id=, clickable=false, bounds=[1111,842][1448,903], enabled=true, focused=false, checked=false, scrollable=false, selected=false, class=android.widget.TextView, important-for-accessibility=true, error=}, children=[], clickable=false, enabled=true, focused=false, checked=false, selected=false), bounds=Bounds(x=1111, y=842, width=337, height=61))
+18:26:48.723 [ INFO] maestro.Maestro.tap-HgV9Ck0: Tap aimed via settled hierarchy
+18:26:48.724 [ INFO] maestro.Maestro.hierarchyBasedTap-ogj28Uc: Tapping at (1279, 872) using hierarchy based logic for wait
+18:26:50.719 [ INFO] maestro.Maestro.hierarchyBasedTap-ogj28Uc: Something has changed in the UI judging by view hierarchy. Proceed.
+18:26:50.719 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandFinished: Tap on "Gửi mã xác nhận" COMPLETED
+18:26:50.720 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandStart: Assert that "Nhập mã 6 số" is visible RUNNING
+18:26:51.448 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandFinished: Assert that "Nhập mã 6 số" is visible COMPLETED
+18:26:51.449 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandStart: Assert that "Mã đã gửi tới 0903 456 789.*" is visible RUNNING
+18:26:51.813 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandFinished: Assert that "Mã đã gửi tới 0903 456 789.*" is visible COMPLETED
+18:26:51.813 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandStart: Take screenshot 03-ma-otp RUNNING
+18:26:51.814 [ INFO] maestro.Maestro.takeScreenshot: Taking screenshot
+18:26:51.815 [TRACE] maestro.utils.ScreenshotUtils.takeScreenshot: Taking screenshot to output sink
+18:26:52.082 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandFinished: Take screenshot 03-ma-otp COMPLETED
+18:26:52.083 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandStart: Input text 123456 RUNNING
+18:26:52.084 [ INFO] maestro.Maestro.inputText: Inputting text: 123456
+18:26:54.891 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandFinished: Input text 123456 COMPLETED
+18:26:54.891 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandFinished: Run subflows/login.yaml COMPLETED
+18:26:54.892 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandStart: Assert that "QuickPOS dùng thông tin của quán thế nào" is visible RUNNING
+18:26:55.012 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandFinished: Assert that "QuickPOS dùng thông tin của quán thế nào" is visible COMPLETED
+18:26:55.012 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandStart: Assert that "Đánh dấu “Tôi đồng ý” để tiếp tục" is visible RUNNING
+18:26:55.128 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandFinished: Assert that "Đánh dấu “Tôi đồng ý” để tiếp tục" is visible COMPLETED
+18:26:55.128 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandStart: Take screenshot 04-dong-y RUNNING
+18:26:55.129 [ INFO] maestro.Maestro.takeScreenshot: Taking screenshot
+18:26:55.129 [TRACE] maestro.utils.ScreenshotUtils.takeScreenshot: Taking screenshot to output sink
+18:26:55.344 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandFinished: Take screenshot 04-dong-y COMPLETED
+18:26:55.344 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandStart: Tap on "Tôi đã đọc và đồng ý" RUNNING
+18:26:55.810 [ INFO] maestro.Maestro.tap-HgV9Ck0: Tapping on element:  UiElement(treeNode=TreeNode(attributes={text=Tôi đã đọc và đồng ý, accessibilityText=, hintText=, ignoreBoundsFiltering=false, resource-id=, clickable=false, bounds=[160,1000][2488,1052], enabled=true, focused=false, checked=false, scrollable=false, selected=false, class=android.widget.TextView, important-for-accessibility=true, error=}, children=[], clickable=false, enabled=true, focused=false, checked=false, selected=false), bounds=Bounds(x=160, y=1000, width=2328, height=52))
+18:26:57.035 [ INFO] maestro.Maestro.tap-HgV9Ck0: Tap aimed via settled hierarchy
+18:26:57.036 [ INFO] maestro.Maestro.hierarchyBasedTap-ogj28Uc: Tapping at (1324, 1026) using hierarchy based logic for wait
+18:26:57.907 [ INFO] maestro.Maestro.hierarchyBasedTap-ogj28Uc: Something has changed in the UI judging by view hierarchy. Proceed.
+18:26:57.907 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandFinished: Tap on "Tôi đã đọc và đồng ý" COMPLETED
+18:26:57.907 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandStart: Tap on "Đồng ý và tiếp tục" RUNNING
+18:26:58.024 [ INFO] maestro.Maestro.tap-HgV9Ck0: Tapping on element:  UiElement(treeNode=TreeNode(attributes={text=Đồng ý và tiếp tục, accessibilityText=, hintText=, ignoreBoundsFiltering=false, resource-id=, clickable=false, bounds=[1096,1278][1463,1339], enabled=true, focused=false, checked=false, scrollable=false, selected=false, class=android.widget.TextView, important-for-accessibility=true, error=}, children=[], clickable=false, enabled=true, focused=false, checked=false, selected=false), bounds=Bounds(x=1096, y=1278, width=367, height=61))
+18:26:59.315 [ INFO] maestro.Maestro.tap-HgV9Ck0: Tap aimed via settled hierarchy
+18:26:59.316 [ INFO] maestro.Maestro.hierarchyBasedTap-ogj28Uc: Tapping at (1279, 1308) using hierarchy based logic for wait
+18:27:01.487 [ INFO] maestro.Maestro.hierarchyBasedTap-ogj28Uc: Something has changed in the UI judging by view hierarchy. Proceed.
+18:27:01.487 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandFinished: Tap on "Đồng ý và tiếp tục" COMPLETED
+18:27:01.488 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandStart: Assert that "Thông tin quán" is visible RUNNING
+18:27:01.603 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandFinished: Assert that "Thông tin quán" is visible COMPLETED
+18:27:01.603 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandStart: Tap on "Tiếp tục" RUNNING
+18:27:01.683 [ INFO] maestro.Maestro.tap-HgV9Ck0: Tapping on element:  UiElement(treeNode=TreeNode(attributes={text=Tiếp tục, accessibilityText=, hintText=, ignoreBoundsFiltering=false, resource-id=, clickable=false, bounds=[1195,1349][1364,1410], enabled=true, focused=false, checked=false, scrollable=false, selected=false, class=android.widget.TextView, important-for-accessibility=true, error=}, children=[], clickable=false, enabled=true, focused=false, checked=false, selected=false), bounds=Bounds(x=1195, y=1349, width=169, height=61))
+18:27:03.039 [ INFO] maestro.Maestro.tap-HgV9Ck0: Tap aimed via settled hierarchy
+18:27:03.040 [ INFO] maestro.Maestro.hierarchyBasedTap-ogj28Uc: Tapping at (1279, 1379) using hierarchy based logic for wait
+18:27:03.923 [ INFO] maestro.Maestro.hierarchyBasedTap-ogj28Uc: Something has changed in the UI judging by view hierarchy. Proceed.
+18:27:03.923 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandFinished: Tap on "Tiếp tục" COMPLETED
+18:27:03.923 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandStart: Assert that "Nhập tên quán." is visible RUNNING
+18:27:04.004 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandFinished: Assert that "Nhập tên quán." is visible COMPLETED
+18:27:04.004 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandStart: Take screenshot 05-quan-loi RUNNING
+18:27:04.004 [ INFO] maestro.Maestro.takeScreenshot: Taking screenshot
+18:27:04.005 [TRACE] maestro.utils.ScreenshotUtils.takeScreenshot: Taking screenshot to output sink
+18:27:04.224 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandFinished: Take screenshot 05-quan-loi COMPLETED
+18:27:04.225 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandStart: Tap on id: field-name RUNNING
+18:27:04.343 [ INFO] maestro.Maestro.tap-HgV9Ck0: Tapping on element:  UiElement(treeNode=TreeNode(attributes={text=, accessibilityText=, hintText=, ignoreBoundsFiltering=false, resource-id=field-name, clickable=true, bounds=[40,380][2520,500], enabled=true, focused=false, checked=false, scrollable=false, selected=false, class=android.widget.EditText, important-for-accessibility=true, error=}, children=[], clickable=true, enabled=true, focused=false, checked=false, selected=false), bounds=Bounds(x=40, y=380, width=2480, height=120))
+18:27:05.591 [ INFO] maestro.Maestro.tap-HgV9Ck0: Tap aimed via settled hierarchy
+18:27:05.592 [ INFO] maestro.Maestro.hierarchyBasedTap-ogj28Uc: Tapping at (1280, 440) using hierarchy based logic for wait
+18:27:07.603 [ INFO] maestro.Maestro.hierarchyBasedTap-ogj28Uc: Something has changed in the UI judging by view hierarchy. Proceed.
+18:27:07.603 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandFinished: Tap on id: field-name COMPLETED
+18:27:07.603 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandStart: Wait for animation to end RUNNING
+18:27:07.604 [ INFO] maestro.Maestro.waitForAnimationToEnd$lambda$54: Waiting for animation to end with timeout 15000
+18:27:07.604 [TRACE] maestro.utils.ScreenshotUtils.takeScreenshot: Taking screenshot to byte array
+18:27:07.604 [TRACE] maestro.utils.ScreenshotUtils.takeScreenshot: Taking screenshot to output sink
+18:27:07.862 [TRACE] maestro.utils.ScreenshotUtils.takeScreenshot: Taking screenshot to byte array
+18:27:07.862 [TRACE] maestro.utils.ScreenshotUtils.takeScreenshot: Taking screenshot to output sink
+18:27:08.534 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandFinished: Wait for animation to end COMPLETED
+18:27:08.534 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandStart: Input text Quan Co Ba RUNNING
+18:27:08.534 [ INFO] maestro.Maestro.inputText: Inputting text: Quan Co Ba
+18:27:12.624 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandFinished: Input text Quan Co Ba COMPLETED
+18:27:12.624 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandStart: Tap on (Optional) "Thông tin quán" RUNNING
+18:27:12.748 [ INFO] maestro.Maestro.tap-HgV9Ck0: Tapping on element:  UiElement(treeNode=TreeNode(attributes={text=Thông tin quán, accessibilityText=, hintText=, ignoreBoundsFiltering=false, resource-id=, clickable=false, bounds=[40,100][2520,170], enabled=true, focused=false, checked=false, scrollable=false, selected=false, class=android.widget.TextView, important-for-accessibility=true, error=}, children=[], clickable=false, enabled=true, focused=false, checked=false, selected=false), bounds=Bounds(x=40, y=100, width=2480, height=70))
+18:27:14.083 [ INFO] maestro.Maestro.tap-HgV9Ck0: Tap aimed via settled hierarchy
+18:27:14.084 [ INFO] maestro.Maestro.hierarchyBasedTap-ogj28Uc: Tapping at (1280, 135) using hierarchy based logic for wait
+18:27:15.581 [ INFO] maestro.Maestro.hierarchyBasedTap-ogj28Uc: Something has changed in the UI judging by view hierarchy. Proceed.
+18:27:15.581 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandFinished: Tap on (Optional) "Thông tin quán" COMPLETED
+18:27:15.581 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandStart: Tap on (Optional) "Mã số thuế của hộ" RUNNING
+18:27:15.699 [ INFO] maestro.Maestro.tap-HgV9Ck0: Tapping on element:  UiElement(treeNode=TreeNode(attributes={text=Mã số thuế của hộ, accessibilityText=, hintText=, ignoreBoundsFiltering=false, resource-id=, clickable=false, bounds=[40,524][2520,576], enabled=true, focused=false, checked=false, scrollable=false, selected=false, class=android.widget.TextView, important-for-accessibility=true, error=}, children=[], clickable=false, enabled=true, focused=false, checked=false, selected=false), bounds=Bounds(x=40, y=524, width=2480, height=52))
+18:27:17.475 [ INFO] maestro.Maestro.tap-HgV9Ck0: Tap aimed via settled hierarchy
+18:27:17.476 [ INFO] maestro.Maestro.hierarchyBasedTap-ogj28Uc: Tapping at (1280, 550) using hierarchy based logic for wait
+18:27:17.843 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandFinished: Tap on (Optional) "Mã số thuế của hộ" COMPLETED
+18:27:17.843 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandStart: Tap on id: field-taxCode RUNNING
+18:27:17.956 [ INFO] maestro.Maestro.tap-HgV9Ck0: Tapping on element:  UiElement(treeNode=TreeNode(attributes={text=, accessibilityText=, hintText=, ignoreBoundsFiltering=false, resource-id=field-taxCode, clickable=true, bounds=[40,639][2520,759], enabled=true, focused=false, checked=false, scrollable=false, selected=false, class=android.widget.EditText, important-for-accessibility=true, error=}, children=[], clickable=true, enabled=true, focused=false, checked=false, selected=false), bounds=Bounds(x=40, y=639, width=2480, height=120))
+18:27:19.195 [ INFO] maestro.Maestro.tap-HgV9Ck0: Tap aimed via settled hierarchy
+18:27:19.196 [ INFO] maestro.Maestro.hierarchyBasedTap-ogj28Uc: Tapping at (1280, 699) using hierarchy based logic for wait
+18:27:21.175 [ INFO] maestro.Maestro.hierarchyBasedTap-ogj28Uc: Something has changed in the UI judging by view hierarchy. Proceed.
+18:27:21.176 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandFinished: Tap on id: field-taxCode COMPLETED
+18:27:21.176 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandStart: Wait for animation to end RUNNING
+18:27:21.176 [ INFO] maestro.Maestro.waitForAnimationToEnd$lambda$54: Waiting for animation to end with timeout 15000
+18:27:21.176 [TRACE] maestro.utils.ScreenshotUtils.takeScreenshot: Taking screenshot to byte array
+18:27:21.176 [TRACE] maestro.utils.ScreenshotUtils.takeScreenshot: Taking screenshot to output sink
+18:27:21.469 [TRACE] maestro.utils.ScreenshotUtils.takeScreenshot: Taking screenshot to byte array
+18:27:21.469 [TRACE] maestro.utils.ScreenshotUtils.takeScreenshot: Taking screenshot to output sink
+18:27:21.932 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandFinished: Wait for animation to end COMPLETED
+18:27:21.932 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandStart: Input text 123 RUNNING
+18:27:21.932 [ INFO] maestro.Maestro.inputText: Inputting text: 123
+18:27:23.130 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandFinished: Input text 123 COMPLETED
+18:27:23.131 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandStart: Tap on (Optional) "Thông tin quán" RUNNING
+18:27:30.245 [ INFO] maestro.orchestra.Orchestra.executeCommands: [Command execution] CommandWarned: Element not found: Text matching regex: Thông tin quán
+18:27:30.344 [ INFO] maestro.Maestro.takeScreenshot: Taking screenshot
+18:27:30.345 [TRACE] maestro.utils.ScreenshotUtils.takeScreenshot: Taking screenshot to output sink
+18:27:30.630 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandFinished: Tap on (Optional) "Thông tin quán" WARNED
+18:27:30.630 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandStart: Tap on (Optional) "Mã số thuế của hộ" RUNNING
+18:27:30.777 [ INFO] maestro.Maestro.tap-HgV9Ck0: Tapping on element:  UiElement(treeNode=TreeNode(attributes={text=Mã số thuế của hộ, accessibilityText=, hintText=, ignoreBoundsFiltering=false, resource-id=, clickable=false, bounds=[40,317][2520,369], enabled=true, focused=false, checked=false, scrollable=false, selected=false, class=android.widget.TextView, important-for-accessibility=true, error=}, children=[], clickable=false, enabled=true, focused=false, checked=false, selected=false), bounds=Bounds(x=40, y=317, width=2480, height=52))
+18:27:32.020 [ INFO] maestro.Maestro.tap-HgV9Ck0: Tap aimed via settled hierarchy
+18:27:32.021 [ INFO] maestro.Maestro.hierarchyBasedTap-ogj28Uc: Tapping at (1280, 343) using hierarchy based logic for wait
+18:27:33.491 [ INFO] maestro.Maestro.hierarchyBasedTap-ogj28Uc: Something has changed in the UI judging by view hierarchy. Proceed.
+18:27:33.491 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandFinished: Tap on (Optional) "Mã số thuế của hộ" COMPLETED
+18:27:33.492 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandStart: Tap on "Tiếp tục" RUNNING
+18:27:33.567 [ INFO] maestro.Maestro.tap-HgV9Ck0: Tapping on element:  UiElement(treeNode=TreeNode(attributes={text=Tiếp tục, accessibilityText=, hintText=, ignoreBoundsFiltering=false, resource-id=, clickable=false, bounds=[1195,1349][1364,1410], enabled=true, focused=false, checked=false, scrollable=false, selected=false, class=android.widget.TextView, important-for-accessibility=true, error=}, children=[], clickable=false, enabled=true, focused=false, checked=false, selected=false), bounds=Bounds(x=1195, y=1349, width=169, height=61))
+18:27:34.807 [ INFO] maestro.Maestro.tap-HgV9Ck0: Tap aimed via settled hierarchy
+18:27:34.810 [ INFO] maestro.Maestro.hierarchyBasedTap-ogj28Uc: Tapping at (1279, 1379) using hierarchy based logic for wait
+18:27:35.763 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandFinished: Tap on "Tiếp tục" COMPLETED
+18:27:35.764 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandStart: Scrolling DOWN until "Mã số thuế gồm 10 hoặc 12 số.*" is visible with speed 40, visibility percentage 100%, timeout 10000 ms, with centering disabled RUNNING
+18:27:35.880 [ INFO] maestro.orchestra.Orchestra.scrollUntilVisible: Scrolling try count: 0, DeviceWidth: 2560, DeviceWidth: 1600
+18:27:35.880 [ INFO] maestro.orchestra.Orchestra.scrollUntilVisible: Element bounds: Bounds(x=40, y=767, width=2480, height=54)
+18:27:35.881 [ INFO] maestro.orchestra.Orchestra.scrollUntilVisible: Visibility Percent: 1.0
+18:27:35.891 [ INFO] maestro.orchestra.Orchestra.scrollUntilVisible: Command centerElement: ScrollUntilVisibleCommand(selector=ElementSelector(textRegex=Mã số thuế gồm 10 hoặc 12 số.*, idRegex=null, size=null, below=null, above=null, leftOf=null, rightOf=null, containsChild=null, containsDescendants=null, traits=null, index=null, enabled=null, optional=false, selected=null, checked=null, focused=null, childOf=null, css=null), direction=DOWN, scrollDuration=601, visibilityPercentage=100, timeout=10000, waitToSettleTimeoutMs=null, centerElement=false, originalSpeedValue=40, label=null, optional=false).centerElement
+18:27:35.892 [ INFO] maestro.orchestra.Orchestra.scrollUntilVisible: visibilityPercentageNormalized: 1.0
+18:27:35.892 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandFinished: Scrolling DOWN until "Mã số thuế gồm 10 hoặc 12 số.*" is visible with speed 40, visibility percentage 100%, timeout 10000 ms, with centering disabled COMPLETED
+18:27:35.892 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandStart: Tap on (Optional) "Thông tin quán" RUNNING
+18:27:35.996 [ INFO] maestro.Maestro.tap-HgV9Ck0: Tapping on element:  UiElement(treeNode=TreeNode(attributes={text=Thông tin quán, accessibilityText=, hintText=, ignoreBoundsFiltering=false, resource-id=, clickable=false, bounds=[40,148][2520,218], enabled=true, focused=false, checked=false, scrollable=false, selected=false, class=android.widget.TextView, important-for-accessibility=true, error=}, children=[], clickable=false, enabled=true, focused=false, checked=false, selected=false), bounds=Bounds(x=40, y=148, width=2480, height=70))
+18:27:37.271 [ INFO] maestro.Maestro.tap-HgV9Ck0: Tap aimed via settled hierarchy
+18:27:37.272 [ INFO] maestro.Maestro.hierarchyBasedTap-ogj28Uc: Tapping at (1280, 183) using hierarchy based logic for wait
+18:27:37.655 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandFinished: Tap on (Optional) "Thông tin quán" COMPLETED
+18:27:37.656 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandStart: Tap on (Optional) "Mã số thuế của hộ" RUNNING
+18:27:37.768 [ INFO] maestro.Maestro.tap-HgV9Ck0: Tapping on element:  UiElement(treeNode=TreeNode(attributes={text=Mã số thuế của hộ, accessibilityText=, hintText=, ignoreBoundsFiltering=false, resource-id=, clickable=false, bounds=[40,524][2520,576], enabled=true, focused=false, checked=false, scrollable=false, selected=false, class=android.widget.TextView, important-for-accessibility=true, error=}, children=[], clickable=false, enabled=true, focused=false, checked=false, selected=false), bounds=Bounds(x=40, y=524, width=2480, height=52))
+18:27:39.003 [ INFO] maestro.Maestro.tap-HgV9Ck0: Tap aimed via settled hierarchy
+18:27:39.004 [ INFO] maestro.Maestro.hierarchyBasedTap-ogj28Uc: Tapping at (1280, 550) using hierarchy based logic for wait
+18:27:39.456 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandFinished: Tap on (Optional) "Mã số thuế của hộ" COMPLETED
+18:27:39.456 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandStart: Tap on id: field-taxCode RUNNING
+18:27:39.572 [ INFO] maestro.Maestro.tap-HgV9Ck0: Tapping on element:  UiElement(treeNode=TreeNode(attributes={text=123, accessibilityText=, hintText=, ignoreBoundsFiltering=false, resource-id=field-taxCode, clickable=true, bounds=[40,639][2520,759], enabled=true, focused=false, checked=false, scrollable=false, selected=false, class=android.widget.EditText, important-for-accessibility=true, error=}, children=[], clickable=true, enabled=true, focused=false, checked=false, selected=false), bounds=Bounds(x=40, y=639, width=2480, height=120))
+18:27:40.811 [ INFO] maestro.Maestro.tap-HgV9Ck0: Tap aimed via settled hierarchy
+18:27:40.812 [ INFO] maestro.Maestro.hierarchyBasedTap-ogj28Uc: Tapping at (1280, 699) using hierarchy based logic for wait
+18:27:42.987 [ INFO] maestro.Maestro.hierarchyBasedTap-ogj28Uc: Something has changed in the UI judging by view hierarchy. Proceed.
+18:27:42.987 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandFinished: Tap on id: field-taxCode COMPLETED
+18:27:42.987 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandStart: Wait for animation to end RUNNING
+18:27:42.988 [ INFO] maestro.Maestro.waitForAnimationToEnd$lambda$54: Waiting for animation to end with timeout 15000
+18:27:42.988 [TRACE] maestro.utils.ScreenshotUtils.takeScreenshot: Taking screenshot to byte array
+18:27:42.988 [TRACE] maestro.utils.ScreenshotUtils.takeScreenshot: Taking screenshot to output sink
+18:27:43.345 [TRACE] maestro.utils.ScreenshotUtils.takeScreenshot: Taking screenshot to byte array
+18:27:43.345 [TRACE] maestro.utils.ScreenshotUtils.takeScreenshot: Taking screenshot to output sink
+18:27:44.042 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandFinished: Wait for animation to end COMPLETED
+18:27:44.042 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandStart: Erase 5 characters RUNNING
+18:27:44.042 [ INFO] maestro.Maestro.eraseText$lambda$53: Erasing 5 characters
+18:27:45.306 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandFinished: Erase 5 characters COMPLETED
+18:27:45.306 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandStart: Input text 0312345678 RUNNING
+18:27:45.306 [ INFO] maestro.Maestro.inputText: Inputting text: 0312345678
+18:27:47.995 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandFinished: Input text 0312345678 COMPLETED
+18:27:47.996 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandStart: Tap on (Optional) "Thông tin quán" RUNNING
+18:27:55.146 [ INFO] maestro.orchestra.Orchestra.executeCommands: [Command execution] CommandWarned: Element not found: Text matching regex: Thông tin quán
+18:27:55.247 [ INFO] maestro.Maestro.takeScreenshot: Taking screenshot
+18:27:55.248 [TRACE] maestro.utils.ScreenshotUtils.takeScreenshot: Taking screenshot to output sink
+18:27:55.554 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandFinished: Tap on (Optional) "Thông tin quán" WARNED
+18:27:55.554 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandStart: Tap on (Optional) "Mã số thuế của hộ" RUNNING
+18:27:55.693 [ INFO] maestro.Maestro.tap-HgV9Ck0: Tapping on element:  UiElement(treeNode=TreeNode(attributes={text=Mã số thuế của hộ, accessibilityText=, hintText=, ignoreBoundsFiltering=false, resource-id=, clickable=false, bounds=[40,317][2520,369], enabled=true, focused=false, checked=false, scrollable=false, selected=false, class=android.widget.TextView, important-for-accessibility=true, error=}, children=[], clickable=false, enabled=true, focused=false, checked=false, selected=false), bounds=Bounds(x=40, y=317, width=2480, height=52))
+18:27:56.998 [ INFO] maestro.Maestro.tap-HgV9Ck0: Tap aimed via settled hierarchy
+18:27:56.999 [ INFO] maestro.Maestro.hierarchyBasedTap-ogj28Uc: Tapping at (1280, 343) using hierarchy based logic for wait
+18:27:58.467 [ INFO] maestro.Maestro.hierarchyBasedTap-ogj28Uc: Something has changed in the UI judging by view hierarchy. Proceed.
+18:27:58.467 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandFinished: Tap on (Optional) "Mã số thuế của hộ" COMPLETED
+18:27:58.467 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandStart: Scrolling DOWN until id: field-address is visible with speed 40, visibility percentage 100%, timeout 20000 ms, with centering disabled RUNNING
+18:27:58.547 [ INFO] maestro.orchestra.Orchestra.scrollUntilVisible: Scrolling try count: 0, DeviceWidth: 2560, DeviceWidth: 1600
+18:27:58.548 [ INFO] maestro.orchestra.Orchestra.scrollUntilVisible: Element bounds: Bounds(x=40, y=843, width=2480, height=120)
+18:27:58.548 [ INFO] maestro.orchestra.Orchestra.scrollUntilVisible: Visibility Percent: 1.0
+18:27:58.548 [ INFO] maestro.orchestra.Orchestra.scrollUntilVisible: Command centerElement: ScrollUntilVisibleCommand(selector=ElementSelector(textRegex=null, idRegex=field-address, size=null, below=null, above=null, leftOf=null, rightOf=null, containsChild=null, containsDescendants=null, traits=null, index=null, enabled=null, optional=false, selected=null, checked=null, focused=null, childOf=null, css=null), direction=DOWN, scrollDuration=601, visibilityPercentage=100, timeout=20000, waitToSettleTimeoutMs=null, centerElement=false, originalSpeedValue=40, label=null, optional=false).centerElement
+18:27:58.548 [ INFO] maestro.orchestra.Orchestra.scrollUntilVisible: visibilityPercentageNormalized: 1.0
+18:27:58.548 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandFinished: Scrolling DOWN until id: field-address is visible with speed 40, visibility percentage 100%, timeout 20000 ms, with centering disabled COMPLETED
+18:27:58.548 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandStart: Tap on id: field-address RUNNING
+18:27:58.660 [ INFO] maestro.Maestro.tap-HgV9Ck0: Tapping on element:  UiElement(treeNode=TreeNode(attributes={text=, accessibilityText=, hintText=, ignoreBoundsFiltering=false, resource-id=field-address, clickable=true, bounds=[40,843][2520,963], enabled=true, focused=false, checked=false, scrollable=false, selected=false, class=android.widget.EditText, important-for-accessibility=true, error=}, children=[], clickable=true, enabled=true, focused=false, checked=false, selected=false), bounds=Bounds(x=40, y=843, width=2480, height=120))
+18:27:59.899 [ INFO] maestro.Maestro.tap-HgV9Ck0: Tap aimed via settled hierarchy
+18:27:59.900 [ INFO] maestro.Maestro.hierarchyBasedTap-ogj28Uc: Tapping at (1280, 903) using hierarchy based logic for wait
+18:28:01.946 [ INFO] maestro.Maestro.hierarchyBasedTap-ogj28Uc: Something has changed in the UI judging by view hierarchy. Proceed.
+18:28:01.946 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandFinished: Tap on id: field-address COMPLETED
+18:28:01.946 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandStart: Wait for animation to end RUNNING
+18:28:01.947 [ INFO] maestro.Maestro.waitForAnimationToEnd$lambda$54: Waiting for animation to end with timeout 15000
+18:28:01.947 [TRACE] maestro.utils.ScreenshotUtils.takeScreenshot: Taking screenshot to byte array
+18:28:01.947 [TRACE] maestro.utils.ScreenshotUtils.takeScreenshot: Taking screenshot to output sink
+18:28:02.217 [TRACE] maestro.utils.ScreenshotUtils.takeScreenshot: Taking screenshot to byte array
+18:28:02.217 [TRACE] maestro.utils.ScreenshotUtils.takeScreenshot: Taking screenshot to output sink
+18:28:02.836 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandFinished: Wait for animation to end COMPLETED
+18:28:02.836 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandStart: Input text 12 Le Loi, Quan 1 RUNNING
+18:28:02.836 [ INFO] maestro.Maestro.inputText: Inputting text: 12 Le Loi, Quan 1
+18:28:08.475 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandFinished: Input text 12 Le Loi, Quan 1 COMPLETED
+18:28:08.475 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandStart: Tap on (Optional) "Thông tin quán" RUNNING
+18:28:15.611 [ INFO] maestro.orchestra.Orchestra.executeCommands: [Command execution] CommandWarned: Element not found: Text matching regex: Thông tin quán
+18:28:15.762 [ INFO] maestro.Maestro.takeScreenshot: Taking screenshot
+18:28:15.762 [TRACE] maestro.utils.ScreenshotUtils.takeScreenshot: Taking screenshot to output sink
+18:28:16.036 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandFinished: Tap on (Optional) "Thông tin quán" WARNED
+18:28:16.036 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandStart: Tap on (Optional) "Mã số thuế của hộ" RUNNING
+18:28:16.188 [ INFO] maestro.Maestro.tap-HgV9Ck0: Tapping on element:  UiElement(treeNode=TreeNode(attributes={text=Mã số thuế của hộ, accessibilityText=, hintText=, ignoreBoundsFiltering=false, resource-id=, clickable=false, bounds=[40,48][2520,65], enabled=true, focused=false, checked=false, scrollable=false, selected=false, class=android.widget.TextView, important-for-accessibility=true, error=}, children=[], clickable=false, enabled=true, focused=false, checked=false, selected=false), bounds=Bounds(x=40, y=48, width=2480, height=17))
+18:28:17.480 [ INFO] maestro.Maestro.tap-HgV9Ck0: Tap aimed via settled hierarchy
+18:28:17.481 [ INFO] maestro.Maestro.hierarchyBasedTap-ogj28Uc: Tapping at (1280, 56) using hierarchy based logic for wait
+18:28:19.171 [ INFO] maestro.Maestro.hierarchyBasedTap-ogj28Uc: Something has changed in the UI judging by view hierarchy. Proceed.
+18:28:19.172 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandFinished: Tap on (Optional) "Mã số thuế của hộ" COMPLETED
+18:28:19.172 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandStart: Take screenshot 06-quan-dien-xong RUNNING
+18:28:19.172 [ INFO] maestro.Maestro.takeScreenshot: Taking screenshot
+18:28:19.173 [TRACE] maestro.utils.ScreenshotUtils.takeScreenshot: Taking screenshot to output sink
+18:28:19.345 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandFinished: Take screenshot 06-quan-dien-xong COMPLETED
+18:28:19.345 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandStart: Tap on "Tiếp tục" RUNNING
+18:28:19.457 [ INFO] maestro.Maestro.tap-HgV9Ck0: Tapping on element:  UiElement(treeNode=TreeNode(attributes={text=Tiếp tục, accessibilityText=, hintText=, ignoreBoundsFiltering=false, resource-id=, clickable=false, bounds=[1195,1349][1364,1410], enabled=true, focused=false, checked=false, scrollable=false, selected=false, class=android.widget.TextView, important-for-accessibility=true, error=}, children=[], clickable=false, enabled=true, focused=false, checked=false, selected=false), bounds=Bounds(x=1195, y=1349, width=169, height=61))
+18:28:20.692 [ INFO] maestro.Maestro.tap-HgV9Ck0: Tap aimed via settled hierarchy
+18:28:20.693 [ INFO] maestro.Maestro.hierarchyBasedTap-ogj28Uc: Tapping at (1279, 1379) using hierarchy based logic for wait
+18:28:21.929 [ INFO] maestro.Maestro.hierarchyBasedTap-ogj28Uc: Something has changed in the UI judging by view hierarchy. Proceed.
+18:28:21.929 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandFinished: Tap on "Tiếp tục" COMPLETED
+18:28:21.930 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandStart: Assert that "Đã tìm thấy tài khoản" is visible RUNNING
+18:28:22.084 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandFinished: Assert that "Đã tìm thấy tài khoản" is visible COMPLETED
+18:28:22.084 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandStart: Take screenshot 07-tai-khoan RUNNING
+18:28:22.085 [ INFO] maestro.Maestro.takeScreenshot: Taking screenshot
+18:28:22.085 [TRACE] maestro.utils.ScreenshotUtils.takeScreenshot: Taking screenshot to output sink
+18:28:22.342 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandFinished: Take screenshot 07-tai-khoan COMPLETED
+18:28:22.342 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandStart: Tap on "Đúng, dùng tài khoản này" RUNNING
+18:28:22.452 [ INFO] maestro.Maestro.tap-HgV9Ck0: Tapping on element:  UiElement(treeNode=TreeNode(attributes={text=Đúng, dùng tài khoản này, accessibilityText=, hintText=, ignoreBoundsFiltering=false, resource-id=, clickable=false, bounds=[1021,1349][1538,1410], enabled=true, focused=false, checked=false, scrollable=false, selected=false, class=android.widget.TextView, important-for-accessibility=true, error=}, children=[], clickable=false, enabled=true, focused=false, checked=false, selected=false), bounds=Bounds(x=1021, y=1349, width=517, height=61))
+18:28:23.775 [ INFO] maestro.Maestro.tap-HgV9Ck0: Tap aimed via settled hierarchy
+18:28:23.776 [ INFO] maestro.Maestro.hierarchyBasedTap-ogj28Uc: Tapping at (1279, 1379) using hierarchy based logic for wait
+18:28:25.076 [ INFO] maestro.Maestro.hierarchyBasedTap-ogj28Uc: Something has changed in the UI judging by view hierarchy. Proceed.
+18:28:25.076 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandFinished: Tap on "Đúng, dùng tài khoản này" COMPLETED
+18:28:25.076 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandStart: Assert that "Tạo mã PIN 4 số cho chủ quán" is visible RUNNING
+18:28:25.233 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandFinished: Assert that "Tạo mã PIN 4 số cho chủ quán" is visible COMPLETED
+18:28:25.233 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandStart: Tap on id: key-1 RUNNING
+18:28:25.345 [ INFO] maestro.Maestro.tap-HgV9Ck0: Tapping on element:  UiElement(treeNode=TreeNode(attributes={text=, accessibilityText=1, hintText=, ignoreBoundsFiltering=false, resource-id=key-1, clickable=true, bounds=[40,404][856,532], enabled=true, focused=false, checked=false, scrollable=false, selected=false, class=android.widget.Button, important-for-accessibility=true, error=}, children=[TreeNode(attributes={text=1, accessibilityText=, hintText=, ignoreBoundsFiltering=false, resource-id=, clickable=false, bounds=[435,433][460,503], enabled=true, focused=false, checked=false, scrollable=false, selected=false, class=android.widget.TextView, important-for-accessibility=true, error=}, children=[], clickable=false, enabled=true, focused=false, checked=false, selected=false)], clickable=true, enabled=true, focused=false, checked=false, selected=false), bounds=Bounds(x=40, y=404, width=816, height=128))
+18:28:26.703 [ INFO] maestro.Maestro.tap-HgV9Ck0: Tap aimed via settled hierarchy
+18:28:26.704 [ INFO] maestro.Maestro.hierarchyBasedTap-ogj28Uc: Tapping at (448, 468) using hierarchy based logic for wait
+18:28:27.532 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandFinished: Tap on id: key-1 COMPLETED
+18:28:27.532 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandStart: Tap on id: key-2 RUNNING
+18:28:27.648 [ INFO] maestro.Maestro.tap-HgV9Ck0: Tapping on element:  UiElement(treeNode=TreeNode(attributes={text=, accessibilityText=2, hintText=, ignoreBoundsFiltering=false, resource-id=key-2, clickable=true, bounds=[872,404][1688,532], enabled=true, focused=false, checked=false, scrollable=false, selected=false, class=android.widget.Button, important-for-accessibility=true, error=}, children=[TreeNode(attributes={text=2, accessibilityText=, hintText=, ignoreBoundsFiltering=false, resource-id=, clickable=false, bounds=[1261,433][1299,503], enabled=true, focused=false, checked=false, scrollable=false, selected=false, class=android.widget.TextView, important-for-accessibility=true, error=}, children=[], clickable=false, enabled=true, focused=false, checked=false, selected=false)], clickable=true, enabled=true, focused=false, checked=false, selected=false), bounds=Bounds(x=872, y=404, width=816, height=128))
+18:28:28.928 [ INFO] maestro.Maestro.tap-HgV9Ck0: Tap aimed via settled hierarchy
+18:28:28.929 [ INFO] maestro.Maestro.hierarchyBasedTap-ogj28Uc: Tapping at (1280, 468) using hierarchy based logic for wait
+18:28:29.752 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandFinished: Tap on id: key-2 COMPLETED
+18:28:29.752 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandStart: Tap on id: key-3 RUNNING
+18:28:29.865 [ INFO] maestro.Maestro.tap-HgV9Ck0: Tapping on element:  UiElement(treeNode=TreeNode(attributes={text=, accessibilityText=3, hintText=, ignoreBoundsFiltering=false, resource-id=key-3, clickable=true, bounds=[1704,404][2520,532], enabled=true, focused=false, checked=false, scrollable=false, selected=false, class=android.widget.Button, important-for-accessibility=true, error=}, children=[TreeNode(attributes={text=3, accessibilityText=, hintText=, ignoreBoundsFiltering=false, resource-id=, clickable=false, bounds=[2092,433][2131,503], enabled=true, focused=false, checked=false, scrollable=false, selected=false, class=android.widget.TextView, important-for-accessibility=true, error=}, children=[], clickable=false, enabled=true, focused=false, checked=false, selected=false)], clickable=true, enabled=true, focused=false, checked=false, selected=false), bounds=Bounds(x=1704, y=404, width=816, height=128))
+18:28:31.104 [ INFO] maestro.Maestro.tap-HgV9Ck0: Tap aimed via settled hierarchy
+18:28:31.104 [ INFO] maestro.Maestro.hierarchyBasedTap-ogj28Uc: Tapping at (2112, 468) using hierarchy based logic for wait
+18:28:31.980 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandFinished: Tap on id: key-3 COMPLETED
+18:28:31.980 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandStart: Tap on id: key-4 RUNNING
+18:28:32.093 [ INFO] maestro.Maestro.tap-HgV9Ck0: Tapping on element:  UiElement(treeNode=TreeNode(attributes={text=, accessibilityText=4, hintText=, ignoreBoundsFiltering=false, resource-id=key-4, clickable=true, bounds=[40,548][856,676], enabled=true, focused=false, checked=false, scrollable=false, selected=false, class=android.widget.Button, important-for-accessibility=true, error=}, children=[TreeNode(attributes={text=4, accessibilityText=, hintText=, ignoreBoundsFiltering=false, resource-id=, clickable=false, bounds=[427,577][468,647], enabled=true, focused=false, checked=false, scrollable=false, selected=false, class=android.widget.TextView, important-for-accessibility=true, error=}, children=[], clickable=false, enabled=true, focused=false, checked=false, selected=false)], clickable=true, enabled=true, focused=false, checked=false, selected=false), bounds=Bounds(x=40, y=548, width=816, height=128))
+18:28:33.332 [ INFO] maestro.Maestro.tap-HgV9Ck0: Tap aimed via settled hierarchy
+18:28:33.333 [ INFO] maestro.Maestro.hierarchyBasedTap-ogj28Uc: Tapping at (448, 612) using hierarchy based logic for wait
+18:28:34.268 [ INFO] maestro.Maestro.hierarchyBasedTap-ogj28Uc: Something has changed in the UI judging by view hierarchy. Proceed.
+18:28:34.268 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandFinished: Tap on id: key-4 COMPLETED
+18:28:34.268 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandStart: Assert that "Mã này dễ đoán quá.*" is visible RUNNING
+18:28:34.384 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandFinished: Assert that "Mã này dễ đoán quá.*" is visible COMPLETED
+18:28:34.385 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandStart: Run subflows/enter-pin.yaml RUNNING
+18:28:34.385 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandStart: Apply configuration RUNNING
+18:28:34.385 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandFinished: Apply configuration COMPLETED
+18:28:34.385 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandStart: Tap on id: key-2 RUNNING
+18:28:34.501 [ INFO] maestro.Maestro.tap-HgV9Ck0: Tapping on element:  UiElement(treeNode=TreeNode(attributes={text=, accessibilityText=2, hintText=, ignoreBoundsFiltering=false, resource-id=key-2, clickable=true, bounds=[872,480][1688,608], enabled=true, focused=false, checked=false, scrollable=false, selected=false, class=android.widget.Button, important-for-accessibility=true, error=}, children=[TreeNode(attributes={text=2, accessibilityText=, hintText=, ignoreBoundsFiltering=false, resource-id=, clickable=false, bounds=[1261,509][1299,579], enabled=true, focused=false, checked=false, scrollable=false, selected=false, class=android.widget.TextView, important-for-accessibility=true, error=}, children=[], clickable=false, enabled=true, focused=false, checked=false, selected=false)], clickable=true, enabled=true, focused=false, checked=false, selected=false), bounds=Bounds(x=872, y=480, width=816, height=128))
+18:28:35.736 [ INFO] maestro.Maestro.tap-HgV9Ck0: Tap aimed via settled hierarchy
+18:28:35.737 [ INFO] maestro.Maestro.hierarchyBasedTap-ogj28Uc: Tapping at (1280, 544) using hierarchy based logic for wait
+18:28:36.188 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandFinished: Tap on id: key-2 COMPLETED
+18:28:36.188 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandStart: Tap on id: key-5 RUNNING
+18:28:36.302 [ INFO] maestro.Maestro.tap-HgV9Ck0: Tapping on element:  UiElement(treeNode=TreeNode(attributes={text=, accessibilityText=5, hintText=, ignoreBoundsFiltering=false, resource-id=key-5, clickable=true, bounds=[872,624][1688,752], enabled=true, focused=false, checked=false, scrollable=false, selected=false, class=android.widget.Button, important-for-accessibility=true, error=}, children=[TreeNode(attributes={text=5, accessibilityText=, hintText=, ignoreBoundsFiltering=false, resource-id=, clickable=false, bounds=[1260,653][1299,723], enabled=true, focused=false, checked=false, scrollable=false, selected=false, class=android.widget.TextView, important-for-accessibility=true, error=}, children=[], clickable=false, enabled=true, focused=false, checked=false, selected=false)], clickable=true, enabled=true, focused=false, checked=false, selected=false), bounds=Bounds(x=872, y=624, width=816, height=128))
+18:28:37.540 [ INFO] maestro.Maestro.tap-HgV9Ck0: Tap aimed via settled hierarchy
+18:28:37.541 [ INFO] maestro.Maestro.hierarchyBasedTap-ogj28Uc: Tapping at (1280, 688) using hierarchy based logic for wait
+18:28:37.980 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandFinished: Tap on id: key-5 COMPLETED
+18:28:37.980 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandStart: Tap on id: key-8 RUNNING
+18:28:38.088 [ INFO] maestro.Maestro.tap-HgV9Ck0: Tapping on element:  UiElement(treeNode=TreeNode(attributes={text=, accessibilityText=8, hintText=, ignoreBoundsFiltering=false, resource-id=key-8, clickable=true, bounds=[872,768][1688,896], enabled=true, focused=false, checked=false, scrollable=false, selected=false, class=android.widget.Button, important-for-accessibility=true, error=}, children=[TreeNode(attributes={text=8, accessibilityText=, hintText=, ignoreBoundsFiltering=false, resource-id=, clickable=false, bounds=[1260,797][1299,867], enabled=true, focused=false, checked=false, scrollable=false, selected=false, class=android.widget.TextView, important-for-accessibility=true, error=}, children=[], clickable=false, enabled=true, focused=false, checked=false, selected=false)], clickable=true, enabled=true, focused=false, checked=false, selected=false), bounds=Bounds(x=872, y=768, width=816, height=128))
+18:28:39.408 [ INFO] maestro.Maestro.tap-HgV9Ck0: Tap aimed via settled hierarchy
+18:28:39.409 [ INFO] maestro.Maestro.hierarchyBasedTap-ogj28Uc: Tapping at (1280, 832) using hierarchy based logic for wait
+18:28:39.833 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandFinished: Tap on id: key-8 COMPLETED
+18:28:39.833 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandStart: Tap on id: key-0 RUNNING
+18:28:39.944 [ INFO] maestro.Maestro.tap-HgV9Ck0: Tapping on element:  UiElement(treeNode=TreeNode(attributes={text=, accessibilityText=0, hintText=, ignoreBoundsFiltering=false, resource-id=key-0, clickable=true, bounds=[872,912][1688,1040], enabled=true, focused=false, checked=false, scrollable=false, selected=false, class=android.widget.Button, important-for-accessibility=true, error=}, children=[TreeNode(attributes={text=0, accessibilityText=, hintText=, ignoreBoundsFiltering=false, resource-id=, clickable=false, bounds=[1260,941][1300,1011], enabled=true, focused=false, checked=false, scrollable=false, selected=false, class=android.widget.TextView, important-for-accessibility=true, error=}, children=[], clickable=false, enabled=true, focused=false, checked=false, selected=false)], clickable=true, enabled=true, focused=false, checked=false, selected=false), bounds=Bounds(x=872, y=912, width=816, height=128))
+18:28:41.180 [ INFO] maestro.Maestro.tap-HgV9Ck0: Tap aimed via settled hierarchy
+18:28:41.180 [ INFO] maestro.Maestro.hierarchyBasedTap-ogj28Uc: Tapping at (1280, 976) using hierarchy based logic for wait
+18:28:42.112 [ INFO] maestro.Maestro.hierarchyBasedTap-ogj28Uc: Something has changed in the UI judging by view hierarchy. Proceed.
+18:28:42.112 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandFinished: Tap on id: key-0 COMPLETED
+18:28:42.113 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandFinished: Run subflows/enter-pin.yaml COMPLETED
+18:28:42.113 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandStart: Assert that "Nhập lại mã PIN để chắc chắn" is visible RUNNING
+18:28:42.220 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandFinished: Assert that "Nhập lại mã PIN để chắc chắn" is visible COMPLETED
+18:28:42.220 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandStart: Tap on id: key-9 RUNNING
+18:28:42.333 [ INFO] maestro.Maestro.tap-HgV9Ck0: Tapping on element:  UiElement(treeNode=TreeNode(attributes={text=, accessibilityText=9, hintText=, ignoreBoundsFiltering=false, resource-id=key-9, clickable=true, bounds=[1704,692][2520,820], enabled=true, focused=false, checked=false, scrollable=false, selected=false, class=android.widget.Button, important-for-accessibility=true, error=}, children=[TreeNode(attributes={text=9, accessibilityText=, hintText=, ignoreBoundsFiltering=false, resource-id=, clickable=false, bounds=[2092,721][2132,791], enabled=true, focused=false, checked=false, scrollable=false, selected=false, class=android.widget.TextView, important-for-accessibility=true, error=}, children=[], clickable=false, enabled=true, focused=false, checked=false, selected=false)], clickable=true, enabled=true, focused=false, checked=false, selected=false), bounds=Bounds(x=1704, y=692, width=816, height=128))
+18:28:43.572 [ INFO] maestro.Maestro.tap-HgV9Ck0: Tap aimed via settled hierarchy
+18:28:43.574 [ INFO] maestro.Maestro.hierarchyBasedTap-ogj28Uc: Tapping at (2112, 756) using hierarchy based logic for wait
+18:28:43.984 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandFinished: Tap on id: key-9 COMPLETED
+18:28:43.984 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandStart: Tap on id: key-9 RUNNING
+18:28:44.101 [ INFO] maestro.Maestro.tap-HgV9Ck0: Tapping on element:  UiElement(treeNode=TreeNode(attributes={text=, accessibilityText=9, hintText=, ignoreBoundsFiltering=false, resource-id=key-9, clickable=true, bounds=[1704,692][2520,820], enabled=true, focused=false, checked=false, scrollable=false, selected=false, class=android.widget.Button, important-for-accessibility=true, error=}, children=[TreeNode(attributes={text=9, accessibilityText=, hintText=, ignoreBoundsFiltering=false, resource-id=, clickable=false, bounds=[2092,721][2132,791], enabled=true, focused=false, checked=false, scrollable=false, selected=false, class=android.widget.TextView, important-for-accessibility=true, error=}, children=[], clickable=false, enabled=true, focused=false, checked=false, selected=false)], clickable=true, enabled=true, focused=false, checked=false, selected=false), bounds=Bounds(x=1704, y=692, width=816, height=128))
+18:28:45.340 [ INFO] maestro.Maestro.tap-HgV9Ck0: Tap aimed via settled hierarchy
+18:28:45.341 [ INFO] maestro.Maestro.hierarchyBasedTap-ogj28Uc: Tapping at (2112, 756) using hierarchy based logic for wait
+18:28:45.796 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandFinished: Tap on id: key-9 COMPLETED
+18:28:45.796 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandStart: Tap on id: key-7 RUNNING
+18:28:45.909 [ INFO] maestro.Maestro.tap-HgV9Ck0: Tapping on element:  UiElement(treeNode=TreeNode(attributes={text=, accessibilityText=7, hintText=, ignoreBoundsFiltering=false, resource-id=key-7, clickable=true, bounds=[40,692][856,820], enabled=true, focused=false, checked=false, scrollable=false, selected=false, class=android.widget.Button, important-for-accessibility=true, error=}, children=[TreeNode(attributes={text=7, accessibilityText=, hintText=, ignoreBoundsFiltering=false, resource-id=, clickable=false, bounds=[431,721][465,791], enabled=true, focused=false, checked=false, scrollable=false, selected=false, class=android.widget.TextView, important-for-accessibility=true, error=}, children=[], clickable=false, enabled=true, focused=false, checked=false, selected=false)], clickable=true, enabled=true, focused=false, checked=false, selected=false), bounds=Bounds(x=40, y=692, width=816, height=128))
+18:28:47.140 [ INFO] maestro.Maestro.tap-HgV9Ck0: Tap aimed via settled hierarchy
+18:28:47.141 [ INFO] maestro.Maestro.hierarchyBasedTap-ogj28Uc: Tapping at (448, 756) using hierarchy based logic for wait
+18:28:47.592 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandFinished: Tap on id: key-7 COMPLETED
+18:28:47.592 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandStart: Tap on id: key-1 RUNNING
+18:28:47.701 [ INFO] maestro.Maestro.tap-HgV9Ck0: Tapping on element:  UiElement(treeNode=TreeNode(attributes={text=, accessibilityText=1, hintText=, ignoreBoundsFiltering=false, resource-id=key-1, clickable=true, bounds=[40,404][856,532], enabled=true, focused=false, checked=false, scrollable=false, selected=false, class=android.widget.Button, important-for-accessibility=true, error=}, children=[TreeNode(attributes={text=1, accessibilityText=, hintText=, ignoreBoundsFiltering=false, resource-id=, clickable=false, bounds=[435,433][460,503], enabled=true, focused=false, checked=false, scrollable=false, selected=false, class=android.widget.TextView, important-for-accessibility=true, error=}, children=[], clickable=false, enabled=true, focused=false, checked=false, selected=false)], clickable=true, enabled=true, focused=false, checked=false, selected=false), bounds=Bounds(x=40, y=404, width=816, height=128))
+18:28:48.936 [ INFO] maestro.Maestro.tap-HgV9Ck0: Tap aimed via settled hierarchy
+18:28:48.937 [ INFO] maestro.Maestro.hierarchyBasedTap-ogj28Uc: Tapping at (448, 468) using hierarchy based logic for wait
+18:28:49.884 [ INFO] maestro.Maestro.hierarchyBasedTap-ogj28Uc: Something has changed in the UI judging by view hierarchy. Proceed.
+18:28:49.884 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandFinished: Tap on id: key-1 COMPLETED
+18:28:49.884 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandStart: Assert that "Hai lần nhập chưa giống nhau.*" is visible RUNNING
+18:28:49.996 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandFinished: Assert that "Hai lần nhập chưa giống nhau.*" is visible COMPLETED
+18:28:49.997 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandStart: Run subflows/enter-pin.yaml RUNNING
+18:28:49.997 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandStart: Apply configuration RUNNING
+18:28:49.997 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandFinished: Apply configuration COMPLETED
+18:28:49.997 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandStart: Tap on id: key-2 RUNNING
+18:28:50.108 [ INFO] maestro.Maestro.tap-HgV9Ck0: Tapping on element:  UiElement(treeNode=TreeNode(attributes={text=, accessibilityText=2, hintText=, ignoreBoundsFiltering=false, resource-id=key-2, clickable=true, bounds=[872,480][1688,608], enabled=true, focused=false, checked=false, scrollable=false, selected=false, class=android.widget.Button, important-for-accessibility=true, error=}, children=[TreeNode(attributes={text=2, accessibilityText=, hintText=, ignoreBoundsFiltering=false, resource-id=, clickable=false, bounds=[1261,509][1299,579], enabled=true, focused=false, checked=false, scrollable=false, selected=false, class=android.widget.TextView, important-for-accessibility=true, error=}, children=[], clickable=false, enabled=true, focused=false, checked=false, selected=false)], clickable=true, enabled=true, focused=false, checked=false, selected=false), bounds=Bounds(x=872, y=480, width=816, height=128))
+18:28:51.384 [ INFO] maestro.Maestro.tap-HgV9Ck0: Tap aimed via settled hierarchy
+18:28:51.385 [ INFO] maestro.Maestro.hierarchyBasedTap-ogj28Uc: Tapping at (1280, 544) using hierarchy based logic for wait
+18:28:51.876 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandFinished: Tap on id: key-2 COMPLETED
+18:28:51.877 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandStart: Tap on id: key-5 RUNNING
+18:28:52.001 [ INFO] maestro.Maestro.tap-HgV9Ck0: Tapping on element:  UiElement(treeNode=TreeNode(attributes={text=, accessibilityText=5, hintText=, ignoreBoundsFiltering=false, resource-id=key-5, clickable=true, bounds=[872,624][1688,752], enabled=true, focused=false, checked=false, scrollable=false, selected=false, class=android.widget.Button, important-for-accessibility=true, error=}, children=[TreeNode(attributes={text=5, accessibilityText=, hintText=, ignoreBoundsFiltering=false, resource-id=, clickable=false, bounds=[1260,653][1299,723], enabled=true, focused=false, checked=false, scrollable=false, selected=false, class=android.widget.TextView, important-for-accessibility=true, error=}, children=[], clickable=false, enabled=true, focused=false, checked=false, selected=false)], clickable=true, enabled=true, focused=false, checked=false, selected=false), bounds=Bounds(x=872, y=624, width=816, height=128))
+18:28:53.240 [ INFO] maestro.Maestro.tap-HgV9Ck0: Tap aimed via settled hierarchy
+18:28:53.241 [ INFO] maestro.Maestro.hierarchyBasedTap-ogj28Uc: Tapping at (1280, 688) using hierarchy based logic for wait
+18:28:53.704 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandFinished: Tap on id: key-5 COMPLETED
+18:28:53.704 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandStart: Tap on id: key-8 RUNNING
+18:28:53.813 [ INFO] maestro.Maestro.tap-HgV9Ck0: Tapping on element:  UiElement(treeNode=TreeNode(attributes={text=, accessibilityText=8, hintText=, ignoreBoundsFiltering=false, resource-id=key-8, clickable=true, bounds=[872,768][1688,896], enabled=true, focused=false, checked=false, scrollable=false, selected=false, class=android.widget.Button, important-for-accessibility=true, error=}, children=[TreeNode(attributes={text=8, accessibilityText=, hintText=, ignoreBoundsFiltering=false, resource-id=, clickable=false, bounds=[1260,797][1299,867], enabled=true, focused=false, checked=false, scrollable=false, selected=false, class=android.widget.TextView, important-for-accessibility=true, error=}, children=[], clickable=false, enabled=true, focused=false, checked=false, selected=false)], clickable=true, enabled=true, focused=false, checked=false, selected=false), bounds=Bounds(x=872, y=768, width=816, height=128))
+18:28:55.044 [ INFO] maestro.Maestro.tap-HgV9Ck0: Tap aimed via settled hierarchy
+18:28:55.045 [ INFO] maestro.Maestro.hierarchyBasedTap-ogj28Uc: Tapping at (1280, 832) using hierarchy based logic for wait
+18:28:55.408 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandFinished: Tap on id: key-8 COMPLETED
+18:28:55.408 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandStart: Tap on id: key-0 RUNNING
+18:28:55.517 [ INFO] maestro.Maestro.tap-HgV9Ck0: Tapping on element:  UiElement(treeNode=TreeNode(attributes={text=, accessibilityText=0, hintText=, ignoreBoundsFiltering=false, resource-id=key-0, clickable=true, bounds=[872,912][1688,1040], enabled=true, focused=false, checked=false, scrollable=false, selected=false, class=android.widget.Button, important-for-accessibility=true, error=}, children=[TreeNode(attributes={text=0, accessibilityText=, hintText=, ignoreBoundsFiltering=false, resource-id=, clickable=false, bounds=[1260,941][1300,1011], enabled=true, focused=false, checked=false, scrollable=false, selected=false, class=android.widget.TextView, important-for-accessibility=true, error=}, children=[], clickable=false, enabled=true, focused=false, checked=false, selected=false)], clickable=true, enabled=true, focused=false, checked=false, selected=false), bounds=Bounds(x=872, y=912, width=816, height=128))
+18:28:57.489 [ INFO] maestro.Maestro.tap-HgV9Ck0: Tap aimed via settled hierarchy
+18:28:57.489 [ INFO] maestro.Maestro.hierarchyBasedTap-ogj28Uc: Tapping at (1280, 976) using hierarchy based logic for wait
+18:28:58.432 [ INFO] maestro.Maestro.hierarchyBasedTap-ogj28Uc: Something has changed in the UI judging by view hierarchy. Proceed.
+18:28:58.432 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandFinished: Tap on id: key-0 COMPLETED
+18:28:58.432 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandFinished: Run subflows/enter-pin.yaml COMPLETED
+18:28:58.432 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandStart: Run subflows/enter-pin.yaml RUNNING
+18:28:58.433 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandStart: Apply configuration RUNNING
+18:28:58.433 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandFinished: Apply configuration COMPLETED
+18:28:58.433 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandStart: Tap on id: key-2 RUNNING
+18:28:58.549 [ INFO] maestro.Maestro.tap-HgV9Ck0: Tapping on element:  UiElement(treeNode=TreeNode(attributes={text=, accessibilityText=2, hintText=, ignoreBoundsFiltering=false, resource-id=key-2, clickable=true, bounds=[872,404][1688,532], enabled=true, focused=false, checked=false, scrollable=false, selected=false, class=android.widget.Button, important-for-accessibility=true, error=}, children=[TreeNode(attributes={text=2, accessibilityText=, hintText=, ignoreBoundsFiltering=false, resource-id=, clickable=false, bounds=[1261,433][1299,503], enabled=true, focused=false, checked=false, scrollable=false, selected=false, class=android.widget.TextView, important-for-accessibility=true, error=}, children=[], clickable=false, enabled=true, focused=false, checked=false, selected=false)], clickable=true, enabled=true, focused=false, checked=false, selected=false), bounds=Bounds(x=872, y=404, width=816, height=128))
+18:28:59.784 [ INFO] maestro.Maestro.tap-HgV9Ck0: Tap aimed via settled hierarchy
+18:28:59.785 [ INFO] maestro.Maestro.hierarchyBasedTap-ogj28Uc: Tapping at (1280, 468) using hierarchy based logic for wait
+18:29:00.892 [ INFO] maestro.Maestro.hierarchyBasedTap-ogj28Uc: Something has changed in the UI judging by view hierarchy. Proceed.
+18:29:00.893 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandFinished: Tap on id: key-2 COMPLETED
+18:29:00.893 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandStart: Tap on id: key-5 RUNNING
+18:29:00.965 [ INFO] maestro.Maestro.tap-HgV9Ck0: Tapping on element:  UiElement(treeNode=TreeNode(attributes={text=, accessibilityText=5, hintText=, ignoreBoundsFiltering=false, resource-id=key-5, clickable=true, bounds=[872,548][1688,676], enabled=true, focused=false, checked=false, scrollable=false, selected=false, class=android.widget.Button, important-for-accessibility=true, error=}, children=[TreeNode(attributes={text=5, accessibilityText=, hintText=, ignoreBoundsFiltering=false, resource-id=, clickable=false, bounds=[1260,577][1299,647], enabled=true, focused=false, checked=false, scrollable=false, selected=false, class=android.widget.TextView, important-for-accessibility=true, error=}, children=[], clickable=false, enabled=true, focused=false, checked=false, selected=false)], clickable=true, enabled=true, focused=false, checked=false, selected=false), bounds=Bounds(x=872, y=548, width=816, height=128))
+18:29:02.240 [ INFO] maestro.Maestro.tap-HgV9Ck0: Tap aimed via settled hierarchy
+18:29:02.241 [ INFO] maestro.Maestro.hierarchyBasedTap-ogj28Uc: Tapping at (1280, 612) using hierarchy based logic for wait
+18:29:02.655 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandFinished: Tap on id: key-5 COMPLETED
+18:29:02.656 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandStart: Tap on id: key-8 RUNNING
+18:29:02.764 [ INFO] maestro.Maestro.tap-HgV9Ck0: Tapping on element:  UiElement(treeNode=TreeNode(attributes={text=, accessibilityText=8, hintText=, ignoreBoundsFiltering=false, resource-id=key-8, clickable=true, bounds=[872,692][1688,820], enabled=true, focused=false, checked=false, scrollable=false, selected=false, class=android.widget.Button, important-for-accessibility=true, error=}, children=[TreeNode(attributes={text=8, accessibilityText=, hintText=, ignoreBoundsFiltering=false, resource-id=, clickable=false, bounds=[1260,721][1299,791], enabled=true, focused=false, checked=false, scrollable=false, selected=false, class=android.widget.TextView, important-for-accessibility=true, error=}, children=[], clickable=false, enabled=true, focused=false, checked=false, selected=false)], clickable=true, enabled=true, focused=false, checked=false, selected=false), bounds=Bounds(x=872, y=692, width=816, height=128))
+18:29:04.036 [ INFO] maestro.Maestro.tap-HgV9Ck0: Tap aimed via settled hierarchy
+18:29:04.037 [ INFO] maestro.Maestro.hierarchyBasedTap-ogj28Uc: Tapping at (1280, 756) using hierarchy based logic for wait
+18:29:04.468 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandFinished: Tap on id: key-8 COMPLETED
+18:29:04.468 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandStart: Tap on id: key-0 RUNNING
+18:29:04.580 [ INFO] maestro.Maestro.tap-HgV9Ck0: Tapping on element:  UiElement(treeNode=TreeNode(attributes={text=, accessibilityText=0, hintText=, ignoreBoundsFiltering=false, resource-id=key-0, clickable=true, bounds=[872,836][1688,964], enabled=true, focused=false, checked=false, scrollable=false, selected=false, class=android.widget.Button, important-for-accessibility=true, error=}, children=[TreeNode(attributes={text=0, accessibilityText=, hintText=, ignoreBoundsFiltering=false, resource-id=, clickable=false, bounds=[1260,865][1300,935], enabled=true, focused=false, checked=false, scrollable=false, selected=false, class=android.widget.TextView, important-for-accessibility=true, error=}, children=[], clickable=false, enabled=true, focused=false, checked=false, selected=false)], clickable=true, enabled=true, focused=false, checked=false, selected=false), bounds=Bounds(x=872, y=836, width=816, height=128))
+18:29:05.773 [ INFO] maestro.Maestro.tap-HgV9Ck0: Tap aimed via settled hierarchy
+18:29:05.774 [ INFO] maestro.Maestro.hierarchyBasedTap-ogj28Uc: Tapping at (1280, 900) using hierarchy based logic for wait
+18:29:07.304 [ INFO] maestro.Maestro.hierarchyBasedTap-ogj28Uc: Something has changed in the UI judging by view hierarchy. Proceed.
+18:29:07.304 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandFinished: Tap on id: key-0 COMPLETED
+18:29:07.304 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandFinished: Run subflows/enter-pin.yaml COMPLETED
+18:29:07.304 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandStart: Assert that "Hôm nay đã thu.*" is visible RUNNING
+18:29:07.421 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandFinished: Assert that "Hôm nay đã thu.*" is visible COMPLETED
+18:29:07.421 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandStart: Assert that "Quan Co Ba" is visible RUNNING
+18:29:07.537 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandFinished: Assert that "Quan Co Ba" is visible COMPLETED
+18:29:07.538 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandStart: Assert that ".*130.000 đ.*" is visible RUNNING
+18:29:07.673 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandFinished: Assert that ".*130.000 đ.*" is visible COMPLETED
+18:29:07.674 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandStart: Assert that "Thu tiền" is visible RUNNING
+18:29:08.150 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandFinished: Assert that "Thu tiền" is visible COMPLETED
+18:29:08.151 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandStart: Assert that "Sổ hôm nay" is visible RUNNING
+18:29:08.233 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandFinished: Assert that "Sổ hôm nay" is visible COMPLETED
+18:29:08.233 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandStart: Assert that id: main-settings is visible RUNNING
+18:29:08.353 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandFinished: Assert that id: main-settings is visible COMPLETED
+18:29:08.353 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandStart: Run flow when Platform is ANDROID RUNNING
+18:29:08.353 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandStart: Assert that id: main-exit is visible RUNNING
+18:29:08.473 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandFinished: Assert that id: main-exit is visible COMPLETED
+18:29:08.473 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandFinished: Run flow when Platform is ANDROID COMPLETED
+18:29:08.473 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandStart: Take screenshot 08-trang-chinh RUNNING
+18:29:08.473 [ INFO] maestro.Maestro.takeScreenshot: Taking screenshot
+18:29:08.474 [TRACE] maestro.utils.ScreenshotUtils.takeScreenshot: Taking screenshot to output sink
+18:29:08.692 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandFinished: Take screenshot 08-trang-chinh COMPLETED
+18:29:08.692 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandStart: Scrolling DOWN until "Việc khác.*" is visible with speed 40, visibility percentage 100%, timeout 20000 ms, with centering disabled RUNNING
+18:29:08.861 [ INFO] maestro.orchestra.Orchestra.scrollUntilVisible: Scrolling try count: 0, DeviceWidth: 2560, DeviceWidth: 1600
+18:29:08.861 [ INFO] maestro.orchestra.Orchestra.scrollUntilVisible: Element bounds: Bounds(x=1484, y=1139, width=204, height=61)
+18:29:08.861 [ INFO] maestro.orchestra.Orchestra.scrollUntilVisible: Visibility Percent: 1.0
+18:29:08.861 [ INFO] maestro.orchestra.Orchestra.scrollUntilVisible: Command centerElement: ScrollUntilVisibleCommand(selector=ElementSelector(textRegex=Việc khác.*, idRegex=null, size=null, below=null, above=null, leftOf=null, rightOf=null, containsChild=null, containsDescendants=null, traits=null, index=null, enabled=null, optional=false, selected=null, checked=null, focused=null, childOf=null, css=null), direction=DOWN, scrollDuration=601, visibilityPercentage=100, timeout=20000, waitToSettleTimeoutMs=null, centerElement=false, originalSpeedValue=40, label=null, optional=false).centerElement
+18:29:08.862 [ INFO] maestro.orchestra.Orchestra.scrollUntilVisible: visibilityPercentageNormalized: 1.0
+18:29:08.862 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandFinished: Scrolling DOWN until "Việc khác.*" is visible with speed 40, visibility percentage 100%, timeout 20000 ms, with centering disabled COMPLETED
+18:29:08.862 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandStart: Assert that "Báo cáo" is visible RUNNING
+18:29:08.984 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandFinished: Assert that "Báo cáo" is visible COMPLETED
+18:29:08.984 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandStart: Assert that "Sổ nợ.*" is visible RUNNING
+18:29:09.071 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandFinished: Assert that "Sổ nợ.*" is visible COMPLETED
+18:29:09.072 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandStart: Assert that "Hàng hóa.*" is visible RUNNING
+18:29:09.150 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandFinished: Assert that "Hàng hóa.*" is visible COMPLETED
+18:29:09.151 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandStart: Assert that "Chi tiêu.*" is visible RUNNING
+18:29:09.235 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandFinished: Assert that "Chi tiêu.*" is visible COMPLETED
+18:29:09.235 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandStart: Take screenshot 09-trang-chinh-o-viec RUNNING
+18:29:09.236 [ INFO] maestro.Maestro.takeScreenshot: Taking screenshot
+18:29:09.236 [TRACE] maestro.utils.ScreenshotUtils.takeScreenshot: Taking screenshot to output sink
+18:29:09.456 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandFinished: Take screenshot 09-trang-chinh-o-viec COMPLETED
+18:29:09.457 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandStart: Scrolling UP until id: main-settings is visible with speed 40, visibility percentage 100%, timeout 20000 ms, with centering disabled RUNNING
+18:29:09.625 [ INFO] maestro.orchestra.Orchestra.scrollUntilVisible: Scrolling try count: 0, DeviceWidth: 2560, DeviceWidth: 1600
+18:29:09.625 [ INFO] maestro.orchestra.Orchestra.scrollUntilVisible: Element bounds: Bounds(x=1632, y=72, width=112, height=112)
+18:29:09.625 [ INFO] maestro.orchestra.Orchestra.scrollUntilVisible: Visibility Percent: 1.0
+18:29:09.625 [ INFO] maestro.orchestra.Orchestra.scrollUntilVisible: Command centerElement: ScrollUntilVisibleCommand(selector=ElementSelector(textRegex=null, idRegex=main-settings, size=null, below=null, above=null, leftOf=null, rightOf=null, containsChild=null, containsDescendants=null, traits=null, index=null, enabled=null, optional=false, selected=null, checked=null, focused=null, childOf=null, css=null), direction=UP, scrollDuration=601, visibilityPercentage=100, timeout=20000, waitToSettleTimeoutMs=null, centerElement=false, originalSpeedValue=40, label=null, optional=false).centerElement
+18:29:09.625 [ INFO] maestro.orchestra.Orchestra.scrollUntilVisible: visibilityPercentageNormalized: 1.0
+18:29:09.625 [ INFO] maestro.cli.runner.CliConsoleListener.onCommandFinished: Scrolling UP until id: main-settings is visible with speed 40, visibility percentage 100%, timeout 20000 ms, with centering disabled COMPLETED
