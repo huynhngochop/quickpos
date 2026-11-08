@@ -14,6 +14,7 @@ import { newId } from '../../../lib/device';
 import { space } from '../../../theme/tokens';
 import { vi } from '../../../i18n/vi';
 import type { Product } from '../../../types/api';
+import { CategoryPicker, SupplierPicker } from './Pickers';
 
 const money = (s: string) => s.replace(/\D/g, '').replace(/^0+(?=\d)/, '').slice(0, 11);
 const qtyText = (s: string) => s.replace(/[^\d,]/g, '').replace(/,(?=.*,)/g, '').slice(0, 10);
@@ -39,7 +40,8 @@ export function ProductForm({
   const [name, setName] = useState(initial?.name ?? '');
   const [price, setPrice] = useState(initial ? String(initial.price) : '');
   const [unit, setUnit] = useState(initial?.unit ?? '');
-  const [category, setCategory] = useState(initial?.category ?? '');
+  const [categoryId, setCategoryId] = useState<string | null>(initial?.category_id ?? null);
+  const [supplierId, setSupplierId] = useState<string | null>(initial?.supplier_id ?? null);
   const [barcode, setBarcode] = useState(initial?.barcode ?? initialBarcode ?? '');
   const [cost, setCost] = useState(initial?.cost_price != null ? String(initial.cost_price) : '');
   const [track, setTrack] = useState(initial?.track_stock ?? false);
@@ -64,7 +66,7 @@ export function ProductForm({
     mutationFn: () =>
       upsertProduct({
         productId: productId.current, businessId, name: name.trim(), price: Number(price || '0'),
-        unit: unit.trim() || vi.catalog.defaultUnit, category: category.trim() || null, costPrice: cost ? Number(cost) : null,
+        unit: unit.trim() || vi.catalog.defaultUnit, categoryId, supplierId, costPrice: cost ? Number(cost) : null,
         trackStock: track || expiry, lowStockAt: (track || expiry) && low ? parseQty(low) : null,
         barcode: cleanCode(barcode) || null, trackExpiry: expiry, expiryWarnDays: Number(warn || '7'),
       }),
@@ -90,7 +92,17 @@ export function ProductForm({
       <Field label={vi.catalog.price} value={price} onChangeText={(v) => setPrice(money(v))} keyboardType="number-pad" testID="product-price" />
       {price ? <Txt tone="secondary">{formatVND(Number(price))}</Txt> : null}
       <Field label={vi.catalog.unit} value={unit} onChangeText={setUnit} maxLength={20} testID="product-unit" placeholder={vi.catalog.unitHint} />
-      <Field label={vi.catalog.category} value={category} onChangeText={setCategory} maxLength={50} testID="product-category" placeholder={vi.catalog.categoryHint} />
+      <CategoryPicker
+        businessId={businessId}
+        value={categoryId}
+        allowCreate
+        onChange={(id, c) => {
+          setCategoryId(id);
+          // Danh mục hàng có hạn dùng (sữa, bánh…): món mới bật sẵn "có hạn dùng"
+          if (!initial && c?.track_expiry_default) setExpiry(true);
+        }}
+      />
+      <SupplierPicker businessId={businessId} value={supplierId} onChange={setSupplierId} />
       <Field label={vi.catalog.barcode} value={barcode} onChangeText={(v) => setBarcode(v.slice(0, 64))} maxLength={64} testID="product-barcode" placeholder={vi.catalog.barcodeHint} />
       <Button
         kind="secondary"

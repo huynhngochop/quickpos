@@ -4,19 +4,23 @@
  */
 import { create } from 'zustand';
 import { pressKey, digitsToAmount, type KeypadKey } from '../../lib/money';
-import type { OrderItemInput } from '../../types/api';
+import type { OrderInput, OrderItemInput } from '../../types/api';
+import { orderPayload, type PromoResult } from '../promo/engine';
 
 export interface CartLine {
   productId: string;
   name: string;
   unitPrice: number;
   qty: number;
+  categoryId?: string | null;
 }
 
 interface SaleState {
   digits: string;
   /** Giỏ món (màn "Chọn món"). Bấm bàn phím số → bỏ giỏ, dùng số tự nhập. */
   cart: CartLine[];
+  /** Giá sau khuyến mãi / giảm tay của giỏ (null = không có giảm, dùng giỏ nguyên giá) */
+  pricing: PromoResult | null;
   /** Khách quen gắn vào đơn (tích điểm) */
   customer: { id: string; name: string; points: number } | null;
   /** Mã đơn VietQR đang chờ khách trả (null = chưa tạo) */
@@ -24,7 +28,7 @@ interface SaleState {
   /** Mã đơn sinh sẵn cho lần bấm "Hiện mã QR" tiếp theo — giữ nguyên khi thử lại */
   pendingOrderId: string | null;
   press: (k: KeypadKey) => void;
-  setCart: (lines: CartLine[]) => void;
+  setCart: (lines: CartLine[], pricing?: PromoResult | null) => void;
   setCustomer: (c: SaleState['customer']) => void;
   setActive: (id: string | null) => void;
   setPending: (id: string | null) => void;
@@ -36,19 +40,20 @@ export const cartTotal = (lines: CartLine[]) => lines.reduce((s, l) => s + Math.
 export const useSale = create<SaleState>((set) => ({
   digits: '',
   cart: [],
+  pricing: null,
   customer: null,
   activeOrderId: null,
   pendingOrderId: null,
-  press: (k) => set((s) => ({ digits: pressKey(s.digits, k), cart: [], pendingOrderId: null })),
-  setCart: (lines) => {
+  press: (k) => set((s) => ({ digits: pressKey(s.digits, k), cart: [], pricing: null, pendingOrderId: null })),
+  setCart: (lines, pricing = null) => {
     const clean = lines.filter((l) => l.qty > 0);
-    const total = cartTotal(clean);
-    set({ cart: clean, digits: total > 0 ? String(total) : '', pendingOrderId: null });
+    const total = pricing ? pricing.total : cartTotal(clean);
+    set({ cart: clean, pricing: clean.length ? pricing : null, digits: total > 0 ? String(total) : '', pendingOrderId: null });
   },
   setCustomer: (c) => set({ customer: c }),
   setActive: (id) => set({ activeOrderId: id }),
   setPending: (id) => set({ pendingOrderId: id }),
-  newSale: () => set({ digits: '', cart: [], customer: null, activeOrderId: null, pendingOrderId: null }),
+  newSale: () => set({ digits: '', cart: [], pricing: null, customer: null, activeOrderId: null, pendingOrderId: null }),
 }));
 
 export function useAmount(): number {
@@ -66,4 +71,10 @@ export function saleItems(amount: number, cart: CartLine[]): OrderItemInput[] {
     return cart.map((l) => ({ name: l.name, quantity: l.qty, unit_price: l.unitPrice, product_id: l.productId }));
   }
   return quickItems(amount);
+}
+
+/** Như saleItems nhưng kèm khuyến mãi / giảm tay của giỏ (khi tổng sau giảm khớp số đang hiện). */
+export function saleOrder(amount: number, cart: CartLine[], pricing: PromoResult | null): OrderInput {
+  if (pricing && cart.length > 0 && pricing.total === amount) return orderPayload(pricing);
+  return { items: saleItems(amount, cart), discount_amount: 0, promotion_id: null };
 }

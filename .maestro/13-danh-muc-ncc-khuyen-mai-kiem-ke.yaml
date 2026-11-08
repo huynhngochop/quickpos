@@ -1,0 +1,299 @@
+appId: vn.quickpos.app
+---
+# Bản lưu trên máy (tiếp sau luồng 12b): danh mục, nhà cung cấp, phiếu nhập ghi nợ, khuyến mãi khi bán, kiểm kê,
+# thông báo doanh thu mẫu 01/TKN-CNKD (PDF).
+- runFlow:
+    when:
+      notVisible: "Hôm nay đã thu.*"
+    commands:
+      - back
+- runFlow:
+    when:
+      notVisible: "Hôm nay đã thu.*"
+    commands:
+      - back
+- extendedWaitUntil:
+    visible: "Hôm nay đã thu.*"
+    timeout: 10000
+- scrollUntilVisible:
+    element: "Hàng hóa.*"
+- tapOn: "Hàng hóa.*"
+- extendedWaitUntil:
+    visible: "Món bán, giá, tồn kho.*"
+    timeout: 10000
+
+# ---------- Danh mục ----------
+- scrollUntilVisible:
+    element:
+      id: "open-categories"
+- tapOn: { id: "open-categories" }
+- extendedWaitUntil:
+    visible: "Danh mục hàng hóa"
+    timeout: 10000
+- tapOn: { id: "add-category" }
+- tapOn: { id: "category-name" }
+- inputText: "Do uong"
+- runFlow: subflows/an-ban-phim.yaml
+- scrollUntilVisible:
+    element: "Lưu danh mục"
+- tapOn: "Lưu danh mục"
+- extendedWaitUntil:
+    visible: "Do uong"
+    timeout: 10000
+- takeScreenshot: "230-danh-muc"
+- back
+
+# ---------- Nhà cung cấp ----------
+- scrollUntilVisible:
+    element:
+      id: "open-suppliers"
+- tapOn: { id: "open-suppliers" }
+- tapOn: { id: "add-supplier" }
+- tapOn: { id: "supplier-name" }
+- inputText: "Dai ly Nuoc"
+- runFlow: subflows/an-ban-phim.yaml
+- tapOn: { id: "supplier-phone" }
+- inputText: "0903111222"
+- runFlow: subflows/an-ban-phim.yaml
+- scrollUntilVisible:
+    element: "Lưu nhà cung cấp"
+- tapOn: "Lưu nhà cung cấp"
+- extendedWaitUntil:
+    visible: "Không còn nợ"
+    timeout: 10000
+- back
+- runFlow:
+    when:
+      notVisible: "Món bán, giá, tồn kho.*"
+    commands:
+      - back
+
+# ---------- Thêm món có danh mục + nhà cung cấp ----------
+- scrollUntilVisible:
+    element: "Thêm món"
+    direction: UP
+- tapOn: "Thêm món"
+- tapOn: { id: "product-name" }
+- inputText: "Nuoc suoi"
+- runFlow: subflows/an-ban-phim.yaml
+- tapOn: { id: "product-price" }
+- inputText: "5000"
+- runFlow: subflows/an-ban-phim.yaml
+- tapOn: { id: "product-unit" }
+- inputText: "chai"
+- runFlow: subflows/an-ban-phim.yaml
+- scrollUntilVisible:
+    element: "Do uong"
+- tapOn: "Do uong"
+- scrollUntilVisible:
+    element: "Dai ly Nuoc"
+- tapOn: "Dai ly Nuoc"
+- scrollUntilVisible:
+    element: "Theo dõi tồn kho món này"
+- tapOn: "Theo dõi tồn kho món này"
+- scrollUntilVisible:
+    element: "Lưu món"
+- tapOn: "Lưu món"
+- extendedWaitUntil:
+    visible: "Món bán, giá, tồn kho.*"
+    timeout: 10000
+
+# ---------- Phiếu nhập: 24 chai × 3.000, ghi nợ hết ----------
+- scrollUntilVisible:
+    element:
+      id: "open-purchase"
+- tapOn: { id: "open-purchase" }
+- extendedWaitUntil:
+    visible: "Một lần nhập nhiều món.*"
+    timeout: 10000
+- tapOn: "Dai ly Nuoc"
+- tapOn: { id: "purchase-search" }
+- inputText: "nuoc"
+- runFlow: subflows/an-ban-phim.yaml
+- tapOn: { id: "pick-Nuoc suoi" }
+- tapOn: { id: "line-qty-Nuoc suoi" }
+- inputText: "24"
+- runFlow: subflows/an-ban-phim.yaml
+- tapOn: { id: "line-cost-Nuoc suoi" }
+- eraseText: 10
+- inputText: "3000"
+- runFlow: subflows/an-ban-phim.yaml
+- scrollUntilVisible:
+    element:
+      id: "purchase-pay-later"
+- tapOn: { id: "purchase-pay-later" }
+- extendedWaitUntil:
+    visible: "Ghi nợ nhà cung cấp: 72.000 đ"
+    timeout: 5000
+- takeScreenshot: "231-phieu-nhap-ghi-no"
+- tapOn: { id: "save-purchase" }
+- extendedWaitUntil:
+    visible: ".*Đã nhập 1 mặt hàng vào kho"
+    timeout: 10000
+- back
+
+# Nợ nhà cung cấp
+- scrollUntilVisible:
+    element:
+      id: "open-suppliers"
+- tapOn: { id: "open-suppliers" }
+- extendedWaitUntil:
+    visible: "Tổng nợ nhà cung cấp: 72.000 đ"
+    timeout: 10000
+- tapOn: "Dai ly Nuoc.*"
+- extendedWaitUntil:
+    visible: "Hàng do nhà cung cấp này giao"
+    timeout: 10000
+- takeScreenshot: "232-cong-no-ncc"
+- back
+- back
+
+# ---------- Khuyến mãi: nước suối giảm 10% ----------
+- scrollUntilVisible:
+    element:
+      id: "open-promos"
+- tapOn: { id: "open-promos" }
+- tapOn: { id: "add-promo" }
+- tapOn: { id: "promo-name" }
+- inputText: "Nuoc giam 10"
+- runFlow: subflows/an-ban-phim.yaml
+- tapOn: { id: "promo-product" }
+- inputText: "nuoc"
+- runFlow: subflows/an-ban-phim.yaml
+- tapOn: { id: "pick-Nuoc suoi" }
+- scrollUntilVisible:
+    element:
+      id: "promo-value"
+- tapOn: { id: "promo-value" }
+- inputText: "10"
+- runFlow: subflows/an-ban-phim.yaml
+- scrollUntilVisible:
+    element:
+      id: "save-promo"
+- tapOn: { id: "save-promo" }
+- extendedWaitUntil:
+    visible: "Đang chạy"
+    timeout: 10000
+- takeScreenshot: "233-khuyen-mai"
+- back
+- back
+- extendedWaitUntil:
+    visible: "Hôm nay đã thu.*"
+    timeout: 10000
+
+# Bán 2 chai: tự giảm 1.000 đ
+- tapOn: "Thu tiền"
+- extendedWaitUntil:
+    visible: "Khách cần trả"
+    timeout: 10000
+- runFlow:
+    file: subflows/cuon-thu-tien-id.yaml
+    env:
+      ID: "pay-link-pick"
+- tapOn: { id: "pay-link-pick" }
+- extendedWaitUntil:
+    visible: "Chọn món"
+    timeout: 10000
+- tapOn: { id: "sell-Nuoc suoi" }
+- tapOn: { id: "sell-Nuoc suoi" }
+- extendedWaitUntil:
+    visible: "Khách được giảm 1.000 đ"
+    timeout: 5000
+- takeScreenshot: "234-ban-co-khuyen-mai"
+- tapOn: "Tính tiền"
+- extendedWaitUntil:
+    visible: "9.000 đ"
+    timeout: 10000
+- tapOn: "Khách trả tiền mặt"
+- extendedWaitUntil:
+    visible: "Khách đưa bao nhiêu?"
+    timeout: 10000
+- tapOn: "Đưa đủ"
+- scrollUntilVisible:
+    element: "Đã thu tiền mặt"
+- tapOn: "Đã thu tiền mặt"
+- extendedWaitUntil:
+    visible: "Đơn mới"
+    timeout: 10000
+- tapOn: "Đơn mới"
+- extendedWaitUntil:
+    visible: "Chưa nhập số tiền"
+    timeout: 10000
+- tapOn: "Trang chính"
+
+# ---------- Kiểm kê: máy 22, đếm 20 → chỉnh còn 20 ----------
+- extendedWaitUntil:
+    visible: "Hôm nay đã thu.*"
+    timeout: 10000
+- scrollUntilVisible:
+    element: "Hàng hóa.*"
+- tapOn: "Hàng hóa.*"
+- scrollUntilVisible:
+    element:
+      id: "open-counts"
+- tapOn: { id: "open-counts" }
+- tapOn: { id: "start-count" }
+- extendedWaitUntil:
+    visible: "Chưa đếm: 1 món"
+    timeout: 10000
+- tapOn: { id: "count-pending-Nuoc suoi" }
+- tapOn: { id: "count-qty" }
+- inputText: "20"
+- runFlow: subflows/an-ban-phim.yaml
+- tapOn: { id: "count-save" }
+- extendedWaitUntil:
+    visible: "Máy 22 · Đếm 20 · Lệch -2 chai"
+    timeout: 10000
+- takeScreenshot: "235-kiem-ke"
+- scrollUntilVisible:
+    element:
+      id: "finish-count"
+- tapOn: { id: "finish-count" }
+- tapOn: "Chốt và chỉnh kho"
+- extendedWaitUntil:
+    visible: ".*Đã chốt kiểm kê, tồn kho đã được chỉnh."
+    timeout: 10000
+- back
+- back
+- scrollUntilVisible:
+    element: ".*Còn 20 chai.*"
+- back
+
+# ---------- Thông báo doanh thu mẫu 01/TKN-CNKD ----------
+- extendedWaitUntil:
+    visible: "Hôm nay đã thu.*"
+    timeout: 10000
+- scrollUntilVisible:
+    element: "Việc khác.*"
+- tapOn: "Việc khác.*"
+- tapOn: "Thuế.*"
+- runFlow:
+    when:
+      visible: "Mã PIN chủ quán"
+    file: subflows/enter-pin.yaml
+- extendedWaitUntil:
+    visible: "Thuế của quán"
+    timeout: 10000
+- scrollUntilVisible:
+    element:
+      id: "open-form01"
+- tapOn: { id: "open-form01" }
+- extendedWaitUntil:
+    visible: "Thông báo doanh thu / Tờ khai thuế năm"
+    timeout: 10000
+- tapOn: { id: "form01-year-2026" }
+- tapOn: { id: "form01-taxpayer" }
+- inputText: "Nguyen Thi Ba"
+- runFlow: subflows/an-ban-phim.yaml
+- takeScreenshot: "236-mau-01"
+- scrollUntilVisible:
+    element:
+      id: "form01-pdf"
+- tapOn: { id: "form01-pdf" }
+- waitForAnimationToEnd:
+    timeout: 8000
+- takeScreenshot: "237-mau-01-pdf-chia-se"
+- back
+- extendedWaitUntil:
+    visible: "Tải Excel để sửa thêm"
+    timeout: 15000

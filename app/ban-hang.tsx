@@ -7,7 +7,10 @@ import { Button } from '../src/components/Button';
 import { ChoiceGrid, Field } from '../src/components/Choice';
 import { Empty, ErrorView, Loading } from '../src/components/States';
 import { useBusinessId, useSession, canManage } from '../src/features/session/store';
-import { useProducts, useScanResult, formatQty } from '../src/features/shop/hooks';
+import { useCategories, useProducts, useScanResult, formatQty } from '../src/features/shop/hooks';
+import { usePromotions } from '../src/features/promo/api';
+import { applyPromotions } from '../src/features/promo/engine';
+import { vnDay } from '../src/lib/time';
 import { findByBarcode, matchProduct } from '../src/features/shop/inventory';
 import { cartTotal, useSale, type CartLine } from '../src/features/sale/store';
 import { formatVND } from '../src/lib/money';
@@ -22,6 +25,15 @@ import type { Product } from '../src/types/api';
 export default function BanHang() {
   const businessId = useBusinessId();
   const role = useSession((s) => s.role);
+  const business = useSession((s) => s.business);
+  const promos = usePromotions(businessId);
+  // Giảm tay: chủ / quản lý, hoặc thu ngân khi quán cho phép
+  const canDiscount = canManage(role) || !!business?.allow_cashier_discount;
+  const [manualText, setManualText] = useState(() => {
+    const m = useSale.getState().pricing?.manualDiscount ?? 0;
+    return m > 0 ? String(m) : '';
+  });
+  const [showManual, setShowManual] = useState(manualText !== '');
   const products = useProducts(businessId);
   const initial = useSale.getState().cart;
   const [cart, setCart] = useState<CartLine[]>(initial);
@@ -30,19 +42,39 @@ export default function BanHang() {
   const { width } = useWindowDimensions();
   const columns = width >= 900 ? 4 : width >= 600 ? 3 : 2;
 
-  const cats = useMemo<string[]>(() => {
-    const names: string[] = [];
-    for (const p of products.data ?? []) if (p.category && !names.includes(p.category)) names.push(p.category);
-    return ['ALL', ...names.sort()];
-  }, [products.data]);
-  const shown = (products.data ?? []).filter((p) => (cat === 'ALL' || p.category === cat) && matchProduct(p, query));
-  const total = cartTotal(cart);
+  const categories = useCategories(businessId);
+  const cats = useMemo(() => {
+    const used = new Set((products.data ?? []).map((p) => p.category_id).filter(Boolean));
+    return [{ key: 'ALL', label: vi.catalog.all }, ...(categories.data ?? []).filter((c) => used.has(c.id)).map((c) => ({ key: c.id, label: c.name }))];
+  }, [products.data, categories.data]);
+  const shown = (products.data ?? []).filter((p) => (cat === 'ALL' || p.category_id === cat) && matchProduct(p, query));
+  const productMap = useMemo(
+    () =>
+      new Map<string, { name: string; price: number; category_id: string | null }>(
+        (products.data ?? []).map((p) => [p.id, { name: p.name, price: p.price, category_id: p.category_id ?? null }]),
+      ),
+    [products.data],
+  );
+  const pricing = useMemo(
+    () =>
+      applyPromotions(
+        cart.map((l) => ({ product_id: l.productId, category_id: l.categoryId ?? null, name: l.name, quantity: l.qty, unit_price: l.unitPrice })),
+        promos.data ?? [],
+        vnDay(),
+        productMap,
+        canDiscount ? Number(manualText || '0') : 0,
+      ),
+    [cart, promos.data, productMap, manualText, canDiscount],
+  );
+  const total = cart.length ? pricing.total : cartTotal(cart);
+  const saved = pricing.itemDiscount + pricing.orderDiscount.amount + pricing.manualDiscount;
   const count = cart.reduce((n, l) => n + l.qty, 0);
 
   const add = (id: string, name: string, price: number, delta: number) =>
     setCart((c) => {
       const has = c.find((l) => l.productId === id);
-      if (!has) return delta > 0 ? [...c, { productId: id, name, unitPrice: price, qty: delta }] : c;
+      const categoryId = productMap.get(id)?.category_id ?? null;
+      if (!has) return delta > 0 ? [...c, { productId: id, name, unitPrice: price, qty: delta, categoryId }] : c;
       return c.map((l) => (l.productId === id ? { ...l, qty: Math.max(l.qty + delta, 0) } : l)).filter((l) => l.qty > 0);
     });
 
@@ -57,7 +89,7 @@ export default function BanHang() {
   }, [scanned, products.data]);
 
   const checkout = () => {
-    useSale.getState().setCart(cart);
+    useSale.getState().setCart(cart, saved > 0 || pricing.lines.some((l) => l.is_gift) ? pricing : null);
     router.replace('/thu-tien');
   };
 
@@ -67,6 +99,11 @@ export default function BanHang() {
       maxWidth={1000}
       footer={
         <>
+          {saved > 0 ? (
+            <Txt variant="bodyStrong" tone="success" testID="cart-saved">
+              {vi.inv.youSave(formatVND(saved))}
+            </Txt>
+          ) : null}
           <View style={{ flexDirection: 'row', alignItems: 'center', gap: space.md }}>
             <Txt variant="bodyStrong" tone="secondary" style={{ flex: 1 }}>
               {vi.catalog.cartCount(formatQty(count))}
@@ -145,13 +182,38 @@ export default function BanHang() {
       </View>
       {cart.length > 0 ? (
         <Card style={{ gap: space.xs }}>
-          {cart.map((l) => (
-            <View key={l.productId} style={{ flexDirection: 'row', gap: space.md }}>
-              <Txt style={{ flex: 1 }}>{`${formatQty(l.qty)} × ${l.name}`}</Txt>
-              <Txt variant="bodyStrong">{formatVND(Math.round(l.qty * l.unitPrice))}</Txt>
+          {pricing.lines.map((l, i) => (
+            <View key={`${l.product_id}-${i}`} style={{ flexDirection: 'row', gap: space.md }}>
+              <Txt style={{ flex: 1 }} tone={l.is_gift ? 'success' : undefined}>
+                {l.is_gift
+                  ? vi.inv.giftLine(formatQty(l.quantity), l.name, pricing.applied.find((a) => a.promotion_id === l.promotion_id)?.name ?? '')
+                  : `${formatQty(l.quantity)} × ${l.name}`}
+              </Txt>
+              <Txt variant="bodyStrong">{formatVND(l.line_amount)}</Txt>
             </View>
           ))}
+          {pricing.applied
+            .filter((a) => !a.gift)
+            .map((a) => (
+              <Txt key={a.promotion_id} tone="success">
+                {vi.inv.discountLine(a.name, formatVND(a.amount))}
+              </Txt>
+            ))}
+          {pricing.manualDiscount > 0 ? <Txt tone="success">{vi.inv.discountLine(vi.inv.manualDiscountName, formatVND(pricing.manualDiscount))}</Txt> : null}
         </Card>
+      ) : null}
+      {cart.length > 0 && canDiscount ? (
+        showManual ? (
+          <Field
+            label={vi.inv.manualDiscount}
+            value={manualText}
+            onChangeText={(v) => setManualText(v.replace(/\D/g, '').replace(/^0+(?=\d)/, '').slice(0, 10))}
+            keyboardType="number-pad"
+            testID="manual-discount"
+          />
+        ) : (
+          <Button kind="link" label={vi.inv.manualDiscountBtn} onPress={() => setShowManual(true)} testID="open-manual-discount" />
+        )
       ) : null}
     </Screen>
   );

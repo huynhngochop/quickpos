@@ -2,7 +2,7 @@ import { FunctionsHttpError } from '@supabase/supabase-js';
 import { supabase } from '../../lib/supabase';
 import { callWithRetry, unwrap } from '../../lib/retry';
 import { AppError, toAppError } from '../../lib/errors';
-import type { Order, OrderItemInput, QrForOrder } from '../../types/api';
+import type { Order, OrderInput, QrForOrder } from '../../types/api';
 
 export const ORDER_COLS =
   'id, business_id, order_code, total_amount, amount_received, overpaid_amount, payment_method, payment_status, paid_at, manual_confirmed_by, manual_confirmed_at, manual_note, sold_at, client_sold_at, clock_suspect, created_device_id, created_by, created_at, updated_at';
@@ -10,7 +10,7 @@ export const ORDER_COLS =
 export async function createOrder(args: {
   orderId: string;
   businessId: string;
-  items: OrderItemInput[];
+  order: OrderInput;
   deviceId: string;
 }): Promise<Order> {
   return callWithRetry(async (signal) =>
@@ -19,7 +19,9 @@ export async function createOrder(args: {
         .rpc('create_order_v1', {
           p_order_id: args.orderId,
           p_business_id: args.businessId,
-          p_items: args.items,
+          p_items: args.order.items,
+          p_discount_amount: args.order.discount_amount,
+          p_promotion_id: args.order.promotion_id,
           p_payment_method: 'VIETQR',
           p_sold_at: new Date().toISOString(),
           p_device_id: args.deviceId,

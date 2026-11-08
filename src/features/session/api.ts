@@ -50,7 +50,7 @@ export async function recordConsent(): Promise<void> {
   );
 }
 
-const BUSINESS_COLS = 'id, business_name, tax_code, address, allow_cashier_manual_confirm, tax_industry, loyalty_vnd_per_point, einvoice_provider, invoice_form_no, invoice_symbol';
+const BUSINESS_COLS = 'id, business_name, tax_code, address, allow_cashier_manual_confirm, allow_cashier_discount, owner_name, tax_industry, loyalty_vnd_per_point, einvoice_provider, invoice_form_no, invoice_symbol';
 
 export async function myMemberships(userId: string): Promise<Membership[]> {
   return callWithRetry(async (signal) => {
@@ -120,13 +120,18 @@ export async function mainPaymentAccount(businessId: string): Promise<PaymentAcc
   });
 }
 
-export async function updateBusinessSettings(businessId: string, allowCashierManualConfirm: boolean): Promise<Business> {
+export async function updateBusinessSettings(
+  businessId: string,
+  allowCashierManualConfirm: boolean,
+  allowCashierDiscount?: boolean,
+): Promise<Business> {
   return callWithRetry(async (signal) =>
     unwrap(
       await supabase
         .rpc('update_business_settings_v1', {
           p_business_id: businessId,
           p_allow_cashier_manual_confirm: allowCashierManualConfirm,
+          ...(allowCashierDiscount === undefined ? {} : { p_allow_cashier_discount: allowCashierDiscount }),
         })
         .abortSignal(signal),
     ) as Business,

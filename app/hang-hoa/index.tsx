@@ -7,7 +7,7 @@ import { Button } from '../../src/components/Button';
 import { ChoiceGrid, Field } from '../../src/components/Choice';
 import { Empty, ErrorView, Loading } from '../../src/components/States';
 import { canManage, useBusinessId, useSession } from '../../src/features/session/store';
-import { useExpiringLots, useProducts, formatQty } from '../../src/features/shop/hooks';
+import { useCategories, useExpiringLots, useProducts, formatQty } from '../../src/features/shop/hooks';
 import { isLowStock, matchProduct, nearestExpiryByProduct } from '../../src/features/shop/inventory';
 import { formatVND } from '../../src/lib/money';
 import { space } from '../../src/theme/tokens';
@@ -26,6 +26,8 @@ export default function HangHoa() {
   const products = useProducts(businessId, true);
   const expiring = useExpiringLots(businessId);
   const [query, setQuery] = useState('');
+  const categories = useCategories(businessId);
+  const [cat, setCat] = useState<string>('ALL');
   const [filter, setFilter] = useState<Filter>(params.filter === 'EXPIRY' ? 'EXPIRY' : params.filter === 'LOW' ? 'LOW' : 'ALL');
 
   const rows = products.data ?? [];
@@ -34,6 +36,7 @@ export default function HangHoa() {
   const lowCount = rows.filter(isLowStock).length;
   const shown = rows.filter((p) => {
     if (!matchProduct(p, query)) return false;
+    if (cat !== 'ALL' && (cat === 'NONE' ? !!p.category_id : p.category_id !== cat)) return false;
     if (filter === 'LOW') return isLowStock(p);
     if (filter === 'EXPIRY') return nearest.has(p.id);
     if (filter === 'STOPPED') return !p.is_active;
@@ -67,6 +70,19 @@ export default function HangHoa() {
         <Button kind="secondary" label={vi.catalog.scan} onPress={() => router.push({ pathname: '/quet-ma', params: { mode: 'find' } })} style={{ flex: 1 }} />
         <Button kind="secondary" label={vi.catalog.stockReport} onPress={() => router.push('/hang-hoa/xuat-nhap-ton')} style={{ flex: 1 }} />
       </View>
+      <View style={{ flexDirection: 'row', gap: space.md }}>
+        <Button kind="secondary" label={vi.inv.newPurchase} onPress={() => router.push('/hang-hoa/nhap-hang')} style={{ flex: 1 }} testID="open-purchase" />
+        {manage ? (
+          <Button kind="secondary" label={vi.inv.counts} onPress={() => router.push('/kiem-ke')} style={{ flex: 1 }} testID="open-counts" />
+        ) : null}
+      </View>
+      {manage ? (
+        <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: space.md }}>
+          <Button kind="link" label={vi.inv.suppliers} onPress={() => router.push('/nha-cung-cap')} testID="open-suppliers" />
+          <Button kind="link" label={vi.inv.categories} onPress={() => router.push('/hang-hoa/danh-muc')} testID="open-categories" />
+          <Button kind="link" label={vi.inv.promos} onPress={() => router.push('/khuyen-mai')} testID="open-promos" />
+        </View>
+      ) : null}
 
       <Field label={vi.catalog.search} value={query} onChangeText={setQuery} maxLength={64} testID="product-search" />
       <ChoiceGrid
@@ -81,6 +97,19 @@ export default function HangHoa() {
         columns={2}
         testIdPrefix="product-filter"
       />
+      {(categories.data ?? []).length > 0 ? (
+        <ChoiceGrid
+          options={[
+            { key: 'ALL', label: vi.catalog.all },
+            ...(categories.data ?? []).map((c) => ({ key: c.id, label: c.name })),
+            { key: 'NONE', label: vi.inv.noCategory },
+          ]}
+          value={cat}
+          onChange={setCat}
+          columns={3}
+          testIdPrefix="product-cat"
+        />
+      ) : null}
 
       {products.isLoading ? <Loading /> : null}
       {products.error ? <ErrorView error={products.error} onRetry={() => void products.refetch()} /> : null}

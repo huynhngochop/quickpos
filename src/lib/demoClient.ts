@@ -160,6 +160,14 @@ const TABLES = {
   invoice_lines: [],
   /** Tổng ngày của các đơn đã chuyển vào kho lưu trữ (giữ báo cáo / thuế đủ số khi đơn cũ không còn trong bộ nhớ) */
   archived_daily_sales: [],
+  // Migration 9: danh mục, nhà cung cấp, phiếu nhập, công nợ NCC, khuyến mãi, kiểm kê
+  product_categories: [],
+  suppliers: [],
+  purchases: [],
+  supplier_payments: [],
+  promotions: [],
+  stock_counts: [],
+  stock_count_lines: [],
 } as Record<string, Row[]>;
 
 // ---------------- Theo dõi thay đổi để chỉ ghi phần đổi (không ghi lại cả kho mỗi lần bán) ----------------
@@ -423,6 +431,7 @@ export function attachRowStore(rs: RowStoreAdapter) {
       const m = meta ? (JSON.parse(meta) as { user: typeof user; arc?: typeof archiveInfo }) : null;
       user = m?.user ?? null;
       if (m?.arc) archiveInfo = { ...archiveInfo, ...m.arc };
+      migrateCategories();
     }
   } catch {
     // Kho lỗi: chạy với dữ liệu trống trong phiên này, không ghi đè kho cũ cho tới lần ghi kế tiếp
@@ -534,11 +543,18 @@ export function archiveOldOrders(now: number = Date.now()): number {
     move.push({ t: 'orders', k: o.id, o: o.id, d: `${o.business_id}|${day}`, j: JSON.stringify(o) });
     if (o.payment_status !== 'PAID') continue;
     const key = `${o.business_id}|${day}|${o.payment_method}`;
+    // Doanh thu theo nhóm ngành (mẫu 01/TKN-CNKD) giữ cùng tổng ngày
+    const groups = (o.tax_groups as Record<string, number> | null) ?? {
+      [(findRow('businesses', o.business_id) ?? db.businesses!.find((b) => b.id === o.business_id))?.tax_industry ?? 'GOODS']: o.total_amount,
+    };
     const r = findRow('archived_daily_sales', key);
-    if (r) Object.assign(r, { orders_count: r.orders_count + 1, amount: r.amount + o.total_amount });
-    else
+    if (r) {
+      const by = { ...(r.by_group ?? {}) } as Record<string, number>;
+      for (const [g, v] of Object.entries(groups)) by[g] = (by[g] ?? 0) + v;
+      Object.assign(r, { orders_count: r.orders_count + 1, amount: r.amount + o.total_amount, by_group: by });
+    } else
       db.archived_daily_sales!.push({
-        id: key, business_id: o.business_id, sale_date: day, method: o.payment_method, orders_count: 1, amount: o.total_amount,
+        id: key, business_id: o.business_id, sale_date: day, method: o.payment_method, orders_count: 1, amount: o.total_amount, by_group: { ...groups },
       });
   }
   const byTable = new Map<string, Set<string>>([['orders', ids]]);
@@ -750,14 +766,20 @@ function emitOrder(o: Row) {
   for (const l of orderListeners) l({ new: { ...o } });
 }
 
-function newOrder(bizId: string, items: Row[], method: string, deviceId: string | null, soldAt?: string): Row {
-  const total = items.reduce((s, i) => s + Math.round(Number(i.quantity) * Number(i.unit_price)), 0);
+/** Tiền một dòng sau giảm giá dòng (món tặng giá 0) */
+function lineAmountOf(i: Row): number {
+  const gross = Math.round(Number(i.quantity) * Number(i.unit_price));
+  return Math.max(gross - Math.max(Math.round(Number(i.discount_amount ?? 0)), 0), 0);
+}
+
+function newOrder(bizId: string, items: Row[], method: string, deviceId: string | null, soldAt?: string, discount = 0): Row {
+  const total = Math.max(items.reduce((s, i) => s + lineAmountOf(i), 0) - discount, 0);
   const t = nowIso();
   return {
     id: uid(), business_id: bizId, order_code: orderCode(), total_amount: total, amount_received: 0, overpaid_amount: 0,
     payment_method: method, payment_status: 'UNPAID', paid_at: null, manual_confirmed_by: null, manual_confirmed_at: null,
     manual_note: null, sold_at: soldAt ?? t, client_sold_at: soldAt ?? t, clock_suspect: false, created_device_id: deviceId,
-    created_by: user?.id ?? null, created_at: t, updated_at: t,
+    created_by: user?.id ?? null, created_at: t, updated_at: t, discount_amount: discount, promotion_id: null, discount_note: null, tax_groups: null,
   };
 }
 
@@ -776,7 +798,9 @@ function saveItems(orderId: string, items: Row[]) {
   for (const i of items) {
     const quantity = Number(i.quantity);
     const unit_price = Number(i.unit_price);
-    db.order_items!.push({ id: uid(), order_id: orderId, product_id: i.product_id ?? null, name: String(i.name).trim(), quantity, unit_price, line_amount: Math.round(quantity * unit_price) });
+    db.order_items!.push({ id: uid(), order_id: orderId, product_id: i.product_id ?? null, name: String(i.name).trim(), quantity, unit_price,
+      line_amount: lineAmountOf(i), discount_amount: Math.max(Math.round(Number(i.discount_amount ?? 0)), 0), promotion_id: i.promotion_id ?? null,
+      is_gift: !!i.is_gift });
   }
 }
 
@@ -784,11 +808,13 @@ function saveItems(orderId: string, items: Row[]) {
 function onPaid(o: Row) {
   const byProduct = new Map<string, number>();
   for (const it of orderItems(o.id).filter((x) => x.product_id)) byProduct.set(it.product_id, (byProduct.get(it.product_id) ?? 0) + it.quantity);
+  // Chỉ chạy một lần mỗi đơn (lúc đơn chuyển sang đã trả), nên không cần quét bảng phiếu kho để chống trùng
   for (const [pid, qty] of byProduct) {
-    const p = db.products!.find((x) => x.id === pid);
-    if (!p?.track_stock || db.stock_movements!.some((m) => m.kind === 'SALE' && m.order_id === o.id && m.product_id === pid)) continue;
-    db.stock_movements!.push({ id: uid(), business_id: o.business_id, product_id: pid, kind: 'SALE', qty: -qty, unit_cost: null, order_id: o.id, note: null, created_at: nowIso() });
-    p.stock_qty = Math.round((p.stock_qty - qty) * 1000) / 1000;
+    const p = findRow('products', pid);
+    if (!p?.track_stock) continue;
+    const cost = consumeLots(p, qty);
+    db.stock_movements!.push({ id: uid(), business_id: o.business_id, product_id: pid, kind: 'SALE', qty: -qty, unit_cost: cost, order_id: o.id, note: null, created_at: nowIso() });
+    p.stock_qty = round3(p.stock_qty - qty);
     trimLots(p);
   }
   awardPoints(o);
@@ -1041,10 +1067,477 @@ class Query implements PromiseLike<Result> {
   }
 }
 
+
+// ---------------- Danh mục, nhà cung cấp, phiếu nhập, khuyến mãi, kiểm kê (bản lưu trên máy, như migration 9) ----------------
+const memberOf = (bizId: string) => db.business_members!.find((m) => m.business_id === bizId && m.user_id === user?.id);
+const isManager = (bizId: string) => ['OWNER', 'MANAGER'].includes(memberOf(bizId)?.role ?? '');
+const round3 = (n: number) => Math.round(n * 1000) / 1000;
+const TAX_GROUPS = ['GOODS', 'SERVICE', 'LEASING', 'PRODUCTION', 'DIGITAL', 'OTHER'];
+const VALID_DAY = /^\d{4}-\d{2}-\d{2}$/;
+const cleanText = (v: unknown, max: number): string | null => {
+  const s = typeof v === 'string' ? v.trim() : '';
+  return s ? s.slice(0, max) : null;
+};
+
+/** Lô của một mặt hàng còn hàng, theo thứ tự xuất: hết hạn sớm trước, rồi nhập trước */
+function openLots(productId: string): Row[] {
+  return db.stock_lots!
+    .filter((l) => l.product_id === productId && l.qty_left > 0)
+    .sort((a, b) => (a.expires_on ?? '9999').localeCompare(b.expires_on ?? '9999') || a.created_at.localeCompare(b.created_at));
+}
+
+/**
+ * Bán / xuất qty: trừ phần tồn không thuộc lô nào trước (hàng cũ trước khi có lô), rồi trừ lô theo thứ tự xuất.
+ * Trả giá vốn bình quân của phần đã xuất (null nếu không biết giá nhập nào).
+ */
+function consumeLots(p: Row, qty: number): number | null {
+  const lots = openLots(p.id);
+  const inLots = lots.reduce((t, l) => t + l.qty_left, 0);
+  let rest = qty;
+  let cost = 0;
+  let known = false;
+  const fallback = typeof p.cost_price === 'number' ? p.cost_price : null;
+  const loose = Math.min(Math.max(round3(p.stock_qty - inLots), 0), rest);
+  if (loose > 0) {
+    if (fallback != null) { cost += loose * fallback; known = true; }
+    rest = round3(rest - loose);
+  }
+  for (const l of lots) {
+    if (rest <= 0) break;
+    const take = Math.min(l.qty_left, rest);
+    l.qty_left = round3(l.qty_left - take);
+    rest = round3(rest - take);
+    const c = typeof l.unit_cost === 'number' ? l.unit_cost : fallback;
+    if (c != null) { cost += take * c; known = true; }
+  }
+  if (rest > 0 && fallback != null) { cost += rest * fallback; known = true; }
+  return known && qty > 0 ? Math.round(cost / qty) : null;
+}
+
+/** Nhóm ngành tính thuế của từng dòng (theo danh mục có đặt nhóm riêng), chia giảm giá cả đơn theo tỷ lệ. Null = cả đơn theo ngành của quán. */
+function orderTaxGroups(bizId: string, items: Row[], orderDiscount: number): Record<string, number> | null {
+  const cats = db.product_categories!.filter((c) => c.business_id === bizId && c.tax_group && !c.archived_at);
+  if (cats.length === 0) return null;
+  const biz = findRow('businesses', bizId) ?? db.businesses!.find((b) => b.id === bizId);
+  const base = (biz?.tax_industry as string) ?? 'GOODS';
+  const out: Record<string, number> = {};
+  let sum = 0;
+  for (const i of items) {
+    const amt = lineAmountOf(i);
+    if (amt <= 0) continue;
+    const p = i.product_id ? findRow('products', i.product_id) : undefined;
+    const c = p?.category_id ? findRow('product_categories', p.category_id) : undefined;
+    const g = (c && !c.archived_at && c.tax_group) || base;
+    out[g] = (out[g] ?? 0) + amt;
+    sum += amt;
+  }
+  if (orderDiscount > 0 && sum > 0) {
+    let left = orderDiscount;
+    const keys = Object.keys(out);
+    keys.forEach((k, idx) => {
+      const cut = idx === keys.length - 1 ? left : Math.round((orderDiscount * out[k]!) / sum);
+      out[k] = out[k]! - cut;
+      left -= cut;
+    });
+  }
+  return Object.keys(out).length > 1 || !out[base] ? out : null;
+}
+
+function ensureCategory(bizId: string, name: string): Row {
+  const key = name.trim().toLowerCase();
+  const found = db.product_categories!.find((c) => c.business_id === bizId && !c.archived_at && String(c.name).toLowerCase() === key);
+  if (found) return found;
+  const sort = db.product_categories!.filter((c) => c.business_id === bizId).length;
+  db.product_categories!.push({ id: uid(), business_id: bizId, name: name.trim().slice(0, 50), sort_order: sort, tax_group: null,
+    track_expiry_default: false, archived_at: null, created_at: nowIso() });
+  return db.product_categories![db.product_categories!.length - 1]!;
+}
+
+/** Hàng cũ chỉ có tên danh mục dạng chữ: tạo danh mục và gắn mã (chạy khi mở app, gọi lại không sao) */
+export function migrateCategories() {
+  for (const p of db.products ?? []) {
+    if (p.category_id || !p.category || typeof p.category !== 'string') continue;
+    p.category_id = ensureCategory(p.business_id, p.category).id;
+  }
+}
+
+function supplierBalance(supplierId: string): { purchased: number; paid: number; balance: number } {
+  let purchased = 0;
+  let paid = 0;
+  for (const x of db.purchases!) if (x.supplier_id === supplierId) purchased += x.total_amount;
+  for (const x of db.supplier_payments!) if (x.supplier_id === supplierId && !x.voided_at) paid += x.amount;
+  return { purchased, paid, balance: purchased - paid };
+}
+
+/** Phiếu nhập: nhiều mặt hàng, mỗi dòng thành một lô (giá nhập, nhà cung cấp, hạn dùng). Gửi lại cùng mã phiếu không nhập hai lần. */
+function createPurchase(a: Row): Result {
+  if (!user) return fail('QP_UNAUTHENTICATED');
+  const bizId = a.p_business_id;
+  if (!memberOf(bizId)) return fail('QP_FORBIDDEN');
+  const existing = findRow('purchases', a.p_purchase_id);
+  if (existing) return ok({ ...existing });
+  const lines = Array.isArray(a.p_lines) ? (a.p_lines as Row[]) : [];
+  if (!a.p_purchase_id || lines.length === 0 || lines.length > 200) return fail('QP_INVALID_INPUT');
+  let supplier: Row | undefined;
+  if (a.p_supplier_id) {
+    supplier = findRow('suppliers', a.p_supplier_id);
+    if (!supplier || supplier.business_id !== bizId || supplier.archived_at) return fail('QP_NOT_FOUND');
+  }
+  const day = a.p_purchased_on ?? vnDay();
+  if (!VALID_DAY.test(day) || day > vnDay()) return fail('QP_INVALID_INPUT');
+  const checked: { p: Row; l: Row; qty: number; cost: number | null }[] = [];
+  const seen = new Set<string>();
+  for (const l of lines) {
+    const p = findRow('products', l.product_id);
+    if (!p || p.business_id !== bizId || p.archived_at) return fail('QP_NOT_FOUND');
+    const qty = Number(l.qty);
+    const cost = l.unit_cost == null || l.unit_cost === '' ? null : Number(l.unit_cost);
+    if (!l.movement_id || seen.has(l.movement_id) || !(qty > 0 && qty <= 1_000_000) || (cost != null && !(cost >= 0 && Number.isInteger(cost))))
+      return fail('QP_INVALID_INPUT');
+    if (l.expires_on != null && !VALID_DAY.test(l.expires_on)) return fail('QP_INVALID_INPUT');
+    if (p.track_expiry && !l.expires_on) return fail('QP_EXPIRY_REQUIRED');
+    if (findRow('stock_movements', l.movement_id)) return fail('QP_INVALID_INPUT');
+    seen.add(l.movement_id);
+    checked.push({ p, l, qty, cost });
+  }
+  const total = checked.reduce((t, x) => t + (x.cost == null ? 0 : Math.round(x.qty * x.cost)), 0);
+  // Không có nhà cung cấp thì không có công nợ: coi như trả đủ
+  const paid = supplier ? Math.round(Number(a.p_paid_amount ?? 0)) : total;
+  if (!(paid >= 0 && paid <= total)) return fail('QP_INVALID_INPUT');
+  const t = nowIso();
+  for (const { p, l, qty, cost } of checked) {
+    db.stock_movements!.push({ id: l.movement_id, business_id: bizId, product_id: p.id, kind: 'IN', qty, unit_cost: cost, order_id: null,
+      note: cleanText(l.note ?? a.p_note, 200), reason: null, lot_id: l.movement_id, supplier_id: supplier?.id ?? null, purchase_id: a.p_purchase_id,
+      count_id: null, created_at: t });
+    db.stock_lots!.push({ id: l.movement_id, business_id: bizId, product_id: p.id, expires_on: l.expires_on ?? null, qty_in: qty, qty_left: qty,
+      unit_cost: cost, supplier_id: supplier?.id ?? null, purchase_id: a.p_purchase_id, received_on: day, created_at: t });
+    p.stock_qty = round3(p.stock_qty + qty);
+    p.track_stock = true;
+    if (cost != null) p.cost_price = cost;
+    if (supplier && !p.supplier_id) p.supplier_id = supplier.id;
+  }
+  const row = { id: a.p_purchase_id, business_id: bizId, supplier_id: supplier?.id ?? null, purchased_on: day, total_amount: total, paid_amount: paid,
+    line_count: checked.length, note: cleanText(a.p_note, 200), created_by: user.id, created_at: t };
+  db.purchases!.push(row);
+  if (supplier && paid > 0) {
+    db.supplier_payments!.push({ id: a.p_purchase_id, business_id: bizId, supplier_id: supplier.id, amount: paid, paid_on: day,
+      note: 'Trả khi nhập hàng', purchase_id: a.p_purchase_id, created_by: user.id, created_at: t, voided_at: null });
+  }
+  const expense = supplier ? paid : total;
+  if (a.p_record_expense && expense > 0) {
+    db.journal_entries!.push({ id: uid(), business_id: bizId, entry_type: 'EXPENSE', amount: expense, category: 'Nhập hàng',
+      description: supplier ? `Nhập hàng · ${supplier.name}` : `Nhập ${checked.length} mặt hàng`, source: 'MANUAL', source_id: a.p_purchase_id,
+      entry_date: day, created_at: t, voided_at: null });
+  }
+  return ok({ ...row });
+}
+
+function inventoryRpc(name: string, a: Row): Result | undefined {
+  switch (name) {
+    // ----- Danh mục -----
+    case 'upsert_category_v1': {
+      if (!isManager(a.p_business_id)) return fail('QP_FORBIDDEN');
+      const nm = cleanText(a.p_name, 51);
+      if (!nm || nm.length > 50 || (a.p_tax_group != null && !TAX_GROUPS.includes(a.p_tax_group))) return fail('QP_INVALID_INPUT');
+      const dup = db.product_categories!.some((c) => c.business_id === a.p_business_id && !c.archived_at && c.id !== a.p_category_id
+        && String(c.name).toLowerCase() === nm.toLowerCase());
+      if (dup) return fail('QP_DUPLICATE_NAME');
+      let c = findRow('product_categories', a.p_category_id);
+      if (c && (c.business_id !== a.p_business_id || c.archived_at)) return fail('QP_NOT_FOUND');
+      const fields = { name: nm, sort_order: Number.isInteger(a.p_sort_order) ? a.p_sort_order : c?.sort_order ?? 0, tax_group: a.p_tax_group ?? null,
+        track_expiry_default: !!a.p_track_expiry_default };
+      if (c) {
+        Object.assign(c, fields);
+        for (const p of db.products!) if (p.category_id === c.id) p.category = nm;
+      } else {
+        db.product_categories!.push({ id: a.p_category_id, business_id: a.p_business_id, archived_at: null, created_at: nowIso(), ...fields });
+        c = findRow('product_categories', a.p_category_id)!;
+      }
+      return ok({ ...c });
+    }
+    case 'archive_category_v1': {
+      const c = findRow('product_categories', a.p_category_id);
+      if (!c) return fail('QP_NOT_FOUND');
+      if (!isManager(c.business_id)) return fail('QP_FORBIDDEN');
+      if (!c.archived_at) {
+        c.archived_at = nowIso();
+        for (const p of db.products!) if (p.category_id === c.id) Object.assign(p, { category_id: null, category: null });
+      }
+      return ok({ ...c });
+    }
+
+    // ----- Nhà cung cấp -----
+    case 'upsert_supplier_v1': {
+      if (!isManager(a.p_business_id)) return fail('QP_FORBIDDEN');
+      const nm = cleanText(a.p_name, 101);
+      const phone = cleanText(a.p_phone, 21);
+      if (!nm || nm.length > 100 || (phone && !/^[0-9+ .-]{6,20}$/.test(phone))
+        || (a.p_tax_code && !/^[0-9]{10}([0-9]{2}|-[0-9]{3})?$/.test(a.p_tax_code))) return fail('QP_INVALID_INPUT');
+      let s = findRow('suppliers', a.p_supplier_id);
+      if (s && (s.business_id !== a.p_business_id || s.archived_at)) return fail('QP_NOT_FOUND');
+      const fields = { name: nm, phone, address: cleanText(a.p_address, 200), tax_code: a.p_tax_code || null, note: cleanText(a.p_note, 200) };
+      if (s) Object.assign(s, fields);
+      else {
+        db.suppliers!.push({ id: a.p_supplier_id, business_id: a.p_business_id, archived_at: null, created_at: nowIso(), ...fields });
+        s = findRow('suppliers', a.p_supplier_id)!;
+      }
+      return ok({ ...s });
+    }
+    case 'archive_supplier_v1': {
+      const s = findRow('suppliers', a.p_supplier_id);
+      if (!s) return fail('QP_NOT_FOUND');
+      if (!isManager(s.business_id)) return fail('QP_FORBIDDEN');
+      if (!s.archived_at) s.archived_at = nowIso();
+      for (const p of db.products!) if (p.supplier_id === s.id) p.supplier_id = null;
+      return ok({ ...s });
+    }
+    case 'supplier_balances': {
+      if (!memberOf(a.p_business_id)) return ok([]);
+      return ok(db.suppliers!
+        .filter((s) => s.business_id === a.p_business_id && !s.archived_at)
+        .map((s) => {
+          const b = supplierBalance(s.id);
+          const last = db.purchases!.reduce<string | null>((m, x) => (x.supplier_id === s.id && (!m || x.purchased_on > m) ? x.purchased_on : m), null);
+          return { supplier_id: s.id, name: s.name, phone: s.phone, ...b, last_purchase_on: last };
+        })
+        .sort((x, y) => y.balance - x.balance || x.name.localeCompare(y.name)));
+    }
+    case 'supplier_detail': {
+      const s = findRow('suppliers', a.p_supplier_id);
+      if (!s || !memberOf(s.business_id)) return fail('QP_NOT_FOUND');
+      const products = new Map<string, Row>();
+      for (const l of db.stock_lots!) {
+        if (l.supplier_id !== s.id) continue;
+        const p = findRow('products', l.product_id);
+        if (!p) continue;
+        const r = products.get(p.id) ?? { product_id: p.id, name: p.name, unit: p.unit, qty_total: 0, last_cost: null, last_on: null, archived: !!p.archived_at };
+        r.qty_total = round3(r.qty_total + l.qty_in);
+        if (!r.last_on || l.received_on >= r.last_on) Object.assign(r, { last_on: l.received_on, last_cost: l.unit_cost ?? r.last_cost });
+        products.set(p.id, r);
+      }
+      const purchases = db.purchases!.filter((x) => x.supplier_id === s.id)
+        .sort((x, y) => y.purchased_on.localeCompare(x.purchased_on) || y.created_at.localeCompare(x.created_at)).slice(0, 100);
+      const payments = db.supplier_payments!.filter((x) => x.supplier_id === s.id)
+        .sort((x, y) => y.paid_on.localeCompare(x.paid_on) || y.created_at.localeCompare(x.created_at)).slice(0, 100);
+      return ok({ supplier: { ...s }, ...supplierBalance(s.id), purchases, payments,
+        products: [...products.values()].sort((x, y) => (y.last_on ?? '').localeCompare(x.last_on ?? '')) });
+    }
+    case 'product_suppliers': {
+      const p = findRow('products', a.p_product_id);
+      if (!p || !memberOf(p.business_id)) return ok([]);
+      const map = new Map<string, Row>();
+      for (const l of db.stock_lots!) {
+        if (l.product_id !== p.id || !l.supplier_id) continue;
+        const s = findRow('suppliers', l.supplier_id);
+        if (!s) continue;
+        const r = map.get(s.id) ?? { supplier_id: s.id, name: s.name, qty_total: 0, last_cost: null, last_on: null, is_default: p.supplier_id === s.id };
+        r.qty_total = round3(r.qty_total + l.qty_in);
+        if (!r.last_on || l.received_on >= r.last_on) Object.assign(r, { last_on: l.received_on, last_cost: l.unit_cost ?? r.last_cost });
+        map.set(s.id, r);
+      }
+      return ok([...map.values()].sort((x, y) => (y.last_on ?? '').localeCompare(x.last_on ?? '')));
+    }
+    case 'pay_supplier_v1': {
+      const s = findRow('suppliers', a.p_supplier_id);
+      if (!s || s.archived_at) return fail('QP_NOT_FOUND');
+      if (!isManager(s.business_id)) return fail('QP_FORBIDDEN');
+      if (findRow('supplier_payments', a.p_payment_id)) return ok({ ...findRow('supplier_payments', a.p_payment_id)! });
+      const amt = Number(a.p_amount);
+      const day = a.p_paid_on ?? vnDay();
+      if (!(amt > 0 && Number.isInteger(amt)) || !VALID_DAY.test(day) || day > vnDay()) return fail('QP_INVALID_INPUT');
+      const row = { id: a.p_payment_id, business_id: s.business_id, supplier_id: s.id, amount: amt, paid_on: day, note: cleanText(a.p_note, 200),
+        purchase_id: null, created_by: user!.id, created_at: nowIso(), voided_at: null };
+      db.supplier_payments!.push(row);
+      if (a.p_record_expense) {
+        db.journal_entries!.push({ id: uid(), business_id: s.business_id, entry_type: 'EXPENSE', amount: amt, category: 'Nhập hàng',
+          description: `Trả nợ ${s.name}`, source: 'MANUAL', source_id: a.p_payment_id, entry_date: day, created_at: nowIso(), voided_at: null });
+      }
+      return ok({ ...row });
+    }
+    case 'void_supplier_payment_v1': {
+      const x = findRow('supplier_payments', a.p_payment_id);
+      if (!x) return fail('QP_NOT_FOUND');
+      if (!isManager(x.business_id)) return fail('QP_FORBIDDEN');
+      if (!x.voided_at) {
+        x.voided_at = nowIso();
+        for (const j of db.journal_entries!) if (j.source_id === x.id && j.category === 'Nhập hàng' && !j.voided_at) j.voided_at = nowIso();
+      }
+      return ok({ ...x });
+    }
+    case 'create_purchase_v1':
+      return createPurchase(a);
+
+    // ----- Khuyến mãi -----
+    case 'upsert_promotion_v1': {
+      if (!isManager(a.p_business_id)) return fail('QP_FORBIDDEN');
+      const nm = cleanText(a.p_name, 81);
+      const kind = a.p_kind;
+      const pct = a.p_percent == null ? null : Number(a.p_percent);
+      const amt = a.p_amount == null ? null : Number(a.p_amount);
+      const prod = (id: unknown) => (typeof id === 'string' ? findRow('products', id) : undefined);
+      const okProd = (id: unknown) => { const p = prod(id); return !!p && p.business_id === a.p_business_id && !p.archived_at; };
+      const oneValue = (pct != null) !== (amt != null) && (pct == null || (Number.isInteger(pct) && pct >= 1 && pct <= 100))
+        && (amt == null || (Number.isInteger(amt) && amt > 0));
+      let valid = !!nm && nm.length <= 80 && ['ITEM_DISCOUNT', 'BUY_X_GET_Y', 'ORDER_DISCOUNT'].includes(kind);
+      if (kind === 'ITEM_DISCOUNT') {
+        const cat = a.p_category_id ? findRow('product_categories', a.p_category_id) : undefined;
+        valid &&= oneValue && (a.p_product_id ? okProd(a.p_product_id) && !a.p_category_id : !!cat && cat.business_id === a.p_business_id && !cat.archived_at);
+      }
+      if (kind === 'BUY_X_GET_Y') {
+        valid &&= okProd(a.p_product_id) && okProd(a.p_get_product_id ?? a.p_product_id)
+          && Number.isInteger(a.p_buy_qty) && a.p_buy_qty >= 1 && Number.isInteger(a.p_get_qty) && a.p_get_qty >= 1;
+      }
+      if (kind === 'ORDER_DISCOUNT') valid &&= oneValue && Number.isInteger(a.p_min_total ?? 0) && (a.p_min_total ?? 0) >= 0;
+      if (a.p_starts_on && !VALID_DAY.test(a.p_starts_on)) valid = false;
+      if (a.p_ends_on && !VALID_DAY.test(a.p_ends_on)) valid = false;
+      if (a.p_starts_on && a.p_ends_on && a.p_starts_on > a.p_ends_on) valid = false;
+      if (!valid) return fail('QP_INVALID_INPUT');
+      let x = findRow('promotions', a.p_promotion_id);
+      if (x && (x.business_id !== a.p_business_id || x.archived_at)) return fail('QP_NOT_FOUND');
+      const fields = {
+        name: nm, kind, percent: kind === 'BUY_X_GET_Y' ? null : pct, amount: kind === 'BUY_X_GET_Y' ? null : amt,
+        product_id: kind === 'ORDER_DISCOUNT' ? null : a.p_product_id ?? null, category_id: kind === 'ITEM_DISCOUNT' ? a.p_category_id ?? null : null,
+        buy_qty: kind === 'BUY_X_GET_Y' ? a.p_buy_qty : null, get_qty: kind === 'BUY_X_GET_Y' ? a.p_get_qty : null,
+        get_product_id: kind === 'BUY_X_GET_Y' ? a.p_get_product_id ?? a.p_product_id : null,
+        min_total: kind === 'ORDER_DISCOUNT' ? a.p_min_total ?? 0 : null,
+        starts_on: a.p_starts_on ?? null, ends_on: a.p_ends_on ?? null, is_active: a.p_is_active !== false,
+      };
+      if (x) Object.assign(x, fields);
+      else {
+        db.promotions!.push({ id: a.p_promotion_id, business_id: a.p_business_id, archived_at: null, created_at: nowIso(), ...fields });
+        x = findRow('promotions', a.p_promotion_id)!;
+      }
+      return ok({ ...x });
+    }
+    case 'archive_promotion_v1': {
+      const x = findRow('promotions', a.p_promotion_id);
+      if (!x) return fail('QP_NOT_FOUND');
+      if (!isManager(x.business_id)) return fail('QP_FORBIDDEN');
+      if (!x.archived_at) Object.assign(x, { archived_at: nowIso(), is_active: false });
+      return ok({ ...x });
+    }
+
+    // ----- Kiểm kê -----
+    case 'start_stock_count_v1': {
+      if (!isManager(a.p_business_id)) return fail('QP_FORBIDDEN');
+      const same = findRow('stock_counts', a.p_count_id);
+      if (same) return same.business_id === a.p_business_id ? ok({ ...same }) : fail('QP_NOT_FOUND');
+      if (db.stock_counts!.some((c) => c.business_id === a.p_business_id && c.status === 'OPEN')) return fail('QP_COUNT_ALREADY_OPEN');
+      const row = { id: a.p_count_id, business_id: a.p_business_id, status: 'OPEN', note: cleanText(a.p_note, 200), started_at: nowIso(),
+        finished_at: null, created_by: user!.id, lines_total: 0, lines_diff: 0, value_diff: 0 };
+      db.stock_counts!.push(row);
+      return ok({ ...row });
+    }
+    case 'count_line_v1': {
+      const c = findRow('stock_counts', a.p_count_id);
+      if (!c || !memberOf(c.business_id)) return fail('QP_NOT_FOUND');
+      if (c.status !== 'OPEN') return fail('QP_COUNT_CLOSED');
+      const p = findRow('products', a.p_product_id);
+      const q = Number(a.p_counted_qty);
+      if (!p || p.business_id !== c.business_id || p.archived_at) return fail('QP_NOT_FOUND');
+      if (!(q >= 0 && q <= 1_000_000)) return fail('QP_INVALID_INPUT');
+      const id = `${c.id}:${p.id}`;
+      const fields = { expected_qty: p.stock_qty, counted_qty: round3(q), diff: round3(q - p.stock_qty), counted_at: nowIso(), counted_by: user!.id };
+      const cur = findRow('stock_count_lines', id);
+      if (cur) Object.assign(cur, fields);
+      else db.stock_count_lines!.push({ id, count_id: c.id, business_id: c.business_id, product_id: p.id, ...fields });
+      return ok({ ...findRow('stock_count_lines', id)! });
+    }
+    case 'finish_stock_count_v1':
+    case 'cancel_stock_count_v1': {
+      const c = findRow('stock_counts', a.p_count_id);
+      if (!c) return fail('QP_NOT_FOUND');
+      if (!isManager(c.business_id)) return fail('QP_FORBIDDEN');
+      if (c.status !== 'OPEN') return ok({ ...c });
+      if (name === 'cancel_stock_count_v1') {
+        Object.assign(c, { status: 'CANCELLED', finished_at: nowIso() });
+        return ok({ ...c });
+      }
+      const lines = db.stock_count_lines!.filter((l) => l.count_id === c.id);
+      let diffs = 0;
+      let value = 0;
+      for (const l of lines) {
+        if (l.diff === 0) continue;
+        const p = findRow('products', l.product_id);
+        if (!p) continue;
+        diffs++;
+        value += Math.round(l.diff * (p.cost_price ?? 0));
+        // Áp chênh lệch lúc đếm vào tồn hiện tại (hàng bán sau khi đếm vẫn được trừ đúng)
+        db.stock_movements!.push({ id: `${c.id}:${p.id}`, business_id: c.business_id, product_id: p.id, kind: 'COUNT', qty: l.diff, unit_cost: p.cost_price ?? null,
+          order_id: null, note: 'Kiểm kê', reason: null, lot_id: null, supplier_id: null, purchase_id: null, count_id: c.id, created_at: nowIso() });
+        p.stock_qty = round3(p.stock_qty + l.diff);
+        p.track_stock = true;
+        if (l.diff < 0) trimLots(p);
+      }
+      Object.assign(c, { status: 'DONE', finished_at: nowIso(), lines_total: lines.length, lines_diff: diffs, value_diff: value });
+      return ok({ ...c });
+    }
+    case 'stock_count_detail': {
+      const c = findRow('stock_counts', a.p_count_id);
+      if (!c || !memberOf(c.business_id)) return fail('QP_NOT_FOUND');
+      const lines: Row[] = db.stock_count_lines!.filter((l) => l.count_id === c.id).map((l) => {
+        const p = findRow('products', l.product_id);
+        return { ...l, name: p?.name ?? '', unit: p?.unit ?? '', category_id: p?.category_id ?? null, cost_price: p?.cost_price ?? null } as Row;
+      }).sort((x, y) => String(x.name).localeCompare(String(y.name)));
+      const counted = new Set(lines.map((l) => l.product_id));
+      const pending = c.status === 'OPEN'
+        ? db.products!.filter((p) => p.business_id === c.business_id && !p.archived_at && p.track_stock && !counted.has(p.id))
+          .map((p) => ({ product_id: p.id, name: p.name, unit: p.unit, stock_qty: p.stock_qty, category_id: p.category_id ?? null, barcode: p.barcode ?? null }))
+          .sort((x, y) => x.name.localeCompare(y.name))
+        : [];
+      return ok({ count: { ...c }, lines, pending });
+    }
+
+    // ----- Thông báo doanh thu (mẫu 01/TKN-CNKD) -----
+    case 'revenue_notice': {
+      const b = db.businesses!.find((x) => x.id === a.p_business_id);
+      if (!b || !isManager(b.id)) return fail('QP_FORBIDDEN');
+      const from = a.p_from_day as string;
+      const to = a.p_to_day as string;
+      if (!VALID_DAY.test(from) || !VALID_DAY.test(to) || from > to) return fail('QP_INVALID_INPUT');
+      const base = (b.tax_industry as string) ?? 'GOODS';
+      const groups: Record<string, number> = {};
+      const add = (g: string, v: number) => { groups[g] = (groups[g] ?? 0) + v; };
+      let total = 0;
+      let orders = 0;
+      for (const r of db.archived_daily_sales!) {
+        if (r.business_id !== b.id || r.sale_date < from || r.sale_date > to) continue;
+        total += r.amount;
+        orders += r.orders_count;
+        const by = (r.by_group ?? null) as Record<string, number> | null;
+        if (by) for (const [g, v] of Object.entries(by)) add(g, v);
+        else add(base, r.amount);
+      }
+      for (let d = from, guard = 0; d <= to && guard < 800; d = addDays(d, 1), guard++) {
+        for (const o of ordersByDay.get(`${b.id}|${d}`) ?? []) {
+          if (o.payment_status !== 'PAID') continue;
+          total += o.total_amount;
+          orders += 1;
+          const by = o.tax_groups as Record<string, number> | null;
+          if (by) for (const [g, v] of Object.entries(by)) add(g, v);
+          else add(base, o.total_amount);
+        }
+      }
+      if (b.id === bulkBiz) {
+        for (const r of bulkDailySales(from, to)) {
+          total += r.amount;
+          orders += r.orders_count;
+          add(base, r.amount);
+        }
+      }
+      return ok({ business_name: b.business_name, owner_name: b.owner_name ?? null, tax_code: b.tax_code, address: b.address, tax_industry: base,
+        from, to, total, orders, by_group: groups });
+    }
+  }
+  return undefined;
+}
+
 // ---------------- Hàm RPC ----------------
 function rpcImpl(name: string, a: Row): Result {
   const needUser = () => (user ? null : fail('QP_UNAUTHENTICATED'));
   const member = (bizId: string) => db.business_members!.find((m) => m.business_id === bizId && m.user_id === user?.id);
+  const inv = inventoryRpc(name, a);
+  if (inv) return inv;
 
   switch (name) {
     case 'check_app_version_v1':
@@ -1065,7 +1558,7 @@ function rpcImpl(name: string, a: Row): Result {
       if (!/^[0-9]{10}([0-9]{2}|-[0-9]{3})?$/.test(a.p_tax_code ?? '')) return fail('QP_INVALID_INPUT');
       const b = {
         id: a.p_business_id, owner_id: user!.id, business_name: String(a.p_business_name).trim(), tax_code: a.p_tax_code,
-        address: String(a.p_address).trim(), allow_cashier_manual_confirm: true, tax_industry: 'GOODS', loyalty_vnd_per_point: 10000, einvoice_provider: 'NONE', invoice_form_no: '2', invoice_symbol: null,
+        address: String(a.p_address).trim(), allow_cashier_manual_confirm: true, allow_cashier_discount: false, owner_name: null, tax_industry: 'GOODS', loyalty_vnd_per_point: 10000, einvoice_provider: 'NONE', invoice_form_no: '2', invoice_symbol: null,
         bank_account_name: SAMPLE ? 'NGUYEN THI BA' : null,
       };
       db.businesses!.push(b);
@@ -1074,6 +1567,7 @@ function rpcImpl(name: string, a: Row): Result {
         seedBusiness(b.id);
         seedBooks(b.id);
         seedShop(b.id);
+        migrateCategories();
       }
       return ok(b);
     }
@@ -1120,6 +1614,7 @@ function rpcImpl(name: string, a: Row): Result {
       if (!m || !['OWNER', 'MANAGER'].includes(m.role)) return fail('QP_FORBIDDEN');
       const b = db.businesses!.find((x) => x.id === a.p_business_id)!;
       b.allow_cashier_manual_confirm = a.p_allow_cashier_manual_confirm;
+      if (typeof a.p_allow_cashier_discount === 'boolean') b.allow_cashier_discount = a.p_allow_cashier_discount;
       return ok(b);
     }
 
@@ -1137,8 +1632,31 @@ function rpcImpl(name: string, a: Row): Result {
       const items = (a.p_items ?? []) as Row[];
       if (items.length === 0) return fail('QP_INVALID_ITEMS');
       const cash = name === 'create_cash_sale_v1';
-      const o = newOrder(a.p_business_id, items, cash ? 'CASH' : 'VIETQR', a.p_device_id ?? null, a.p_sold_at);
+      // Giảm giá: dòng (khuyến mãi theo món) và cả đơn; giảm tay (không theo chương trình) chỉ chủ / quản lý hoặc khi quán cho phép
+      const role = member(a.p_business_id)!.role;
+      const biz = db.businesses!.find((x) => x.id === a.p_business_id);
+      const canManual = ['OWNER', 'MANAGER'].includes(role) || !!biz?.allow_cashier_discount;
+      let subtotal = 0;
+      let manual = false;
+      for (const i of items) {
+        const q = Number(i.quantity);
+        const price = Number(i.unit_price);
+        const d = Number(i.discount_amount ?? 0);
+        if (!(q > 0) || !(price >= 0) || !(d >= 0) || d > Math.round(q * price) || (i.is_gift && price !== 0)) return fail('QP_INVALID_ITEMS');
+        if (i.promotion_id && findRow('promotions', i.promotion_id)?.business_id !== a.p_business_id) return fail('QP_INVALID_ITEMS');
+        if (d > 0 && !i.promotion_id) manual = true;
+        subtotal += lineAmountOf(i);
+      }
+      const discount = Math.round(Number(a.p_discount_amount ?? 0));
+      if (!(discount >= 0) || discount > subtotal) return fail('QP_INVALID_INPUT');
+      if (a.p_promotion_id && findRow('promotions', a.p_promotion_id)?.business_id !== a.p_business_id) return fail('QP_INVALID_INPUT');
+      if (discount > 0 && !a.p_promotion_id) manual = true;
+      if (manual && !canManual) return fail('QP_FORBIDDEN');
+      const o = newOrder(a.p_business_id, items, cash ? 'CASH' : 'VIETQR', a.p_device_id ?? null, a.p_sold_at, discount);
       o.id = a.p_order_id;
+      o.promotion_id = a.p_promotion_id ?? null;
+      o.discount_note = discount > 0 ? cleanText(a.p_discount_note, 100) : null;
+      o.tax_groups = orderTaxGroups(a.p_business_id, items, discount);
       if (cash) Object.assign(o, { payment_status: 'PAID', amount_received: o.total_amount, paid_at: nowIso() });
       else if (o.total_amount <= 0) return fail('QP_INVALID_ITEMS');
       db.orders!.push(o);
@@ -1352,7 +1870,18 @@ function rpcImpl(name: string, a: Row): Result {
       if (p && (p.business_id !== a.p_business_id || p.archived_at)) return fail('QP_NOT_FOUND');
       if (code && db.products!.some((x) => x.business_id === a.p_business_id && x.barcode === code && !x.archived_at && x.id !== a.p_product_id))
         return fail('QP_DUPLICATE_BARCODE');
-      const fields = { name: nm, price: a.p_price, unit: String(a.p_unit).trim(), category: a.p_category ? String(a.p_category).trim() || null : null,
+      // Danh mục: theo mã (p_category_id); bản cũ gửi tên chữ (p_category) thì tìm hoặc tạo danh mục cùng tên
+      let cat: Row | undefined;
+      if (a.p_category_id) {
+        cat = findRow('product_categories', a.p_category_id);
+        if (!cat || cat.business_id !== a.p_business_id || cat.archived_at) return fail('QP_NOT_FOUND');
+      } else if (a.p_category && String(a.p_category).trim()) cat = ensureCategory(a.p_business_id, String(a.p_category));
+      if (a.p_supplier_id) {
+        const sp = findRow('suppliers', a.p_supplier_id);
+        if (!sp || sp.business_id !== a.p_business_id || sp.archived_at) return fail('QP_NOT_FOUND');
+      }
+      const fields = { name: nm, price: a.p_price, unit: String(a.p_unit).trim(), category: cat?.name ?? null, category_id: cat?.id ?? null,
+        supplier_id: a.p_supplier_id === undefined ? p?.supplier_id ?? null : a.p_supplier_id || null,
         cost_price: a.p_cost_price ?? null, track_stock: !!a.p_track_stock || !!a.p_track_expiry, low_stock_at: a.p_low_stock_at ?? null,
         barcode: code, track_expiry: !!a.p_track_expiry, expiry_warn_days: warn };
       if (p) Object.assign(p, fields);
@@ -1382,19 +1911,16 @@ function rpcImpl(name: string, a: Row): Result {
     }
 
     case 'stock_in_v2': {
-      const p = db.products!.find((x) => x.id === a.p_product_id);
+      // Nhập một mặt hàng = phiếu nhập một dòng (mã phiếu = mã phiếu kho)
+      const p = findRow('products', a.p_product_id);
       if (!p || !member(p.business_id) || p.archived_at) return fail('QP_NOT_FOUND');
-      if (db.stock_movements!.some((x) => x.id === a.p_movement_id)) return ok({ ...p });
-      if (p.track_expiry && !a.p_expires_on) return fail('QP_EXPIRY_REQUIRED');
-      const r = rpcImpl('stock_in_v1', a);
-      if (r.error) return r;
-      if (a.p_expires_on || p.track_expiry) {
-        db.stock_lots!.push({ id: a.p_movement_id, business_id: p.business_id, product_id: p.id, expires_on: a.p_expires_on ?? null,
-          qty_in: Number(a.p_qty), qty_left: Number(a.p_qty), created_at: nowIso() });
-        const mv = db.stock_movements!.find((x) => x.id === a.p_movement_id);
-        if (mv) mv.lot_id = a.p_movement_id;
-      }
-      return ok({ ...p });
+      if (findRow('stock_movements', a.p_movement_id)) return ok({ ...p });
+      const r = createPurchase({
+        p_purchase_id: a.p_movement_id, p_business_id: p.business_id, p_supplier_id: a.p_supplier_id ?? null, p_paid_amount: a.p_paid_amount,
+        p_record_expense: a.p_record_expense, p_note: a.p_note, p_purchased_on: a.p_received_on,
+        p_lines: [{ movement_id: a.p_movement_id, product_id: p.id, qty: a.p_qty, unit_cost: a.p_unit_cost ?? null, expires_on: a.p_expires_on ?? null }],
+      });
+      return r.error ? r : ok({ ...findRow('products', p.id)! });
     }
 
     case 'stock_out_v1': {
@@ -1404,15 +1930,18 @@ function rpcImpl(name: string, a: Row): Result {
       if (!['OWNER', 'MANAGER'].includes(m.role)) return fail('QP_FORBIDDEN');
       if (db.stock_movements!.some((x) => x.id === a.p_movement_id)) return ok({ ...p });
       const q = Number(a.p_qty);
-      if (!(q > 0) || !['EXPIRED', 'DAMAGED', 'USED', 'OTHER'].includes(a.p_reason)) return fail('QP_INVALID_INPUT');
+      // Hàng tặng (GIFT), hàng mẫu (SAMPLE): xuất kho, không tính doanh thu
+      if (!(q > 0) || !['EXPIRED', 'DAMAGED', 'USED', 'GIFT', 'SAMPLE', 'OTHER'].includes(a.p_reason)) return fail('QP_INVALID_INPUT');
       if (q > Math.max(p.stock_qty, 0)) return fail('QP_OUT_EXCEEDS_STOCK');
+      let unitCost: number | null = null;
       if (a.p_lot_id) {
         const l = db.stock_lots!.find((x) => x.id === a.p_lot_id && x.product_id === p.id);
         if (!l) return fail('QP_NOT_FOUND');
         if (q > l.qty_left) return fail('QP_OUT_EXCEEDS_STOCK');
-        l.qty_left = Math.round((l.qty_left - q) * 1000) / 1000;
-      }
-      db.stock_movements!.push({ id: a.p_movement_id, business_id: p.business_id, product_id: p.id, kind: 'OUT', qty: -q, unit_cost: null,
+        l.qty_left = round3(l.qty_left - q);
+        unitCost = l.unit_cost ?? p.cost_price ?? null;
+      } else unitCost = consumeLots(p, q);
+      db.stock_movements!.push({ id: a.p_movement_id, business_id: p.business_id, product_id: p.id, kind: 'OUT', qty: -q, unit_cost: unitCost,
         order_id: null, note: a.p_note ?? null, reason: a.p_reason, lot_id: a.p_lot_id ?? null, created_at: nowIso() });
       p.stock_qty = Math.round((p.stock_qty - q) * 1000) / 1000;
       trimLots(p);

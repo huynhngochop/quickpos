@@ -8,6 +8,8 @@ import { toAppError } from '../../lib/errors';
 import type {
   Business, ClosedShift, CurrentShift, Customer, EinvoiceProvider, ExpiringLot, HourRow, InviteRow, Invoice, LoyaltyEvent,
   Order, OrderItemRow, Product, Role, StockLot, StockMovement, StockOutReason, StockReportRow, TopProductRow,
+  Category, Supplier, SupplierBalance, SupplierDetail, ProductSupplier, Purchase, PurchaseLineInput, SupplierPayment,
+  StockCount, StockCountDetail, StockCountLine, RevenueNotice, TaxGroup,
 } from '../../types/api';
 
 const rpc = <T>(name: string, args: Record<string, unknown>) =>
@@ -15,7 +17,7 @@ const rpc = <T>(name: string, args: Record<string, unknown>) =>
 
 // ---------- Hàng hóa ----------
 export const PRODUCT_COLS =
-  'id, business_id, name, unit, price, category, cost_price, track_stock, stock_qty, low_stock_at, is_active, barcode, track_expiry, expiry_warn_days';
+  'id, business_id, name, unit, price, category, category_id, supplier_id, cost_price, track_stock, stock_qty, low_stock_at, is_active, barcode, track_expiry, expiry_warn_days';
 
 export async function listProducts(businessId: string, includeInactive = false): Promise<Product[]> {
   return callWithRetry(async (signal) => {
@@ -27,7 +29,7 @@ export async function listProducts(businessId: string, includeInactive = false):
 }
 
 export interface ProductInput {
-  productId: string; businessId: string; name: string; price: number; unit: string; category?: string | null;
+  productId: string; businessId: string; name: string; price: number; unit: string; categoryId?: string | null; supplierId?: string | null;
   costPrice?: number | null; trackStock: boolean; lowStockAt?: number | null;
   barcode?: string | null; trackExpiry?: boolean; expiryWarnDays?: number;
 }
@@ -35,7 +37,7 @@ export interface ProductInput {
 export function upsertProduct(p: ProductInput) {
   return rpc<Product>('upsert_product_v2', {
     p_product_id: p.productId, p_business_id: p.businessId, p_name: p.name, p_price: p.price, p_unit: p.unit,
-    p_category: p.category ?? null, p_cost_price: p.costPrice ?? null, p_track_stock: p.trackStock, p_low_stock_at: p.lowStockAt ?? null,
+    p_category_id: p.categoryId ?? null, p_supplier_id: p.supplierId ?? null, p_cost_price: p.costPrice ?? null, p_track_stock: p.trackStock, p_low_stock_at: p.lowStockAt ?? null,
     p_barcode: p.barcode?.trim() || null, p_track_expiry: !!p.trackExpiry, p_expiry_warn_days: p.expiryWarnDays ?? 7,
   });
 }
@@ -48,10 +50,12 @@ export const setProductActive = (productId: string, active: boolean) =>
 
 export const stockIn = (p: {
   movementId: string; productId: string; qty: number; unitCost?: number | null; note?: string; recordExpense: boolean; expiresOn?: string | null;
+  supplierId?: string | null; paidAmount?: number;
 }) =>
   rpc<Product>('stock_in_v2', {
     p_movement_id: p.movementId, p_product_id: p.productId, p_qty: p.qty, p_unit_cost: p.unitCost ?? null,
     p_note: p.note ?? null, p_record_expense: p.recordExpense, p_expires_on: p.expiresOn ?? null,
+    p_supplier_id: p.supplierId ?? null, p_paid_amount: p.paidAmount ?? null,
   });
 
 export const stockOut = (p: { movementId: string; productId: string; qty: number; reason: StockOutReason; lotId?: string | null; note?: string }) =>
@@ -64,7 +68,7 @@ export async function listLots(productId: string): Promise<StockLot[]> {
     unwrap(
       await supabase
         .from('stock_lots')
-        .select('id, product_id, expires_on, qty_in, qty_left, created_at')
+        .select('id, product_id, expires_on, qty_in, qty_left, created_at, unit_cost, supplier_id, received_on')
         .eq('product_id', productId)
         .gt('qty_left', 0)
         .order('expires_on', { ascending: true })
@@ -265,3 +269,73 @@ export async function recentInvoices(businessId: string): Promise<Invoice[]> {
     ) as Invoice[],
   );
 }
+
+// ---------- Danh mục (migration 9) ----------
+export async function listCategories(businessId: string): Promise<Category[]> {
+  return callWithRetry(async (signal) =>
+    unwrap(
+      await supabase.from('product_categories').select('id, business_id, name, sort_order, tax_group, track_expiry_default')
+        .eq('business_id', businessId).is('archived_at', null)
+        .order('sort_order', { ascending: true }).order('name', { ascending: true }).abortSignal(signal),
+    ) as Category[],
+  );
+}
+export const upsertCategory = (c: { categoryId: string; businessId: string; name: string; sortOrder?: number; taxGroup?: TaxGroup | null; trackExpiryDefault?: boolean }) =>
+  rpc<Category>('upsert_category_v1', {
+    p_category_id: c.categoryId, p_business_id: c.businessId, p_name: c.name, p_sort_order: c.sortOrder ?? null,
+    p_tax_group: c.taxGroup ?? null, p_track_expiry_default: !!c.trackExpiryDefault,
+  });
+export const archiveCategory = (categoryId: string) => rpc<Category>('archive_category_v1', { p_category_id: categoryId });
+
+// ---------- Nhà cung cấp, phiếu nhập, công nợ ----------
+export async function listSuppliers(businessId: string): Promise<Supplier[]> {
+  return callWithRetry(async (signal) =>
+    unwrap(
+      await supabase.from('suppliers').select('id, business_id, name, phone, address, tax_code, note')
+        .eq('business_id', businessId).is('archived_at', null).order('name', { ascending: true }).abortSignal(signal),
+    ) as Supplier[],
+  );
+}
+export const upsertSupplier = (s: { supplierId: string; businessId: string; name: string; phone?: string | null; address?: string | null; taxCode?: string | null; note?: string | null }) =>
+  rpc<Supplier>('upsert_supplier_v1', {
+    p_supplier_id: s.supplierId, p_business_id: s.businessId, p_name: s.name, p_phone: s.phone || null, p_address: s.address || null,
+    p_tax_code: s.taxCode || null, p_note: s.note || null,
+  });
+export const archiveSupplier = (supplierId: string) => rpc<Supplier>('archive_supplier_v1', { p_supplier_id: supplierId });
+export const supplierBalances = (businessId: string) => rpc<SupplierBalance[]>('supplier_balances', { p_business_id: businessId });
+export const supplierDetail = (supplierId: string) => rpc<SupplierDetail>('supplier_detail', { p_supplier_id: supplierId });
+export const productSuppliers = (productId: string) => rpc<ProductSupplier[]>('product_suppliers', { p_product_id: productId });
+export const createPurchase = (p: {
+  purchaseId: string; businessId: string; supplierId: string | null; lines: PurchaseLineInput[]; paidAmount: number; recordExpense: boolean;
+  note?: string | null; purchasedOn?: string;
+}) =>
+  rpc<Purchase>('create_purchase_v1', {
+    p_purchase_id: p.purchaseId, p_business_id: p.businessId, p_supplier_id: p.supplierId, p_lines: p.lines, p_paid_amount: p.paidAmount,
+    p_record_expense: p.recordExpense, p_note: p.note ?? null, p_purchased_on: p.purchasedOn ?? null,
+  });
+export const paySupplier = (p: { paymentId: string; supplierId: string; amount: number; note?: string | null; recordExpense: boolean }) =>
+  rpc<SupplierPayment>('pay_supplier_v1', {
+    p_payment_id: p.paymentId, p_supplier_id: p.supplierId, p_amount: p.amount, p_note: p.note ?? null, p_record_expense: p.recordExpense,
+  });
+export const voidSupplierPayment = (paymentId: string) => rpc<SupplierPayment>('void_supplier_payment_v1', { p_payment_id: paymentId });
+
+// ---------- Kiểm kê ----------
+export async function listStockCounts(businessId: string): Promise<StockCount[]> {
+  return callWithRetry(async (signal) =>
+    unwrap(
+      await supabase.from('stock_counts').select('id, business_id, status, note, started_at, finished_at, lines_total, lines_diff, value_diff')
+        .eq('business_id', businessId).order('started_at', { ascending: false }).limit(50).abortSignal(signal),
+    ) as StockCount[],
+  );
+}
+export const startStockCount = (countId: string, businessId: string, note?: string | null) =>
+  rpc<StockCount>('start_stock_count_v1', { p_count_id: countId, p_business_id: businessId, p_note: note ?? null });
+export const countLine = (countId: string, productId: string, countedQty: number) =>
+  rpc<StockCountLine>('count_line_v1', { p_count_id: countId, p_product_id: productId, p_counted_qty: countedQty });
+export const finishStockCount = (countId: string) => rpc<StockCount>('finish_stock_count_v1', { p_count_id: countId });
+export const cancelStockCount = (countId: string) => rpc<StockCount>('cancel_stock_count_v1', { p_count_id: countId });
+export const stockCountDetail = (countId: string) => rpc<StockCountDetail>('stock_count_detail', { p_count_id: countId });
+
+// ---------- Thông báo doanh thu (mẫu 01/TKN-CNKD) ----------
+export const revenueNotice = (businessId: string, fromDay: string, toDay: string) =>
+  rpc<RevenueNotice>('revenue_notice', { p_business_id: businessId, p_from_day: fromDay, p_to_day: toDay });

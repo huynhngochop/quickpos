@@ -9,7 +9,7 @@ import { callWithRetry, unwrap } from '../../lib/retry';
 import { queryClient } from '../../lib/queryClient';
 import { flushQueue, newQueuedSale, type FlushResult, type QueuedSale } from './queue';
 import { sqliteQueueStore } from './sqliteStore';
-import type { OrderItemInput } from '../../types/api';
+import type { OrderInput } from '../../types/api';
 
 interface QueueState {
   items: QueuedSale[];
@@ -33,6 +33,8 @@ async function sendSale(sale: QueuedSale): Promise<unknown> {
             p_order_id: sale.orderId,
             p_business_id: sale.businessId,
             p_items: sale.items,
+            p_discount_amount: sale.discountAmount ?? 0,
+            p_promotion_id: sale.promotionId ?? null,
             p_sold_at: sale.soldAt,
             p_device_id: sale.deviceId,
           })
@@ -67,10 +69,13 @@ export async function flushNow(): Promise<FlushResult | null> {
 export async function recordCashSale(args: {
   orderId: string;
   businessId: string;
-  items: OrderItemInput[];
+  order: OrderInput;
   deviceId: string;
 }): Promise<{ sentNow: boolean }> {
-  const sale = newQueuedSale({ ...args, soldAt: new Date().toISOString() });
+  const sale = newQueuedSale({
+    orderId: args.orderId, businessId: args.businessId, deviceId: args.deviceId, items: args.order.items,
+    discountAmount: args.order.discount_amount, promotionId: args.order.promotion_id, soldAt: new Date().toISOString(),
+  });
   await sqliteQueueStore.add(sale);
   await refreshQueue();
   await flushNow();

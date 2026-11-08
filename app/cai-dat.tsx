@@ -47,6 +47,10 @@ export default function CaiDat() {
     mutationFn: (v: boolean) => updateBusinessSettings(businessId, v),
     onSuccess: (b) => useSession.getState().set({ business: b }),
   });
+  const discountMut = useMutation({
+    mutationFn: (v: boolean) => updateBusinessSettings(businessId, business?.allow_cashier_manual_confirm ?? true, v),
+    onSuccess: (b) => useSession.getState().set({ business: b }),
+  });
 
   const logout = async () => {
     const blocked = await logoutHere(queued);
@@ -107,6 +111,16 @@ export default function CaiDat() {
           />
         ) : null}
         {manualMut.error ? <ErrorView error={manualMut.error} /> : null}
+        {canManage(role) ? (
+          <Toggle
+            label={vi.inv.allowCashierDiscount}
+            hint={vi.inv.allowCashierDiscountHelp}
+            value={business?.allow_cashier_discount ?? false}
+            disabled={discountMut.isPending}
+            onChange={(v) => discountMut.mutate(v)}
+          />
+        ) : null}
+        {discountMut.error ? <ErrorView error={discountMut.error} /> : null}
         <Button kind="secondary" label={vi.settings.testVoice} onPress={() => speakVi(vi.paid.speakPaid(readNumber(18000)))} style={{ marginBottom: 12 }} />
       </Card>
 

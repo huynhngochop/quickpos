@@ -95,7 +95,12 @@ export function PaymentPanel({ orderId, qrSize, onNewSale }: { orderId: string; 
       yes={vi.sale.manualYes}
       no={vi.sale.manualNo}
       busy={manual.isPending}
-      onYes={() => manual.mutate({ orderId: o.id, note: null }, { onSettled: () => setAskManual(false) })}
+      onYes={() => {
+        // Đóng hộp hỏi TRƯỚC khi đơn chuyển sang "Đã nhận": màn "Đã nhận" không vẽ hộp này, mà gỡ một Modal đang mở
+        // trên Android để lại lớp trong suốt chặn mọi lần bấm (bấm "Đơn mới" không ăn — lỗi QA 08/11/2026)
+        setAskManual(false);
+        manual.mutate({ orderId: o.id, note: null });
+      }}
       onNo={() => setAskManual(false)}
     />
   );

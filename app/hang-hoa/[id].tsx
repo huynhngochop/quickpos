@@ -9,7 +9,9 @@ import { ChoiceGrid, Field } from '../../src/components/Choice';
 import { ConfirmSheet } from '../../src/components/ConfirmSheet';
 import { Checkbox, ErrorView, Loading } from '../../src/components/States';
 import { canManage, useBusinessId, useSession } from '../../src/features/session/store';
-import { useLots, useProducts, formatQty } from '../../src/features/shop/hooks';
+import { useLots, useProducts, useProductSuppliers, formatQty } from '../../src/features/shop/hooks';
+import { SupplierPicker } from '../../src/features/shop/components/Pickers';
+import { ExpiryQuick } from '../../src/features/shop/components/ExpiryQuick';
 import { deleteProduct, listMovements, setProductActive, stockCount, stockIn, stockOut } from '../../src/features/shop/api';
 import { ProductForm } from '../../src/features/shop/components/ProductForm';
 import { dayToVN, daysUntil, expiryTone, maskDate, parseDateVN } from '../../src/features/shop/inventory';
@@ -43,6 +45,9 @@ export default function MonHang() {
   const [cost, setCost] = useState('');
   const [expires, setExpires] = useState('');
   const [toExpense, setToExpense] = useState(true);
+  const [supplierId, setSupplierId] = useState<string | null>(null);
+  const [paid, setPaid] = useState('');
+  const suppliers = useProductSuppliers(businessId, id);
   const [reason, setReason] = useState<StockOutReason>('EXPIRED');
   const [msg, setMsg] = useState<{ text: string; ok: boolean } | null>(null);
   const [discard, setDiscard] = useState<StockLot | null>(null);
@@ -52,6 +57,7 @@ export default function MonHang() {
 
   useEffect(() => {
     if (p?.cost_price && !cost) setCost(String(p.cost_price));
+    if (p?.supplier_id && !supplierId) setSupplierId(p.supplier_id);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [p?.id]);
 
@@ -59,7 +65,9 @@ export default function MonHang() {
     moveId.current = newId();
     setQty('');
     setExpires('');
+    setPaid('');
     void qc.invalidateQueries({ queryKey: ['products', businessId] });
+    void qc.invalidateQueries({ queryKey: ['suppliers', businessId] });
     void qc.invalidateQueries({ queryKey: ['movements', id] });
     void qc.invalidateQueries({ queryKey: ['lots', id] });
     void qc.invalidateQueries({ queryKey: ['stock-report', businessId] });
@@ -73,6 +81,7 @@ export default function MonHang() {
         await stockIn({
           movementId: moveId.current, productId: p.id, qty: parseQty(qty), unitCost: cost ? Number(cost) : null,
           recordExpense: toExpense && !!cost, expiresOn: expires ? parseDateVN(expires) : null,
+          supplierId, paidAmount: supplierId ? (paid === '' ? lineTotal : Number(paid)) : undefined,
         });
         return vi.catalog.stockInDone;
       }
@@ -109,8 +118,10 @@ export default function MonHang() {
     },
   });
 
+  const lineTotal = cost && qty ? Math.round(parseQty(qty) * Number(cost)) : 0;
   const submit = () => {
     setMsg(null);
+    if (tab === 'IN' && supplierId && paid !== '' && Number(paid) > lineTotal) return setMsg({ text: vi.inv.paidTooMuch, ok: false });
     const n = parseQty(qty);
     if (qty === '' || !(n >= 0) || (tab !== 'COUNT' && n <= 0)) return setMsg({ text: vi.catalog.enterQty, ok: false });
     if (tab === 'IN' && p) {
@@ -199,6 +210,22 @@ export default function MonHang() {
                   maxLength={10}
                   testID="stock-expires"
                 />
+                {p.track_expiry ? <ExpiryQuick onPick={setExpires} /> : null}
+                <SupplierPicker businessId={businessId} value={supplierId} onChange={setSupplierId} />
+                {supplierId && lineTotal > 0 ? (
+                  <>
+                    <Field
+                      label={vi.inv.inPaidNow}
+                      value={paid === '' ? String(lineTotal) : paid}
+                      onChangeText={(v) => setPaid(money(v))}
+                      keyboardType="number-pad"
+                      testID="stock-paid"
+                    />
+                    {lineTotal - (paid === '' ? lineTotal : Number(paid)) > 0 ? (
+                      <Txt tone="warn">{vi.inv.debtAfter(formatVND(lineTotal - Number(paid || '0')))}</Txt>
+                    ) : null}
+                  </>
+                ) : null}
                 <Checkbox label={vi.catalog.toExpense} value={toExpense} onChange={setToExpense} />
               </>
             ) : tab === 'OUT' ? (
@@ -206,7 +233,7 @@ export default function MonHang() {
                 <Field label={vi.catalog.qtyOut(p.unit)} value={qty} onChangeText={(v) => setQty(qtyText(v))} keyboardType="decimal-pad" testID="stock-qty" />
                 <Txt variant="bodyStrong">{vi.catalog.outReason}</Txt>
                 <ChoiceGrid
-                  options={(['EXPIRED', 'DAMAGED', 'USED', 'OTHER'] as StockOutReason[]).map((k) => ({ key: k, label: vi.catalog.reasons[k] ?? k }))}
+                  options={(['EXPIRED', 'DAMAGED', 'USED', 'GIFT', 'SAMPLE', 'OTHER'] as StockOutReason[]).map((k) => ({ key: k, label: vi.catalog.reasons[k] ?? k }))}
                   value={reason}
                   onChange={setReason}
                   columns={2}
@@ -255,6 +282,23 @@ export default function MonHang() {
           ) : null}
           {remove.error ? <ErrorView error={remove.error} /> : null}
           {discardLot.error ? <ErrorView error={discardLot.error} /> : null}
+
+          {(suppliers.data ?? []).length > 0 ? (
+            <Card style={{ gap: space.sm }}>
+              <Txt variant="title">{vi.inv.productSuppliers}</Txt>
+              {(suppliers.data ?? []).map((s) => (
+                <Button
+                  key={s.supplier_id}
+                  kind="link"
+                  label={`${s.name}${s.is_default ? ` (${vi.inv.defaultSupplier})` : ''} — ${vi.inv.productSupplierLine(
+                    s.last_cost != null ? formatVND(s.last_cost) : null,
+                    s.last_on ? dayToVN(s.last_on) : '',
+                  )}`}
+                  onPress={() => router.push({ pathname: '/nha-cung-cap/[id]', params: { id: s.supplier_id } })}
+                />
+              ))}
+            </Card>
+          ) : null}
 
           <Txt variant="title">{vi.catalog.history}</Txt>
           {(moves.data ?? []).map((m) => (

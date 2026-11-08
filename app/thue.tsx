@@ -1,5 +1,6 @@
 import { Share, View } from 'react-native';
 import { useMutation } from '@tanstack/react-query';
+import { router } from 'expo-router';
 import { Screen, Card } from '../src/components/Screen';
 import { Amount, Txt } from '../src/components/Txt';
 import { Button } from '../src/components/Button';
@@ -114,6 +115,7 @@ export default function Thue() {
             <Txt tone="secondary">{vi.tax.howTo}</Txt>
             <Txt tone="secondary">{vi.tax.expenses(formatVND(data?.expenseTotal ?? 0))}</Txt>
           </Card>
+          <Button big label={vi.inv.form01} onPress={() => router.push('/to-khai-01')} testID="open-form01" />
           <Button kind="secondary" label={vi.tax.export} onPress={() => void share()} />
 
           <Txt variant="title">{vi.tax.industry}</Txt>

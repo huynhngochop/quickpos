@@ -15,6 +15,9 @@ export interface QueuedSale {
   orderId: string;
   businessId: string;
   items: OrderItemInput[];
+  /** Giảm cả đơn (khuyến mãi / giảm tay); bản cũ trong hàng đợi không có → 0 */
+  discountAmount?: number;
+  promotionId?: string | null;
   total: number;
   soldAt: string;
   deviceId: string;
@@ -42,10 +45,11 @@ export interface FlushResult {
 }
 
 export function newQueuedSale(
-  args: Pick<QueuedSale, 'orderId' | 'businessId' | 'items' | 'soldAt' | 'deviceId'>,
+  args: Pick<QueuedSale, 'orderId' | 'businessId' | 'items' | 'soldAt' | 'deviceId' | 'discountAmount' | 'promotionId'>,
   now: Date = new Date(),
 ): QueuedSale {
-  const total = args.items.reduce((s, i) => s + Math.round(i.quantity * i.unit_price), 0);
+  const lines = args.items.reduce((s, i) => s + Math.max(Math.round(i.quantity * i.unit_price) - (i.discount_amount ?? 0), 0), 0);
+  const total = Math.max(lines - (args.discountAmount ?? 0), 0);
   return { ...args, total, attempts: 0, status: 'PENDING', lastError: null, createdAt: now.toISOString() };
 }
 

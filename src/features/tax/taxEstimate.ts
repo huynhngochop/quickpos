@@ -6,7 +6,8 @@
  *  - NĐ 68/2026/NĐ-CP sửa đổi bởi NĐ 141/2026/NĐ-CP: doanh thu năm ≤ 1 tỷ đồng không phải nộp thuế GTGT, TNCN.
  *  - Trên 1 tỷ: GTGT = tỷ lệ ngành × toàn bộ doanh thu; TNCN (đến 3 tỷ, cách tỷ lệ) = tỷ lệ ngành × (doanh thu − 1 tỷ),
  *    hoặc chọn cách thu nhập: (doanh thu − chi phí) × 15%. Trên 3 tỷ: TNCN = (doanh thu − chi phí) × 17% (trên 50 tỷ: 20%).
- *  - Mẫu: 01/TKN-CNKD (thông báo doanh thu, hộ ≤ 1 tỷ, hạn 31/01 năm sau), 01/CNKD (tờ khai, hộ > 1 tỷ, theo quý) — TT 18/2026/TT-BTC.
+ *  - Mẫu: 01/TKN-CNKD (thông báo doanh thu, hộ ≤ 1 tỷ; Phụ lục I TT 89/2026/TT-BTC ngày 30/06/2026, app điền sẵn ở
+ *    src/features/tax/form01.ts), 01/CNKD (tờ khai, hộ > 1 tỷ, theo quý). Hạn nộp: kiểm tra lại theo TT 89/2026 trước khi sửa.
  * Khi luật đổi: sửa các hằng số ở đây và kiểm thử trong tests/reports-tax.test.ts.
  */
 export type TaxIndustry = 'GOODS' | 'PRODUCTION' | 'SERVICE' | 'LEASING' | 'OTHER';

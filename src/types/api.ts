@@ -42,7 +42,19 @@ export interface OrderItemInput {
   name: string;
   quantity: number;
   unit_price: number;
-  product_id?: string;
+  product_id?: string | null;
+  /** Giảm giá của dòng (khuyến mãi theo món), đồng */
+  discount_amount?: number;
+  promotion_id?: string | null;
+  /** Món tặng (giá 0, trừ kho, không tính doanh thu) */
+  is_gift?: boolean;
+}
+
+/** Dòng hàng + giảm giá cả đơn gửi lên create_order_v1 / create_cash_sale_v1 */
+export interface OrderInput {
+  items: OrderItemInput[];
+  discount_amount: number;
+  promotion_id: string | null;
 }
 
 export interface Business {
@@ -58,6 +70,10 @@ export interface Business {
   einvoice_provider?: 'NONE' | 'DEMO' | 'MISA' | 'VIETTEL' | 'VNPT' | 'OTHER';
   invoice_form_no?: '1' | '2';
   invoice_symbol?: string | null;
+  /** Migration 9: thu ngân được giảm giá tay */
+  allow_cashier_discount?: boolean;
+  /** Họ tên chủ hộ (người nộp thuế, mẫu 01/TKN-CNKD) */
+  owner_name?: string | null;
 }
 
 export interface Membership {
@@ -184,9 +200,14 @@ export interface Product {
   track_expiry: boolean;
   /** Báo trước bao nhiêu ngày khi lô sắp hết hạn */
   expiry_warn_days: number;
+  /** Danh mục (migration 9); `category` giữ tên để hiện nhanh */
+  category_id: string | null;
+  /** Nhà cung cấp thường nhập (chọn sẵn khi nhập hàng) */
+  supplier_id: string | null;
 }
 
-export type StockOutReason = 'EXPIRED' | 'DAMAGED' | 'USED' | 'OTHER';
+/** Hàng tặng (GIFT), hàng mẫu (SAMPLE): xuất kho, không tính doanh thu */
+export type StockOutReason = 'EXPIRED' | 'DAMAGED' | 'USED' | 'GIFT' | 'SAMPLE' | 'OTHER';
 
 export interface StockLot {
   id: string;
@@ -195,6 +216,155 @@ export interface StockLot {
   qty_in: number;
   qty_left: number;
   created_at: string;
+  unit_cost?: number | null;
+  supplier_id?: string | null;
+  received_on?: string | null;
+}
+
+// ---------- Migration 9: danh mục, nhà cung cấp, phiếu nhập, khuyến mãi, kiểm kê ----------
+/** Nhóm ngành tính thuế (mẫu 01/TKN-CNKD): 1 hàng hóa, 2 dịch vụ, 3 cho thuê tài sản, 4 sản xuất / ăn uống, 5 nội dung số, 6 khác */
+export type TaxGroup = 'GOODS' | 'SERVICE' | 'LEASING' | 'PRODUCTION' | 'DIGITAL' | 'OTHER';
+
+export interface Category {
+  id: string;
+  business_id: string;
+  name: string;
+  sort_order: number;
+  /** Nhóm ngành riêng của danh mục (null = theo ngành của quán) */
+  tax_group: TaxGroup | null;
+  /** Hàng mới trong danh mục mặc định có hạn dùng */
+  track_expiry_default: boolean;
+}
+
+export interface Supplier {
+  id: string;
+  business_id: string;
+  name: string;
+  phone: string | null;
+  address: string | null;
+  tax_code: string | null;
+  note: string | null;
+}
+
+/** rpc('supplier_balances') */
+export interface SupplierBalance {
+  supplier_id: string;
+  name: string;
+  phone: string | null;
+  purchased: number;
+  paid: number;
+  /** > 0: quán còn nợ nhà cung cấp */
+  balance: number;
+  last_purchase_on: string | null;
+}
+
+export interface Purchase {
+  id: string;
+  supplier_id: string | null;
+  purchased_on: string;
+  total_amount: number;
+  paid_amount: number;
+  line_count: number;
+  note: string | null;
+  created_at: string;
+}
+
+export interface SupplierPayment {
+  id: string;
+  supplier_id: string;
+  amount: number;
+  paid_on: string;
+  note: string | null;
+  purchase_id: string | null;
+  voided_at: string | null;
+  created_at: string;
+}
+
+export interface SuppliedProduct {
+  product_id: string;
+  name: string;
+  unit: string;
+  qty_total: number;
+  last_cost: number | null;
+  last_on: string | null;
+  archived: boolean;
+}
+
+/** rpc('supplier_detail') */
+export interface SupplierDetail {
+  supplier: Supplier;
+  purchased: number;
+  paid: number;
+  balance: number;
+  purchases: Purchase[];
+  payments: SupplierPayment[];
+  products: SuppliedProduct[];
+}
+
+/** rpc('product_suppliers') */
+export interface ProductSupplier {
+  supplier_id: string;
+  name: string;
+  qty_total: number;
+  last_cost: number | null;
+  last_on: string | null;
+  is_default: boolean;
+}
+
+export interface PurchaseLineInput {
+  movement_id: string;
+  product_id: string;
+  qty: number;
+  unit_cost: number | null;
+  expires_on: string | null;
+}
+
+export type StockCountStatus = 'OPEN' | 'DONE' | 'CANCELLED';
+
+export interface StockCount {
+  id: string;
+  business_id: string;
+  status: StockCountStatus;
+  note: string | null;
+  started_at: string;
+  finished_at: string | null;
+  lines_total: number;
+  lines_diff: number;
+  value_diff: number;
+}
+
+export interface StockCountLine {
+  id: string;
+  product_id: string;
+  name: string;
+  unit: string;
+  expected_qty: number;
+  counted_qty: number;
+  diff: number;
+  counted_at: string;
+  cost_price: number | null;
+}
+
+/** rpc('stock_count_detail') */
+export interface StockCountDetail {
+  count: StockCount;
+  lines: StockCountLine[];
+  /** Hàng có theo dõi tồn chưa đếm (chỉ khi phiên đang mở) */
+  pending: { product_id: string; name: string; unit: string; stock_qty: number; category_id: string | null; barcode: string | null }[];
+}
+
+/** rpc('revenue_notice') — số liệu điền mẫu 01/TKN-CNKD */
+export interface RevenueNotice {
+  business_name: string;
+  owner_name: string | null;
+  tax_code: string;
+  address: string;
+  tax_industry: TaxGroup;
+  from: string;
+  to: string;
+  total: number;
+  orders: number;
+  by_group: Partial<Record<TaxGroup, number>>;
 }
 
 /** rpc('expiring_lots') — days_left < 0: đã quá hạn */

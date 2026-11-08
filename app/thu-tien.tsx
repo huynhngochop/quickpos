@@ -7,7 +7,7 @@ import { Amount, Txt } from '../src/components/Txt';
 import { Button } from '../src/components/Button';
 import { Keypad } from '../src/components/Keypad';
 import { ErrorView, OfflineBanner } from '../src/components/States';
-import { useSale, useAmount, saleItems } from '../src/features/sale/store';
+import { useSale, useAmount, saleOrder } from '../src/features/sale/store';
 import { setOrderCustomer } from '../src/features/shop/api';
 import { createOrder } from '../src/features/sale/api';
 import { applyOrderUpdate } from '../src/features/sale/realtime';
@@ -62,12 +62,12 @@ export default function ThuTien() {
     try {
       let order;
       try {
-        order = await createOrder({ orderId, businessId, items: saleItems(amount, sale.cart), deviceId: deviceIdSync() });
+        order = await createOrder({ orderId, businessId, order: saleOrder(amount, sale.cart, sale.pricing), deviceId: deviceIdSync() });
       } catch (e) {
         if (toAppError(e).code !== 'QP_ORDER_CONFLICT') throw e;
         orderId = newId();
         sale.setPending(orderId);
-        order = await createOrder({ orderId, businessId, items: saleItems(amount, sale.cart), deviceId: deviceIdSync() });
+        order = await createOrder({ orderId, businessId, order: saleOrder(amount, sale.cart, sale.pricing), deviceId: deviceIdSync() });
       }
       applyOrderUpdate(order);
       if (sale.customer) await setOrderCustomer(order.id, sale.customer.id).catch(() => undefined);

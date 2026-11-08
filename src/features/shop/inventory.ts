@@ -1,7 +1,7 @@
 /**
  * Logic thuần cho quản lý hàng hóa (tìm kiếm, mã vạch, hạn dùng, xuất nhập tồn) — kiểm thử ở tests/inventory.test.ts.
  */
-import type { ExpiringLot, Product, StockReportRow } from '../../types/api';
+import type { StockCountDetail, ExpiringLot, Product, StockReportRow } from '../../types/api';
 import { addDays, monthStart, vnDayRange } from '../../lib/time';
 
 /** Bỏ dấu tiếng Việt, chữ thường: "Sữa Tươi" → "sua tuoi" (người lớn tuổi hay gõ không dấu). */
@@ -123,4 +123,27 @@ export function stockReportCsv(rows: StockReportRow[], fromDay: string, toDay: s
       r.cost_price ?? '', r.closing_value ?? ''].join(','),
   );
   return [`Xuất nhập tồn ${dayToVN(fromDay)} - ${dayToVN(toDay)}`, head.join(','), ...lines].join('\n');
+}
+
+/** Cộng tháng cho ngày 'YYYY-MM-DD' (31/01 + 1 tháng → 28/29 tháng 2: lấy ngày cuối tháng) */
+export function addMonthsDay(day: string, months: number): string {
+  const [y, m, d] = day.split('-').map(Number) as [number, number, number];
+  const idx = y * 12 + (m - 1) + months;
+  const ny = Math.floor(idx / 12);
+  const nm = (idx % 12) + 1;
+  const last = new Date(Date.UTC(ny, nm, 0)).getUTCDate();
+  const pad = (v: number) => (v < 10 ? `0${v}` : String(v));
+  return `${ny}-${pad(nm)}-${pad(Math.min(d, last))}`;
+}
+
+/** Biên bản kiểm kê dạng CSV (mở bằng Excel): món, máy, đếm, lệch, giá nhập, giá trị lệch */
+export function countSheetCsv(d: StockCountDetail): string {
+  const esc = (s: string) => (/[",\n]/.test(s) ? `"${s.replace(/"/g, '""')}"` : s);
+  const head = ['Món', 'Đơn vị', 'Số trên máy', 'Số đếm', 'Lệch', 'Giá nhập', 'Giá trị lệch'];
+  const lines = d.lines.map((l) =>
+    [esc(l.name), esc(l.unit), q3(l.expected_qty), q3(l.counted_qty), q3(l.diff), l.cost_price ?? '',
+      l.cost_price != null ? Math.round(l.diff * l.cost_price) : ''].join(','),
+  );
+  const day = d.count.finished_at ?? d.count.started_at;
+  return [`Biên bản kiểm kê ${dayToVN(day.slice(0, 10))}`, head.join(','), ...lines].join('\n');
 }

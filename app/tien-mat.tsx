@@ -4,7 +4,7 @@ import { router } from 'expo-router';
 import { Screen, Card } from '../src/components/Screen';
 import { Amount, Txt } from '../src/components/Txt';
 import { Button } from '../src/components/Button';
-import { useAmount, useSale, saleItems } from '../src/features/sale/store';
+import { useAmount, useSale, saleOrder } from '../src/features/sale/store';
 import { setOrderCustomer } from '../src/features/shop/api';
 import { recordCashSale } from '../src/features/offline/useQueue';
 import { useBusinessId } from '../src/features/session/store';
@@ -31,7 +31,7 @@ export default function TienMat() {
     setBusy(true);
     try {
       const { cart, customer } = useSale.getState();
-      const r = await recordCashSale({ orderId, businessId, items: saleItems(due, cart), deviceId: deviceIdSync() });
+      const r = await recordCashSale({ orderId, businessId, order: saleOrder(due, cart, useSale.getState().pricing), deviceId: deviceIdSync() });
       // Khách quen: cộng điểm ngay khi đơn đã lên server (mất mạng thì bỏ qua, không chặn bán hàng)
       if (r.sentNow && customer) await setOrderCustomer(orderId, customer.id).catch(() => undefined);
       setDone({ offline: !r.sentNow });

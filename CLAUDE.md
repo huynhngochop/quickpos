@@ -229,9 +229,26 @@ Tính theo chiều rộng/cao cửa sổ hiện tại (`useWindowDimensions`), k
     `nextN`, không theo vị trí mảng.
 - **Máy chủ quán chạy nền (Android)**: module trong `modules/qp-foreground` (dịch vụ foreground `connectedDevice`, thông báo cố định).
   Chỉ giữ CPU + Wi‑Fi thức khi có máy nhân viên đang nối; vuốt tắt app thì dịch vụ dừng. Giữ màn hình sáng là tùy chọn (mặc định tắt).
+- **Hàng hóa nâng cao (migration 9, 08/11/2026)** — `docs/api.md` mục 10:
+  - Danh mục là bảng riêng (`product_categories`, `products.category_id`); `products.category` chỉ là tên để hiện nhanh.
+    Danh mục có thể đặt nhóm ngành riêng → đơn ghi `orders.tax_groups` để tách doanh thu theo nhóm ngành (mẫu 01/TKN-CNKD).
+  - Một mặt hàng một mã; mỗi lần nhập (phiếu nhập `create_purchase_v1`, hoặc `stock_in_v2` = phiếu một dòng) là một **lô**
+    có giá nhập, nhà cung cấp, hạn dùng. Không tạo mã hàng mới theo ngày nhập.
+  - Giá vốn khi bán / xuất: phần tồn chưa có lô (hàng cũ) trước, rồi lô hết hạn sớm, rồi lô nhập trước (`consumeLots` /
+    `lot_cost_for`). Ghi vào `stock_movements.unit_cost`.
+  - Công nợ nhà cung cấp = tổng phiếu nhập − tiền đã trả (`supplier_payments`, hủy bằng `voided_at`, không xóa).
+  - Khuyến mãi tính trên máy bán (`src/features/promo/engine.ts`, chọn mức có lợi nhất cho khách); máy chủ chỉ kiểm tra giảm không quá
+    tiền hàng và quyền giảm tay (chủ / quản lý, hoặc `businesses.allow_cashier_discount`). Món tặng: dòng giá 0 `is_gift`, vẫn trừ kho.
+    Hàng tặng / hàng mẫu ngoài đơn: `stock_out_v1` lý do `GIFT` / `SAMPLE`.
+  - Kiểm kê: số trên máy chụp lúc đếm từng món; chốt cộng chênh lệch vào tồn hiện tại (hàng bán trong lúc đếm vẫn đúng).
+  - Mẫu 01/TKN-CNKD (TT 89/2026/TT-BTC): `src/features/tax/form01.ts` (bố cục theo mô tả công khai, chưa đối chiếu file gốc — có file gốc
+    thì sửa COLUMNS / ROWS), PDF qua expo-print, Excel tự đóng gói (`src/lib/xlsx.ts`, `src/lib/zip.ts`, không thêm thư viện).
+- Hộp hỏi (`ConfirmSheet`, là Modal): đóng hộp TRƯỚC khi đổi trạng thái làm nhánh vẽ hộp biến mất. Gỡ một Modal đang mở trên Android
+  để lại lớp trong suốt chặn mọi lần bấm.
 - QA: máy `android-local` chạy luồng 11 với bản lưu trên máy, rồi QA hai máy: 12a (máy chủ hiện mã dạng chữ) → `sh:qa-lan-staff`
   (máy nhân viên giả bằng Node qua `adb forward`, `scripts/qa-lan-client.ts`; kiểm tra dịch vụ chạy nền) → 12b (máy chủ thấy máy
-  nhân viên và đơn). Thử trên máy tính không cần máy ảo: `QA_SIM_SELFTEST=1 npx tsx scripts/qa-lan-host-sim.ts`.
+  nhân viên và đơn) → 13 (danh mục, nhà cung cấp, phiếu nhập ghi nợ, khuyến mãi khi bán, kiểm kê, mẫu 01 PDF).
+  Thử trên máy tính không cần máy ảo: `QA_SIM_SELFTEST=1 npx tsx scripts/qa-lan-host-sim.ts`.
   Các máy khác chạy dữ liệu mẫu.
 
 ## Khi hoàn thành một thay đổi

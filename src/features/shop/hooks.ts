@@ -1,6 +1,9 @@
 import { useQuery } from '@tanstack/react-query';
 import { create } from 'zustand';
-import { currentShift, expiringLots, listCustomers, listLots, listProducts, stockReport } from './api';
+import {
+  currentShift, expiringLots, listCategories, listCustomers, listLots, listProducts, listStockCounts, listSuppliers, productSuppliers,
+  stockCountDetail, stockReport, supplierBalances, supplierDetail,
+} from './api';
 
 export function useProducts(businessId: string, includeInactive = false) {
   return useQuery({ queryKey: ['products', businessId, includeInactive], queryFn: () => listProducts(businessId, includeInactive) });
@@ -58,4 +61,28 @@ export const useScanResult = create<{
 export function formatQty(q: number): string {
   const r = Math.round(q * 1000) / 1000;
   return Number.isInteger(r) ? String(r) : String(r).replace('.', ',');
+}
+
+// ---------- Migration 9 ----------
+/** Khóa bắt đầu bằng 'products' để làm mới cùng hàng hóa sau mỗi lần ghi */
+export function useCategories(businessId: string) {
+  return useQuery({ queryKey: ['products', businessId, 'categories'], queryFn: () => listCategories(businessId), enabled: !!businessId, staleTime: 60_000 });
+}
+export function useSuppliers(businessId: string) {
+  return useQuery({ queryKey: ['suppliers', businessId], queryFn: () => listSuppliers(businessId), enabled: !!businessId, staleTime: 60_000 });
+}
+export function useSupplierBalances(businessId: string) {
+  return useQuery({ queryKey: ['suppliers', businessId, 'balances'], queryFn: () => supplierBalances(businessId), enabled: !!businessId });
+}
+export function useSupplierDetail(businessId: string, supplierId: string) {
+  return useQuery({ queryKey: ['suppliers', businessId, 'detail', supplierId], queryFn: () => supplierDetail(supplierId), enabled: !!supplierId });
+}
+export function useProductSuppliers(businessId: string, productId: string) {
+  return useQuery({ queryKey: ['suppliers', businessId, 'product', productId], queryFn: () => productSuppliers(productId), enabled: !!productId });
+}
+export function useStockCounts(businessId: string) {
+  return useQuery({ queryKey: ['products', businessId, 'counts'], queryFn: () => listStockCounts(businessId), enabled: !!businessId });
+}
+export function useStockCountDetail(businessId: string, countId: string) {
+  return useQuery({ queryKey: ['products', businessId, 'count', countId], queryFn: () => stockCountDetail(countId), enabled: !!countId });
 }

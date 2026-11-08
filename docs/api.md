@@ -227,3 +227,39 @@ Máy nhân viên không gọi được `start_pro_trial_v1`, `set_pro_license_v1
 | `QP_PRO_REQUIRED` | Gói Pro của quán đã hết hạn hoặc chưa bật. Nhờ chủ quán gia hạn gói Pro. |
 | `QP_PAIRING_EXPIRED` | Mã ghép máy đã hết hạn hoặc đã dùng (hoặc máy đã bị thu hồi). Nhờ chủ quán tạo mã mới. |
 | `QP_LICENSE_INVALID` / `QP_LICENSE_OTHER_SHOP` | Mã kích hoạt không đúng / của quán khác. |
+
+## 10. Danh mục, nhà cung cấp, phiếu nhập, khuyến mãi, kiểm kê (migration 9, 08/11/2026)
+
+Bảng đọc được (RLS theo hộ, app không ghi thẳng): `product_categories`, `suppliers`, `purchases`, `supplier_payments`,
+`promotions`, `stock_counts`, `stock_count_lines`. Cột mới: `products.category_id`, `products.supplier_id`;
+`stock_lots.unit_cost / supplier_id / purchase_id / received_on`; `stock_movements.supplier_id / purchase_id / count_id`,
+lý do xuất thêm `GIFT` (tặng khách), `SAMPLE` (hàng mẫu); `orders.discount_amount / promotion_id / discount_note / tax_groups`;
+`order_items.discount_amount / promotion_id / is_gift` (tiền dòng = số lượng × đơn giá − giảm dòng; món tặng giá 0);
+`businesses.allow_cashier_discount`, `businesses.owner_name`.
+
+| Lời gọi | Ai | Tham số | Trả về | Lỗi |
+| --- | --- | --- | --- | --- |
+| `upsert_category_v1` | OWNER/MANAGER | `p_category_id, p_business_id, p_name, p_sort_order?, p_tax_group?` (GOODS/SERVICE/LEASING/PRODUCTION/DIGITAL/OTHER), `p_track_expiry_default?` | danh mục; đổi tên thì `products.category` đổi theo | `QP_DUPLICATE_NAME`, `QP_INVALID_INPUT` |
+| `archive_category_v1` | OWNER/MANAGER | `p_category_id` | danh mục; món trong đó về "Chưa phân loại" | `QP_NOT_FOUND` |
+| `upsert_product_v2` | OWNER/MANAGER | như mục trước + `p_category_id?`, `p_supplier_id?`; chỉ gửi `p_category` (chữ) thì tìm/tạo danh mục cùng tên | món | như trước |
+| `upsert_supplier_v1` / `archive_supplier_v1` | OWNER/MANAGER | `p_supplier_id, p_business_id, p_name, p_phone?, p_address?, p_tax_code?, p_note?` | nhà cung cấp | `QP_INVALID_INPUT` |
+| `create_purchase_v1` | thành viên | `p_purchase_id, p_business_id, p_supplier_id?, p_lines [{movement_id, product_id, qty, unit_cost?, expires_on?}], p_paid_amount?, p_record_expense?, p_note?, p_purchased_on?` | phiếu nhập; mỗi dòng một lô; không có NCC = trả đủ; gửi lại cùng mã → phiếu cũ | `QP_EXPIRY_REQUIRED`, `QP_INVALID_INPUT`, `QP_NOT_FOUND` |
+| `stock_in_v2` | thành viên | như trước + `p_supplier_id?, p_paid_amount?` (mặc định trả đủ), `p_received_on?` | món (phiếu nhập một dòng) | như trên |
+| `pay_supplier_v1` / `void_supplier_payment_v1` | OWNER/MANAGER | `p_payment_id, p_supplier_id, p_amount, p_note?, p_record_expense?, p_paid_on?` | lần trả; hủy thì dòng chi đi kèm cũng hủy | `QP_INVALID_INPUT` |
+| `supplier_balances(p_business_id)` | thành viên | — | `[{supplier_id, name, phone, purchased, paid, balance, last_purchase_on}]`, nợ nhiều nhất trước | — |
+| `supplier_detail(p_supplier_id)` | thành viên | — | `{supplier, purchased, paid, balance, purchases[], payments[], products[]}` | — |
+| `product_suppliers(p_product_id)` | thành viên | — | `[{supplier_id, name, qty_total, last_cost, last_on, is_default}]` | — |
+| `upsert_promotion_v1` / `archive_promotion_v1` | OWNER/MANAGER | `p_promotion_id, p_business_id, p_name, p_kind` (ITEM_DISCOUNT: món hoặc danh mục + % hoặc số tiền mỗi đơn vị; BUY_X_GET_Y: món, `p_buy_qty`, `p_get_qty`, `p_get_product_id?`; ORDER_DISCOUNT: % hoặc số tiền + `p_min_total`), `p_starts_on?, p_ends_on?, p_is_active?` | chương trình | `QP_INVALID_INPUT` |
+| `create_order_v1` / `create_cash_sale_v1` | thành viên | như mục 3 + `p_discount_amount?` (giảm cả đơn), `p_promotion_id?`, `p_discount_note?`; dòng hàng thêm `discount_amount?, promotion_id?, is_gift?` | đơn (tổng = tiền dòng − giảm cả đơn) | `QP_FORBIDDEN` (giảm tay khi không có quyền: không phải chủ/quản lý và quán chưa bật `allow_cashier_discount`), `QP_INVALID_INPUT` (giảm quá tiền hàng), `QP_INVALID_ITEMS` |
+| `update_business_settings_v1` | OWNER/MANAGER | + `p_allow_cashier_discount?` | quán | — |
+| `stock_out_v1` | OWNER/MANAGER | lý do thêm `GIFT`, `SAMPLE`; ghi giá vốn theo lô | món | như trước |
+| `start_stock_count_v1` | OWNER/MANAGER | `p_count_id, p_business_id, p_note?` | lần kiểm (mỗi quán một lần đang mở) | `QP_COUNT_ALREADY_OPEN` |
+| `count_line_v1` | thành viên | `p_count_id, p_product_id, p_counted_qty` (đếm lại = ghi đè) | dòng đếm (số trên máy chụp lúc đếm) | `QP_COUNT_CLOSED` |
+| `finish_stock_count_v1` / `cancel_stock_count_v1` | OWNER/MANAGER | `p_count_id` | lần kiểm; chốt = cộng chênh lệch lúc đếm vào tồn hiện tại, món chưa đếm giữ nguyên | — |
+| `stock_count_detail(p_count_id)` | thành viên | — | `{count, lines[], pending[]}` | — |
+| `revenue_notice(p_business_id, p_from_day, p_to_day)` | OWNER/MANAGER | ngày Việt Nam, tối đa ~13 tháng | `{business_name, owner_name, tax_code, address, tax_industry, total, orders, by_group{nhóm: tiền}}` cho mẫu 01/TKN-CNKD | `QP_FORBIDDEN` |
+
+Giá vốn khi bán / xuất: phần tồn chưa thuộc lô nào (hàng cũ) trước theo giá nhập của món, rồi lô hết hạn sớm, rồi lô nhập trước
+(`stock_movements.unit_cost` của dòng SALE / OUT). Khuyến mãi tính trên máy bán (`src/features/promo/engine.ts`), máy chủ kiểm tra
+giảm không quá tiền hàng, chương trình thuộc quán và quyền giảm tay.
+TODO: hóa đơn điện tử lập từ đơn có giảm giá cần thêm dòng chiết khấu theo hướng dẫn của nhà cung cấp HĐĐT (chưa làm).
