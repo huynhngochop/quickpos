@@ -9,6 +9,7 @@ export const vi = {
   appName: 'QuickPOS',
   common: {
     back: 'Quay lại',
+    backAgainToExit: 'Bấm quay lại lần nữa để thoát',
     home: 'Trang chính',
     settings: 'Cài đặt',
     retry: 'Thử lại',

@@ -185,6 +185,8 @@ Tính theo chiều rộng/cao cửa sổ hiện tại (`useWindowDimensions`), k
   nằm sau mã PIN chủ hộ. Màn Thu tiền có thêm liên kết chữ: Chọn món · Ghi nợ · Khách quen.
   Cài đặt và Thoát là nút biểu tượng ở góc trên (có accessibilityLabel bằng chữ, theo góp ý 01/11/2026). "Thoát" hỏi lại rồi
   đóng app (Android; iOS không có nút này), không đăng xuất. "Đăng xuất" là nút cuối cùng của Cài đặt.
+  Nút quay lại của Android (14/11/2026, `src/lib/backPress.ts`): bấm 1 lần về màn trước, bấm 2 lần liên tiếp (< 600 ms) thoát app;
+  ở màn đầu lần bấm đầu chỉ nhắc "Bấm quay lại lần nữa để thoát".
   Hai nút bị khóa không được hiện cùng một chữ. Nút lựa chọn (kỳ báo cáo, ngành nghề…) đang chọn chỉ đổi màu nền, không thêm dấu
   hay đổi độ dày viền để không giật bố cục.
 - **Thu tiền mặc định** = bàn phím số lớn có phím "000" → bấm "Hiện mã QR". Danh mục sản phẩm là tùy chọn, không bắt buộc.

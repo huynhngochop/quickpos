@@ -26,6 +26,7 @@ import { Txt } from '../src/components/Txt';
 import { Button } from '../src/components/Button';
 import { vi } from '../src/i18n/vi';
 import { qaLog, startQaHeartbeat } from '../src/lib/qaLog';
+import { useDoubleBackExit } from '../src/lib/backPress';
 
 void SplashScreen.preventAutoHideAsync();
 startQaHeartbeat();
@@ -51,6 +52,8 @@ export default function RootLayout() {
   const businessId = useSession((s) => s.business?.id ?? null);
   const { width, height } = useWindowDimensions();
   const lockPortrait = layoutFor(width, height).lockPortrait;
+  // Android: bấm quay lại 1 lần về màn trước, 2 lần liên tiếp thoát app
+  useDoubleBackExit();
 
   useEffect(() => {
     if (fontsLoaded) void SplashScreen.hideAsync();
