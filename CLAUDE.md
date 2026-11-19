@@ -251,7 +251,9 @@ Tính theo chiều rộng/cao cửa sổ hiện tại (`useWindowDimensions`), k
 - **Quảng cáo** (19/11/2026, `src/features/ads/AdBanner.tsx`, thư viện `react-native-google-mobile-ads`): một vùng banner AdMob ở đầu
   trang chính, chỉ bản miễn phí; gói Pro (cả dùng thử) và máy nhân viên không có quảng cáo. Chỉ quảng cáo không cá nhân hóa (không cần
   hỏi quyền theo dõi trên iOS). Không đặt quảng cáo ở màn thu tiền / chờ tiền, không đặt sát nút bấm. Mã: secrets `ADMOB_*_APP_ID`,
-  `EXPO_PUBLIC_ADMOB_BANNER_*`; thiếu mã vùng quảng cáo thì không hiện (bản QA).
+  `EXPO_PUBLIC_ADMOB_BANNER_*`; thiếu mã vùng quảng cáo thì không hiện (bản QA). Mã ứng dụng nằm ở khóa
+  `react-native-google-mobile-ads` gốc app.json (CI ghi đè bằng `scripts/set-admob-ids.mjs`); Kotlin 2.2 đặt trong
+  `plugins/with-android-build-tweaks.js` vì SDK quảng cáo biên dịch bằng Kotlin mới hơn mặc định.
 - QA: máy `android-local` chạy luồng 11 với bản lưu trên máy, rồi QA hai máy: 12a (máy chủ hiện mã dạng chữ) → `sh:qa-lan-staff`
   (máy nhân viên giả bằng Node qua `adb forward`, `scripts/qa-lan-client.ts`; kiểm tra dịch vụ chạy nền) → 12b (máy chủ thấy máy
   nhân viên và đơn) → 13 (danh mục, nhà cung cấp, phiếu nhập ghi nợ, khuyến mãi khi bán, kiểm kê, mẫu 01 PDF).

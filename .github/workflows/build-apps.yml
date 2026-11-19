@@ -40,6 +40,7 @@ jobs:
       - uses: actions/setup-node@v4
         with: { node-version: 22 }
       - run: bash scripts/ci-run.sh setup bash scripts/setup.sh
+      - run: node scripts/set-admob-ids.mjs
       - run: bash scripts/ci-run.sh tsc npx tsc --noEmit
       - run: bash scripts/ci-run.sh test npm test
 
@@ -60,6 +61,7 @@ jobs:
           key: gradle-${{ runner.os }}-${{ hashFiles('package-lock.json', 'package.json') }}
           restore-keys: gradle-${{ runner.os }}-
       - run: bash scripts/ci-run.sh setup bash scripts/setup.sh
+      - run: node scripts/set-admob-ids.mjs
       - run: bash scripts/ci-run.sh prebuild npx expo prebuild --platform android --clean
       # Bản thử: ký bằng khóa debug của template Expo — cài được, KHÔNG dùng để lên Google Play
       # Chỉ đóng gói cho máy ARM 64-bit (gần như mọi điện thoại Android từ 2019): APK nhẹ ~1/3, cài nhanh hơn
@@ -87,6 +89,7 @@ jobs:
       - uses: actions/setup-node@v4
         with: { node-version: 22 }
       - run: bash scripts/ci-run.sh setup bash scripts/setup.sh
+      - run: node scripts/set-admob-ids.mjs
       - run: bash scripts/ci-run.sh prebuild-ios npx expo prebuild --platform ios --clean
       - run: |
           xcodebuild -workspace ios/QuickPOS.xcworkspace -scheme QuickPOS -configuration Release \
@@ -110,5 +113,6 @@ jobs:
           eas-version: latest
           token: ${{ secrets.EXPO_TOKEN }}
       - run: bash scripts/ci-run.sh setup bash scripts/setup.sh
+      - run: node scripts/set-admob-ids.mjs
       # Build trên máy của Expo; kết quả (.aab, .ipa) tải ở expo.dev → Builds
       - run: eas build --platform all --profile production --non-interactive --no-wait
