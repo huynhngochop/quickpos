@@ -543,17 +543,6 @@ export const vi = {
     unpairAsk: 'Ngắt máy này khỏi máy chủ quán?',
     unpairBody: 'Dữ liệu của quán vẫn nằm trên máy chủ quán. Muốn dùng lại thì quét mã ghép máy mới.',
     unpairYes: 'Ngắt kết nối',
-    // Cấp mã (người bán)
-    vendorTitle: 'Cấp mã kích hoạt Pro',
-    vendorKey: 'Khóa bí mật cấp mã (chỉ người bán có)',
-    vendorKeySaved: 'Đã lưu khóa trên máy này',
-    vendorShop: 'Mã quán của khách (8 ký tự)',
-    vendorYears: 'Số năm',
-    vendorMake: 'Tạo mã',
-    vendorCode: 'Mã kích hoạt',
-    vendorShare: 'Gửi mã cho khách',
-    vendorBadKey: 'Khóa bí mật không đúng.',
-    vendorBadShop: 'Mã quán gồm 8 chữ hoặc số.',
   },
 
   crash: {

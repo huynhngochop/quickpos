@@ -1,6 +1,6 @@
 import { test, mock } from 'node:test';
 import assert from 'node:assert/strict';
-import { attachStorage, createDemoClient, exportBackup, parseBackup, restoreBackup, setSampleMode } from '../src/lib/demoClient';
+import { attachStorage, createLocalClient, exportBackup, parseBackup, restoreBackup, setSampleMode } from '../src/lib/localEngine';
 import { backupFileName } from '../src/features/backup/name';
 
 // Chế độ lưu trên máy (bản phát hành chưa có máy chủ): không dữ liệu mẫu, dữ liệu lưu bền, sao lưu/khôi phục bằng file
@@ -9,7 +9,7 @@ test('lưu trên máy: quán trống, tự nhập tài khoản, xác nhận tay,
   mock.timers.enable({ apis: ['setTimeout'] });
   let saved: string | null = null;
   attachStorage({ load: () => saved, save: (j) => (saved = j) });
-  const c = createDemoClient();
+  const c = createLocalClient();
   const tick = async (ms = 300) => {
     mock.timers.tick(ms);
     await new Promise((r) => setImmediate(r));

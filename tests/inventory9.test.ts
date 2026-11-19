@@ -1,6 +1,6 @@
 import { test, mock } from 'node:test';
 import assert from 'node:assert/strict';
-import { createDemoClient, setSampleMode } from '../src/lib/demoClient';
+import { createLocalClient, setSampleMode } from '../src/lib/localEngine';
 import { applyPromotions, orderPayload, type Promotion } from '../src/features/promo/engine';
 import { form01Html, form01Rows, form01Sheet, form01Range, fmtNum, type Form01Data } from '../src/features/tax/form01';
 import { buildXlsx } from '../src/lib/xlsx';
@@ -86,7 +86,7 @@ test('mẫu 01/TKN-CNKD: dòng theo nhóm ngành, HTML in, file Excel hợp lệ
 test('danh mục, nhà cung cấp, phiếu nhập có nợ, giá vốn theo lô, giảm giá khi bán, kiểm kê, doanh thu theo nhóm ngành', async () => {
   setSampleMode(false);
   mock.timers.enable({ apis: ['setTimeout'] });
-  const c = createDemoClient();
+  const c = createLocalClient();
   const rpc = async (name: string, args: Record<string, unknown> = {}) => {
     const p = c.rpc(name, args).then((x) => x);
     mock.timers.tick(300);

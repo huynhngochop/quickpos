@@ -7,7 +7,7 @@ const anonKey = process.env.EXPO_PUBLIC_SUPABASE_ANON_KEY ?? '';
 export const ENV = {
   /** Bản build thiếu máy chủ (APK xem thử): app mở được, cổng vào báo chưa cấu hình thay vì văng */
   configured: url.length > 0 && anonKey.length > 0,
-  /** Không có máy chủ → dữ liệu nằm trên máy (src/lib/demoClient.ts) */
+  /** Không có máy chủ → dữ liệu nằm trên máy (src/lib/localEngine.ts) */
   demo: !(url.length > 0 && anonKey.length > 0),
   /** Không máy chủ + có dữ liệu mẫu, giả lập khách chuyển khoản (QA, xem thử). Bản phát hành đặt EXPO_PUBLIC_DEMO_SAMPLE=0 */
   sample: !(url.length > 0 && anonKey.length > 0) && process.env.EXPO_PUBLIC_DEMO_SAMPLE !== '0',

@@ -5,7 +5,7 @@
 import { File, Paths } from 'expo-file-system';
 import * as DocumentPicker from 'expo-document-picker';
 import * as Sharing from 'expo-sharing';
-import { exportBackup, parseBackup, restoreBackup, type BackupFile } from '../../lib/demoClient';
+import { exportBackup, parseBackup, restoreBackup, type BackupFile } from '../../lib/localEngine';
 import { markBackedUp } from '../../lib/localStore';
 import { backupFileName } from './name';
 import { vnDay } from '../../lib/time';

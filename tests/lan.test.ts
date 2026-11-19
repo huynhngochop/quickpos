@@ -1,6 +1,6 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { addLanMember, createDemoClient, hostExecute, onAnyOrder, removeLanMember, setSampleMode } from '../src/lib/demoClient';
+import { addLanMember, createLocalClient, hostExecute, onAnyOrder, removeLanMember, setSampleMode } from '../src/lib/localEngine';
 import { LanHost, type LanDevice } from '../src/features/lan/host';
 import { LanClient, pairWithHost } from '../src/features/lan/client';
 import { createLanSupabase } from '../src/features/lan/lanSupabase';
@@ -40,7 +40,7 @@ test('khung tin theo dòng: gộp và cắt đôi', () => {
 
 test('máy chủ quán + máy nhân viên: ghép máy, bán, đọc sổ, nhận tin tiền về, chặn gửi lại, hết hạn Pro, thu hồi', async () => {
   // Máy chính: chủ quán tạo quán
-  const local = createDemoClient();
+  const local = createLocalClient();
   await local.auth.verifyOtp({ phone: '+84903000111', token: '123456' });
   await local.rpc('create_business_v1', { p_business_id: 'biz1', p_business_name: 'Quán Cô Ba', p_tax_code: '0312345678', p_address: 'HCM' });
   await local.rpc('set_local_payment_account_v1', { p_business_id: 'biz1', p_bank_bin: '970436', p_account_no: '0071000123456', p_account_name: 'CO BA' });

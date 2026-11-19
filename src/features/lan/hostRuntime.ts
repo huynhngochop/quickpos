@@ -9,7 +9,7 @@ import { LanHost, type LanDevice } from './host';
 import { LAN_PORT, randomKey } from './protocol';
 import { listen, wifiIp } from './tcp';
 import { readHostState, saveHostState, planNow } from './deviceMode';
-import { addLanMember, hostExecute, onAnyOrder, removeLanMember } from '../../lib/demoClient';
+import { addLanMember, hostExecute, onAnyOrder, removeLanMember } from '../../lib/localEngine';
 import { supabase } from '../../lib/supabase';
 import { planStatus } from '../plan/license';
 import type { PlanRow } from '../plan/types';

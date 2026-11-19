@@ -14,8 +14,8 @@ export default function ChoTien() {
   const { width, height, fontScale } = useWindowDimensions();
   const L = layoutFor(width, height, fontScale);
   // Về màn Thu tiền. Mở từ Thu tiền (from=thu-tien, màn này nằm ngay trên Thu tiền) thì chỉ lùi một màn; mở từ chỗ khác
-  // (Sổ nợ → Thu nợ bằng mã QR) thì thay màn này bằng Thu tiền. Không suy từ trạng thái ngăn điều hướng (tên tuyến đổi theo
-  // cách lồng màn — đã gây lỗi "Đơn mới" không ăn, QA 08/11/2026).
+  // (Sổ nợ → Thu nợ bằng mã QR) thì thay màn này bằng Thu tiền. Không suy từ trạng thái ngăn điều hướng: tên tuyến đổi
+  // theo cách lồng màn nên dễ lùi sai chỗ.
   const toThuTien = () => {
     const back = from === 'thu-tien' && router.canGoBack();
     qaLog('đơn mới → thu tiền', back ? 'lùi' : 'thay', from ?? '-');

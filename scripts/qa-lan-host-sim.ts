@@ -6,13 +6,13 @@
  */
 import net from 'node:net';
 import { spawnSync } from 'node:child_process';
-import { addLanMember, createDemoClient, hostExecute, onAnyOrder, removeLanMember, setSampleMode } from '../src/lib/demoClient';
+import { addLanMember, createLocalClient, hostExecute, onAnyOrder, removeLanMember, setSampleMode } from '../src/lib/localEngine';
 import { LanHost, type LanDevice } from '../src/features/lan/host';
 import { LAN_PORT, LineBuffer, encodePairingQr, type LineConn } from '../src/features/lan/protocol';
 
 async function main() {
   setSampleMode(false);
-  const local = createDemoClient();
+  const local = createLocalClient();
   await local.auth.verifyOtp({ phone: '+84903000999', token: '123456' });
   await local.rpc('create_business_v1', { p_business_id: 'sim1', p_business_name: 'Quán thử', p_tax_code: '0312345678', p_address: 'HCM' });
   let saved: LanDevice[] = [];

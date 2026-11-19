@@ -206,7 +206,7 @@ Tính theo chiều rộng/cao cửa sổ hiện tại (`useWindowDimensions`), k
 ## Chế độ lưu trên máy (chưa có máy chủ — quyết định 07/11/2026)
 
 - Bản phát hành hiện chưa nối Supabase: build với `EXPO_PUBLIC_DEMO_SAMPLE=0`, dữ liệu thật nằm trong SQLite của app
-  (`src/lib/demoClient.ts` + `src/lib/localStore.ts`), còn nguyên khi đăng xuất / cập nhật app. Đăng xuất KHÔNG xóa dữ liệu.
+  (`src/lib/localEngine.ts` + `src/lib/localStore.ts`), còn nguyên khi đăng xuất / cập nhật app. Đăng xuất KHÔNG xóa dữ liệu.
 - Chỉ ở chế độ này chủ quán được tự nhập tài khoản nhận tiền (`set_local_payment_account_v1`) và xác nhận chuyển khoản bằng tay;
   quy tắc "không cho gõ số tài khoản" vẫn áp dụng cho bản có máy chủ.
 - Sao lưu / khôi phục bằng file qua bảng chia sẻ (Cài đặt → Sao lưu và khôi phục; bước tạo quán có liên kết khôi phục).
@@ -214,7 +214,8 @@ Tính theo chiều rộng/cao cửa sổ hiện tại (`useWindowDimensions`), k
 - KHÔNG đồng bộ nhiều máy qua mail (ghi đè nhau, mất đơn).
 - **Gói** (chốt 07/11/2026): Miễn phí = một máy, chủ tự bán. **Pro** = nhiều nhân viên, nhiều máy trong Wi‑Fi nối vào máy chủ
   quán (`src/features/lan/`), dùng thử 30 ngày rồi trả theo năm bằng mã kích hoạt (`src/features/plan/license.ts`, ký Ed25519;
-  khóa bí mật chỉ người bán giữ, KHÔNG đưa vào repo; màn cấp mã ẩn `/cap-ma`). Hết hạn: máy nhân viên bị chặn, dữ liệu còn nguyên.
+  khóa bí mật chỉ người bán giữ, KHÔNG đưa vào repo; người bán cấp mã bằng `scripts/cap-ma-pro.ts` trên máy tính —
+  app không có màn ẩn vì cửa hàng ứng dụng cấm chức năng ẩn). Hết hạn: máy nhân viên bị chặn, dữ liệu còn nguyên.
   **Premium** (sau) = đồng bộ qua máy chủ đám mây, dữ liệu lớn.
 - Máy chủ quán: một máy giữ dữ liệu, máy nhân viên chỉ gửi lệnh (không đồng bộ hai chiều). iOS không làm máy chủ quán được.
 - **Hiệu năng bộ máy trên máy** (đo 07/11/2026, 100.000 đơn): mỗi lần bán ghi 2–3 dòng SQLite (< 1 ms), không ghi lại cả kho
@@ -245,8 +246,12 @@ Tính theo chiều rộng/cao cửa sổ hiện tại (`useWindowDimensions`), k
   - Kiểm kê: số trên máy chụp lúc đếm từng món; chốt cộng chênh lệch vào tồn hiện tại (hàng bán trong lúc đếm vẫn đúng).
   - Mẫu 01/TKN-CNKD (TT 89/2026/TT-BTC): `src/features/tax/form01.ts` (bố cục theo mô tả công khai, chưa đối chiếu file gốc — có file gốc
     thì sửa COLUMNS / ROWS), PDF qua expo-print, Excel tự đóng gói (`src/lib/xlsx.ts`, `src/lib/zip.ts`, không thêm thư viện).
-- Hộp hỏi (`ConfirmSheet`, là Modal): đóng hộp TRƯỚC khi đổi trạng thái làm nhánh vẽ hộp biến mất. Gỡ một Modal đang mở trên Android
-  để lại lớp trong suốt chặn mọi lần bấm.
+- Hộp hỏi (`ConfirmSheet`): khi bấm "Có" làm màn đang mở đổi ngay (ví dụ xác nhận tiền về ở màn chờ tiền) thì dùng `inline`
+  (câu hỏi nằm trong trang, không mở Modal). Modal vừa đóng / bị gỡ trên Android có thể chặn lần bấm kế tiếp.
+- **Quảng cáo** (19/11/2026, `src/features/ads/AdBanner.tsx`, thư viện `react-native-google-mobile-ads`): một vùng banner AdMob ở đầu
+  trang chính, chỉ bản miễn phí; gói Pro (cả dùng thử) và máy nhân viên không có quảng cáo. Chỉ quảng cáo không cá nhân hóa (không cần
+  hỏi quyền theo dõi trên iOS). Không đặt quảng cáo ở màn thu tiền / chờ tiền, không đặt sát nút bấm. Mã: secrets `ADMOB_*_APP_ID`,
+  `EXPO_PUBLIC_ADMOB_BANNER_*`; thiếu mã vùng quảng cáo thì không hiện (bản QA).
 - QA: máy `android-local` chạy luồng 11 với bản lưu trên máy, rồi QA hai máy: 12a (máy chủ hiện mã dạng chữ) → `sh:qa-lan-staff`
   (máy nhân viên giả bằng Node qua `adb forward`, `scripts/qa-lan-client.ts`; kiểm tra dịch vụ chạy nền) → 12b (máy chủ thấy máy
   nhân viên và đơn) → 13 (danh mục, nhà cung cấp, phiếu nhập ghi nợ, khuyến mãi khi bán, kiểm kê, mẫu 01 PDF).

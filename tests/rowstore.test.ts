@@ -1,6 +1,6 @@
 import { test, mock } from 'node:test';
 import assert from 'node:assert/strict';
-import { attachRowStore, createDemoClient, persistNow, setSampleMode, type RowStoreAdapter } from '../src/lib/demoClient';
+import { attachRowStore, createLocalClient, persistNow, setSampleMode, type RowStoreAdapter } from '../src/lib/localEngine';
 
 /** Kho SQLite giả trong bộ nhớ, đếm số dòng mỗi lần ghi */
 function memStore(legacy: string | null = null) {
@@ -38,7 +38,7 @@ test('lưu từng dòng: mỗi lần bán chỉ ghi vài dòng, mở lại app t
   };
   const m = memStore();
   attachRowStore(m.rs);
-  const c = createDemoClient();
+  const c = createLocalClient();
   const rpc = async (name: string, args: Record<string, unknown>) => {
     const p = c.rpc(name, args).then((x) => x);
     await tick(260);

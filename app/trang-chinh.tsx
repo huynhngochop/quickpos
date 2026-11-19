@@ -14,6 +14,7 @@ import { syncExpiryReminder } from '../src/features/notifications/expiryReminder
 import { lastBackupAt } from '../src/lib/localStore';
 import { isStaffDevice } from '../src/lib/supabase';
 import { usePlan } from '../src/features/plan/hooks';
+import { AdBanner } from '../src/features/ads/AdBanner';
 import { syncHost } from '../src/features/lan/hostRuntime';
 import { StaffBanner } from '../src/features/lan/StaffBanner';
 import { useSession, useBusinessId } from '../src/features/session/store';
@@ -84,6 +85,8 @@ export default function TrangChinh() {
         <Button big label={vi.main.collect} onPress={() => router.push('/thu-tien')} style={{ minHeight: 88 }} />
       }
     >
+      {/* Bản miễn phí: một vùng quảng cáo trên cùng; gói Pro và máy nhân viên không có quảng cáo */}
+      <AdBanner hidden={staff || !plan.status || plan.status.active} />
       <View style={{ flexDirection: 'row', alignItems: 'flex-start', gap: space.md }}>
         <View style={{ flex: 1 }}>
           <Txt variant="title">{name}</Txt>

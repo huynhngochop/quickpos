@@ -44,7 +44,7 @@ và quy định thuế hộ kinh doanh từ 2026 (bỏ thuế khoán, ngưỡng 
 
 | Giai đoạn | Dữ liệu ở đâu | Nhiều máy | Trạng thái |
 | --- | --- | --- | --- |
-| **1. Một máy** | SQLite của app trên máy đó (`src/lib/demoClient.ts` + `localStore.ts`) | Không; nhân viên dùng chung máy, màn của chủ có PIN | **Đang dùng** (apk-23) |
+| **1. Một máy** | SQLite của app trên máy đó (`src/lib/localEngine.ts` + `localStore.ts`) | Không; nhân viên dùng chung máy, màn của chủ có PIN | **Đang dùng** (apk-23) |
 | **2. Nhiều máy trong quán, không qua Internet = gói Pro** | Một "máy chủ quán" trong mạng Wi‑Fi của quán | 2–10 máy cùng mạng Wi‑Fi | **Đã làm (apk-24)**: dùng thử 30 ngày, mã kích hoạt theo năm; QA tự động mới thử một máy, cần thử thật hai máy |
 | **3. Máy chủ đám mây = gói Premium** | Supabase (đã viết: migration 1–8, Edge Functions) | Không giới hạn, khác mạng, chủ xem từ xa | Chờ tạo dự án Supabase + SMS + cổng thanh toán |
 
@@ -65,8 +65,8 @@ tới đó. Như vậy không có chuyện hai bản dữ liệu ghi đè nhau, 
 ### Cách làm (cách A)
 
 1. **Giao thức = đúng hợp đồng API hiện tại** (`docs/api.md`). Máy nhân viên dùng `LanClient`, có cùng giao diện
-   `rpc()` / `from().select()` / `channel()` như `supabase` và `demoClient`. Mỗi lệnh gửi qua WebSocket là JSON
-   `{ id, type: 'rpc' | 'select', name, args }`; máy chủ quán chạy `rpcImpl` / `Query` của `demoClient` rồi trả kết quả.
+   `rpc()` / `from().select()` / `channel()` như `supabase` và `localEngine`. Mỗi lệnh gửi qua WebSocket là JSON
+   `{ id, type: 'rpc' | 'select', name, args }`; máy chủ quán chạy `rpcImpl` / `Query` của `localEngine` rồi trả kết quả.
    Màn hình và `features/*/api.ts` giữ nguyên. Sau này đổi sang giai đoạn 3 chỉ cần thay client.
 2. **Đẩy tin**: máy chủ quán gửi `{ type: 'order', row }` cho mọi máy khi đơn đổi trạng thái (thay `channel()` / Realtime).
    Chỉ máy tạo đơn đọc to, giữ đúng quy tắc `created_device_id` hiện có.

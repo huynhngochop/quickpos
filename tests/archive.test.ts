@@ -1,9 +1,9 @@
 import { test, mock } from 'node:test';
 import assert from 'node:assert/strict';
 import {
-  archiveCutoffDay, archiveOldOrders, attachRowStore, createDemoClient, exportBackup, persistNow, restoreBackup,
+  archiveCutoffDay, archiveOldOrders, attachRowStore, createLocalClient, exportBackup, persistNow, restoreBackup,
   setSampleMode, type ArchiveRow, type RowStoreAdapter,
-} from '../src/lib/demoClient';
+} from '../src/lib/localEngine';
 
 /** Kho SQLite giả trong bộ nhớ, có bảng lưu trữ */
 function memStore() {
@@ -49,7 +49,7 @@ test('đơn cũ hơn 13 tháng chuyển vào kho lưu trữ: bộ nhớ nhẹ, v
   };
   const m = memStore();
   attachRowStore(m.rs);
-  const c = createDemoClient();
+  const c = createLocalClient();
   const rpc = async (name: string, args: Record<string, unknown>) => {
     const p = c.rpc(name, args).then((x) => x);
     await tick(260);

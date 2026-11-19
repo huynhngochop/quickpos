@@ -1,6 +1,6 @@
 import { test, mock } from 'node:test';
 import assert from 'node:assert/strict';
-import { createDemoClient, setSampleMode } from '../src/lib/demoClient';
+import { createLocalClient, setSampleMode } from '../src/lib/localEngine';
 
 // Các ca này dùng dữ liệu mẫu, kể cả khi build đặt EXPO_PUBLIC_DEMO_SAMPLE=0
 setSampleMode(true);
@@ -8,7 +8,7 @@ import { vnDay, vnDayRange } from '../src/lib/time';
 
 test('chế độ dùng thử: đăng nhập → tạo quán → bán → khách chuyển tiền', async () => {
   mock.timers.enable({ apis: ['setTimeout'] });
-  const c = createDemoClient();
+  const c = createLocalClient();
   const tick = async (ms: number) => {
     mock.timers.tick(ms);
     await new Promise((r) => setImmediate(r));
@@ -73,7 +73,7 @@ test('chế độ dùng thử: đăng nhập → tạo quán → bán → khách
 test('dữ liệu mẫu không lùi qua nửa đêm (mở app lúc 00:05 giờ VN)', async () => {
   // 00:05 ngày 30/10 giờ VN = 17:05 UTC ngày 29/10
   mock.timers.enable({ apis: ['Date', 'setTimeout'], now: Date.parse('2026-10-29T17:05:00Z') });
-  const c = createDemoClient();
+  const c = createLocalClient();
   const settle = async () => {
     mock.timers.tick(300);
     await new Promise((r) => setImmediate(r));

@@ -1,4 +1,4 @@
-import { useRef, useState, type ReactNode } from 'react';
+import { useState, type ReactNode } from 'react';
 import { Linking, Pressable, View } from 'react-native';
 import { router } from 'expo-router';
 import { useMutation, useQuery } from '@tanstack/react-query';
@@ -26,7 +26,6 @@ import { vi } from '../src/i18n/vi';
 
 /** 4.2 Cài đặt (sau mã PIN chủ quán). */
 export default function CaiDat() {
-  const versionTaps = useRef(0);
   const businessId = useBusinessId();
   const business = useSession((s) => s.business);
   const role = useSession((s) => s.role);
@@ -174,20 +173,9 @@ export default function CaiDat() {
       </Card>
 
       <Button kind="link" label={vi.settings.deleteAccount} onPress={() => router.push('/xoa-tai-khoan')} />
-      <Pressable
-        accessibilityRole="text"
-        onPress={() => {
-          versionTaps.current += 1;
-          if (versionTaps.current >= 7) {
-            versionTaps.current = 0;
-            router.push('/cap-ma');
-          }
-        }}
-      >
-        <Txt variant="caption" tone="secondary" center>
-          {vi.settings.version(ENV.appVersion)}
-        </Txt>
-      </Pressable>
+      <Txt variant="caption" tone="secondary" center>
+        {vi.settings.version(ENV.appVersion)}
+      </Txt>
       {/* Đăng xuất là nút cuối cùng của Cài đặt (nút Thoát ở trang chính chỉ đóng app) */}
       {logoutMsg ? (
         <Card tone="warn">

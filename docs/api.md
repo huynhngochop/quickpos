@@ -182,7 +182,7 @@ Secrets: `SEPAY_WEBHOOK_SECRET` (HMAC) hoặc `SEPAY_API_KEY`, `PUSH_WEBHOOK_SEC
 ## 9. Chế độ lưu trên máy (bản chưa có máy chủ)
 
 Khi bản build thiếu `EXPO_PUBLIC_SUPABASE_URL` / `ANON_KEY`, `src/lib/supabase.ts` dùng bộ máy trên máy
-(`src/lib/demoClient.ts`) với cùng các lời gọi ở trên. Dữ liệu ghi vào SQLite của app (`expo-sqlite/kv-store`,
+(`src/lib/localEngine.ts`) với cùng các lời gọi ở trên. Dữ liệu ghi vào SQLite của app (`expo-sqlite/kv-store`,
 khóa `quickpos.local.v1`) sau mỗi lệnh ghi và khi app vào nền: còn nguyên khi tắt app, đăng xuất, cập nhật app;
 mất khi gỡ app / xóa dữ liệu app → sao lưu ra file.
 

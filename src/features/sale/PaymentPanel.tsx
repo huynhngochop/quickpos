@@ -88,8 +88,6 @@ export function PaymentPanel({ orderId, qrSize, onNewSale }: { orderId: string; 
       no={vi.sale.manualNo}
       busy={manual.isPending}
       onYes={() => {
-        // Hỏi tại chỗ, không dùng Modal: đơn chuyển "Đã nhận" ngay khi bấm (bản lưu trên máy), Modal vừa đóng trên Android
-        // làm lần bấm sau không tới được app (bấm "Đơn mới" không ăn — lỗi QA 08/11/2026)
         setAskManual(false);
         manual.mutate({ orderId: o.id, note: null });
       }}
@@ -110,166 +108,163 @@ export function PaymentPanel({ orderId, qrSize, onNewSale }: { orderId: string; 
     />
   );
 
-  // Hai câu hỏi thay chỗ cả phần thanh toán (không dùng Modal): đơn đổi trạng thái ngay khi bấm (bản lưu trên máy trả lời tức thì),
-  // Modal vừa đóng trên Android làm lần bấm sau không tới được app ("Đơn mới" không ăn — lỗi QA 08/11/2026).
-  const content = (() => {
-  // Đang hỏi: cả phần này chỉ còn câu hỏi (một việc một màn, luôn nằm trên cùng, không phải cuộn tìm)
-  const asking = view.kind === 'WAITING' || view.kind === 'PARTIAL';
-  if (askManual && asking) return manualSheet;
-  if (askCancel && asking) return cancelSheet;
-  if (undoLeft > 0) {
-    return (
-      <Card tone="warn" style={{ gap: space.md }}>
-        <Txt variant="title" tone="warn">{`${vi.sale.cancelled} · ${undoLeft}`}</Txt>
-        <Button big label={vi.sale.undo} onPress={undo} />
-      </Card>
-    );
-  }
-  switch (view.kind) {
-    case 'PAID':
-    case 'OVERPAID': {
-      const got = view.kind === 'OVERPAID' ? view.received : view.total;
+  const renderBody = () => {
+    // Đang hỏi: cả phần thanh toán chỉ còn câu hỏi, luôn nằm trên cùng nên không phải cuộn tìm.
+    // Hỏi ngay trong trang chứ không mở Modal: bản lưu trên máy đổi trạng thái đơn tức thì khi bấm "Có", còn Modal
+    // vừa đóng trên Android có thể chặn lần bấm kế tiếp.
+    const asking = view.kind === 'WAITING' || view.kind === 'PARTIAL';
+    if (askManual && asking) return manualSheet;
+    if (askCancel && asking) return cancelSheet;
+    if (undoLeft > 0) {
       return (
-        <View style={{ gap: space.md }}>
-          <View style={{ backgroundColor: colors.success, borderRadius: 20, padding: space.xl, gap: space.sm, alignItems: 'center' }} accessibilityLiveRegion="polite">
-            <Txt variant="heading" tone="onColor">
-              {view.kind === 'OVERPAID' ? vi.paid.receivedFull : vi.paid.received}
-            </Txt>
-            <Amount value={formatVND(got)} tone="onColor" size={font.size.amount} />
-            <Txt variant="title" tone="onColor" center>
-              {capitalize(readVND(got))}
-            </Txt>
-            <Txt tone="onColor">
-              {view.kind === 'OVERPAID' ? vi.paid.orderOf(formatVND(view.total), formatTimeVN(o.paid_at ?? o.updated_at)) : vi.paid.at(formatTimeVN(o.paid_at ?? o.updated_at))}
-            </Txt>
+        <Card tone="warn" style={{ gap: space.md }}>
+          <Txt variant="title" tone="warn">{`${vi.sale.cancelled} · ${undoLeft}`}</Txt>
+          <Button big label={vi.sale.undo} onPress={undo} />
+        </Card>
+      );
+    }
+    switch (view.kind) {
+      case 'PAID':
+      case 'OVERPAID': {
+        const got = view.kind === 'OVERPAID' ? view.received : view.total;
+        return (
+          <View style={{ gap: space.md }}>
+            <View style={{ backgroundColor: colors.success, borderRadius: 20, padding: space.xl, gap: space.sm, alignItems: 'center' }} accessibilityLiveRegion="polite">
+              <Txt variant="heading" tone="onColor">
+                {view.kind === 'OVERPAID' ? vi.paid.receivedFull : vi.paid.received}
+              </Txt>
+              <Amount value={formatVND(got)} tone="onColor" size={font.size.amount} />
+              <Txt variant="title" tone="onColor" center>
+                {capitalize(readVND(got))}
+              </Txt>
+              <Txt tone="onColor">
+                {view.kind === 'OVERPAID' ? vi.paid.orderOf(formatVND(view.total), formatTimeVN(o.paid_at ?? o.updated_at)) : vi.paid.at(formatTimeVN(o.paid_at ?? o.updated_at))}
+              </Txt>
+            </View>
+            {view.kind === 'PAID' && view.manual ? (
+              <Card tone="info">
+                <Txt tone="primary">{vi.paid.manual}</Txt>
+              </Card>
+            ) : null}
+            {view.kind === 'OVERPAID' ? (
+              <Card tone="warn">
+                <Txt variant="bodyStrong" tone="warn">{`${vi.paid.overTitle}: ${formatVND(view.over)}`}</Txt>
+                <Txt tone="warn">{vi.paid.overHint(formatVND(view.over))}</Txt>
+              </Card>
+            ) : null}
+            <Button big label={view.kind === 'OVERPAID' ? vi.paid.doneNew : vi.paid.newOrder} onPress={onNewSale} testID="pay-new-sale" />
+            <Button kind="secondary" label={vi.paid.readAgain} onPress={() => speakVi(vi.paid.speakPaid(readNumber(got)))} />
           </View>
-          {view.kind === 'PAID' && view.manual ? (
-            <Card tone="info">
-              <Txt tone="primary">{vi.paid.manual}</Txt>
+        );
+      }
+
+      case 'CANCELLED':
+        return (
+          <View style={{ gap: space.md }}>
+            <Card>
+              <Txt variant="title">{vi.sale.cancelled}</Txt>
             </Card>
-          ) : null}
-          {view.kind === 'OVERPAID' ? (
+            <Button big label={vi.paid.newOrder} onPress={onNewSale} />
+          </View>
+        );
+
+      case 'PARTIAL':
+        return (
+          <View style={{ gap: space.md }}>
             <Card tone="warn">
-              <Txt variant="bodyStrong" tone="warn">{`${vi.paid.overTitle}: ${formatVND(view.over)}`}</Txt>
-              <Txt tone="warn">{vi.paid.overHint(formatVND(view.over))}</Txt>
+              <Txt variant="title" tone="warn">
+                {vi.paid.partialTitle}
+              </Txt>
+              <View style={{ flexDirection: 'row', gap: space.md }}>
+                <View style={{ flex: 1 }}>
+                  <Txt variant="small" tone="warn">
+                    {vi.paid.received}
+                  </Txt>
+                  <Amount value={formatVND(view.received)} size={font.size.amountSmall} center={false} tone="warn" />
+                  <Txt variant="small" tone="warn">
+                    {vi.paid.of(formatVND(view.total))}
+                  </Txt>
+                </View>
+                <View style={{ flex: 1 }}>
+                  <Txt variant="small" tone="warn">
+                    {vi.paid.missing}
+                  </Txt>
+                  <Amount value={formatVND(view.missing)} size={font.size.amountSmall} center={false} tone="danger" />
+                  <Txt variant="small" tone="warn">
+                    {capitalize(readVND(view.missing))}
+                  </Txt>
+                </View>
+              </View>
             </Card>
-          ) : null}
-          <Button big label={view.kind === 'OVERPAID' ? vi.paid.doneNew : vi.paid.newOrder} onPress={onNewSale} testID="pay-new-sale" />
-          <Button kind="secondary" label={vi.paid.readAgain} onPress={() => speakVi(vi.paid.speakPaid(readNumber(got)))} />
-        </View>
-      );
-    }
-
-    case 'CANCELLED':
-      return (
-        <View style={{ gap: space.md }}>
-          <Card>
-            <Txt variant="title">{vi.sale.cancelled}</Txt>
-          </Card>
-          <Button big label={vi.paid.newOrder} onPress={onNewSale} />
-        </View>
-      );
-
-    case 'PARTIAL':
-      return (
-        <View style={{ gap: space.md }}>
-          <Card tone="warn">
-            <Txt variant="title" tone="warn">
-              {vi.paid.partialTitle}
+            <Txt variant="bodyStrong" center>
+              {vi.paid.qrForMissing(formatVND(view.missing))}
             </Txt>
-            <View style={{ flexDirection: 'row', gap: space.md }}>
-              <View style={{ flex: 1 }}>
-                <Txt variant="small" tone="warn">
-                  {vi.paid.received}
+            <QrCard qr={qr.data} loading={qr.isLoading} error={qr.error} onRetry={() => void qr.refetch()} size={qrSize} />
+            <Txt tone="secondary" center>
+              {vi.paid.qrForMissingHint}
+            </Txt>
+            {manualAllowed ? <Button kind="success" label={vi.sale.iSawFullMoney} onPress={() => setAskManual(true)} /> : null}
+            {manual.error ? <ErrorView error={manual.error} /> : null}
+          </View>
+        );
+
+      case 'WAITING':
+      default: {
+        const slow = waitedS > SLOW_AFTER_S;
+        return (
+          <View style={{ gap: space.md }}>
+            <Txt variant="title" center>
+              {vi.sale.scanToPay}
+            </Txt>
+            <Amount value={formatVND(view.total)} size={font.size.amount} />
+            <QrCard qr={qr.data} loading={qr.isLoading} error={qr.error} onRetry={() => void qr.refetch()} size={qrSize} />
+            {slow ? (
+              <Card tone="warn">
+                <Txt variant="bodyStrong" tone="warn">
+                  {vi.sale.slowTitle}
                 </Txt>
-                <Amount value={formatVND(view.received)} size={font.size.amountSmall} center={false} tone="warn" />
                 <Txt variant="small" tone="warn">
-                  {vi.paid.of(formatVND(view.total))}
+                  {vi.sale.slowBody}
+                </Txt>
+                {vi.sale.slowSteps.map((s, i) => (
+                  <Txt key={s} variant="small" tone="warn">{`${i + 1}. ${s}`}</Txt>
+                ))}
+                <Txt variant="small" tone="warn">
+                  {vi.sale.slowWaited(formatElapsed(waitedS))}
+                </Txt>
+              </Card>
+            ) : (
+              <Txt variant="bodyStrong" tone="secondary" center accessibilityLiveRegion="polite">
+                {vi.sale.waiting(formatElapsed(waitedS))}
+              </Txt>
+            )}
+            {ENV.localOnly ? (
+              <Txt variant="small" tone="warn" center>
+                {vi.local.manualOnly}
+              </Txt>
+            ) : null}
+            {manualAllowed ? (
+              <View style={{ gap: 4 }}>
+                <Button kind="success" label={vi.sale.iSawMoney} onPress={() => setAskManual(true)} />
+                <Txt variant="caption" tone="secondary" center>
+                  {vi.sale.iSawMoneyHint}
                 </Txt>
               </View>
-              <View style={{ flex: 1 }}>
-                <Txt variant="small" tone="warn">
-                  {vi.paid.missing}
-                </Txt>
-                <Amount value={formatVND(view.missing)} size={font.size.amountSmall} center={false} tone="danger" />
-                <Txt variant="small" tone="warn">
-                  {capitalize(readVND(view.missing))}
-                </Txt>
-              </View>
-            </View>
-          </Card>
-          <Txt variant="bodyStrong" center>
-            {vi.paid.qrForMissing(formatVND(view.missing))}
-          </Txt>
-          <QrCard qr={qr.data} loading={qr.isLoading} error={qr.error} onRetry={() => void qr.refetch()} size={qrSize} />
-          <Txt tone="secondary" center>
-            {vi.paid.qrForMissingHint}
-          </Txt>
-          {manualAllowed ? <Button kind="success" label={vi.sale.iSawFullMoney} onPress={() => setAskManual(true)} /> : null}
-          {manual.error ? <ErrorView error={manual.error} /> : null}
-        </View>
-      );
-
-    case 'WAITING':
-    default: {
-      const slow = waitedS > SLOW_AFTER_S;
-      return (
-        <View style={{ gap: space.md }}>
-          <Txt variant="title" center>
-            {vi.sale.scanToPay}
-          </Txt>
-          <Amount value={formatVND(view.total)} size={font.size.amount} />
-          <QrCard qr={qr.data} loading={qr.isLoading} error={qr.error} onRetry={() => void qr.refetch()} size={qrSize} />
-          {slow ? (
-            <Card tone="warn">
-              <Txt variant="bodyStrong" tone="warn">
-                {vi.sale.slowTitle}
+            ) : (
+              <Txt variant="small" tone="secondary" center>
+                {vi.sale.manualNotAllowed}
               </Txt>
-              <Txt variant="small" tone="warn">
-                {vi.sale.slowBody}
-              </Txt>
-              {vi.sale.slowSteps.map((s, i) => (
-                <Txt key={s} variant="small" tone="warn">{`${i + 1}. ${s}`}</Txt>
-              ))}
-              <Txt variant="small" tone="warn">
-                {vi.sale.slowWaited(formatElapsed(waitedS))}
-              </Txt>
-            </Card>
-          ) : (
-            <Txt variant="bodyStrong" tone="secondary" center accessibilityLiveRegion="polite">
-              {vi.sale.waiting(formatElapsed(waitedS))}
-            </Txt>
-          )}
-          {ENV.localOnly ? (
-            <Txt variant="small" tone="warn" center>
-              {vi.local.manualOnly}
-            </Txt>
-          ) : null}
-          {manualAllowed ? (
-            <View style={{ gap: 4 }}>
-              <Button kind="success" label={vi.sale.iSawMoney} onPress={() => setAskManual(true)} />
-              <Txt variant="caption" tone="secondary" center>
-                {vi.sale.iSawMoneyHint}
-              </Txt>
-            </View>
-          ) : (
-            <Txt variant="small" tone="secondary" center>
-              {vi.sale.manualNotAllowed}
-            </Txt>
-          )}
-          {manual.error ? <ErrorView error={manual.error} /> : null}
-          {cancel.error ? <ErrorView error={cancel.error} /> : null}
-          <Button kind="dangerOutline" label={vi.sale.cancelOrder} onPress={() => setAskCancel(true)} />
-        </View>
-      );
+            )}
+            {manual.error ? <ErrorView error={manual.error} /> : null}
+            {cancel.error ? <ErrorView error={cancel.error} /> : null}
+            <Button kind="dangerOutline" label={vi.sale.cancelOrder} onPress={() => setAskCancel(true)} />
+          </View>
+        );
+      }
     }
-  }
-  })();
-  return (
-    <>
-      {content}
-    </>
-  );
+  };
+
+  return renderBody();
 }
 
 /** Đặt lại để bán đơn tiếp theo */

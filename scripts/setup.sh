@@ -22,7 +22,8 @@ npm install \
   zustand@^5 \
   react-hook-form@^7 @hookform/resolvers@^5 zod@^4 \
   react-native-qrcode-svg@^6 \
-  react-native-tcp-socket@^6 tweetnacl@^1
+  react-native-tcp-socket@^6 tweetnacl@^1 \
+  react-native-google-mobile-ads@^16
 
 npm install -D typescript @types/react tsx
 

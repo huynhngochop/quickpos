@@ -7,7 +7,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { createClient } from '@supabase/supabase-js';
 import { AppState, Platform } from 'react-native';
 import { ENV } from './env';
-import { attachRowStore, createDemoClient, persistNow } from './demoClient';
+import { attachRowStore, createLocalClient, persistNow } from './localEngine';
 import { rowStore } from './localStore';
 import '../features/lan/prng';
 import { LanClient } from '../features/lan/client';
@@ -28,9 +28,9 @@ const realClient = () => createClient(ENV.supabaseUrl, ENV.supabaseAnonKey, {
 
 type Client = ReturnType<typeof realClient>;
 
-// Thiếu địa chỉ máy chủ → dữ liệu nằm trên máy (src/lib/demoClient.ts), lưu bền trong SQLite của app
+// Thiếu địa chỉ máy chủ → dữ liệu nằm trên máy (src/lib/localEngine.ts), lưu bền trong SQLite của app
 if (ENV.demo) attachRowStore(rowStore);
-const localClient = ENV.demo ? (createDemoClient() as unknown as Client) : null;
+const localClient = ENV.demo ? (createLocalClient() as unknown as Client) : null;
 
 // Gói Pro: máy nhân viên gửi mọi lệnh tới máy chủ quán trong Wi‑Fi (src/features/lan)
 let lanClient: LanClient | null = null;

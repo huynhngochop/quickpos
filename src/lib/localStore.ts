@@ -5,7 +5,7 @@
  */
 import * as SQLite from 'expo-sqlite';
 import Storage from 'expo-sqlite/kv-store';
-import type { RowStoreAdapter } from './demoClient';
+import type { RowStoreAdapter } from './localEngine';
 
 const LEGACY_KEY = 'quickpos.local.v1';
 const META_KEY = 'quickpos.local.meta';

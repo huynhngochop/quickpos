@@ -1,6 +1,6 @@
 import { test, mock } from 'node:test';
 import assert from 'node:assert/strict';
-import { createDemoClient, setSampleMode } from '../src/lib/demoClient';
+import { createLocalClient, setSampleMode } from '../src/lib/localEngine';
 
 // Các ca này dùng dữ liệu mẫu, kể cả khi build đặt EXPO_PUBLIC_DEMO_SAMPLE=0
 setSampleMode(true);
@@ -8,7 +8,7 @@ import { vnDayRange, vnDay } from '../src/lib/time';
 
 test('dùng thử: bán theo món trừ kho, khách quen, ca bán, nhân viên, thu nợ QR, hóa đơn', async () => {
   mock.timers.enable({ apis: ['setTimeout'] });
-  const c = createDemoClient();
+  const c = createLocalClient();
   const rpc = async (name: string, args: Record<string, unknown> = {}) => {
     const p = c.rpc(name, args).then((x) => x);
     mock.timers.tick(300);

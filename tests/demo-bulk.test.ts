@@ -6,11 +6,11 @@ import { addDays, monthStart, vnDay, vnDayRange } from '../src/lib/time';
 process.env.EXPO_PUBLIC_DEMO_BULK_ORDERS = '1000000';
 
 test('dùng thử 1 triệu đơn: tổng đúng, phân trang keyset đủ và không trùng, hôm nay/hôm qua không đổi', async () => {
-  const { createDemoClient, BULK_ORDERS, setSampleMode } = await import('../src/lib/demoClient');
+  const { createLocalClient, BULK_ORDERS, setSampleMode } = await import('../src/lib/localEngine');
   setSampleMode(true);
   assert.equal(BULK_ORDERS, 1_000_000);
   mock.timers.enable({ apis: ['setTimeout'] });
-  const c = createDemoClient();
+  const c = createLocalClient();
   const rpc = async (name: string, args: Record<string, unknown> = {}) => {
     const p = c.rpc(name, args).then((x) => x);
     mock.timers.tick(300);

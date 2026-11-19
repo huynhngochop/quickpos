@@ -2240,7 +2240,7 @@ class RpcCall implements PromiseLike<Result> {
 }
 
 // ---------------- Client giả lập ----------------
-export function createDemoClient() {
+export function createLocalClient() {
   return {
     from: (table: string) => new Query(table),
     rpc: (name: string, args: Row = {}) => new RpcCall(name, args),
