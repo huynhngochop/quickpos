@@ -35,16 +35,16 @@ test('mã kích hoạt: ký, kiểm tra, sai quán, bị sửa', () => {
   assert.throws(() => signLicense(SECRET, 'abc', '2027-11-07'));
 });
 
-test('gói: miễn phí → dùng thử 30 ngày → hết hạn → mua năm → gia hạn', () => {
+test('gói: miễn phí → dùng thử 3 tháng → hết hạn → mua năm → gia hạn', () => {
   const t0 = at('2026-11-07T03:00:00Z');
   assert.equal(planStatus({ businessId: BIZ, now: t0, publicKey: PUB }).kind, 'FREE');
   const trial = planStatus({ businessId: BIZ, trialStartedAt: new Date(t0).toISOString(), now: t0 + 1000, publicKey: PUB });
   assert.equal(trial.kind, 'PRO_TRIAL');
   assert.equal(trial.active, true);
-  assert.equal(trial.daysLeft, 30);
-  const day29 = planStatus({ businessId: BIZ, trialStartedAt: new Date(t0).toISOString(), now: t0 + 29.5 * DAY, publicKey: PUB });
-  assert.equal(day29.daysLeft, 1);
-  const over = planStatus({ businessId: BIZ, trialStartedAt: new Date(t0).toISOString(), now: t0 + 30 * DAY + 1, publicKey: PUB });
+  assert.equal(trial.daysLeft, 90);
+  const lastDay = planStatus({ businessId: BIZ, trialStartedAt: new Date(t0).toISOString(), now: t0 + 89.5 * DAY, publicKey: PUB });
+  assert.equal(lastDay.daysLeft, 1);
+  const over = planStatus({ businessId: BIZ, trialStartedAt: new Date(t0).toISOString(), now: t0 + 90 * DAY + 1, publicKey: PUB });
   assert.equal(over.kind, 'PRO_EXPIRED');
   assert.equal(over.active, false);
 

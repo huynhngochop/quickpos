@@ -211,7 +211,7 @@ appId: vn.quickpos.app
 - assertVisible: ".*25.000 đ.*"
 - takeScreenshot: "209-dang-nhap-lai-van-con"
 
-# ---------- Gói sử dụng: dùng thử Pro 30 ngày, máy nhân viên, mã kích hoạt ----------
+# ---------- Gói sử dụng: dùng thử Pro 3 tháng, máy nhân viên, mã kích hoạt ----------
 - tapOn: { id: "main-settings" }
 - runFlow:
     when:
@@ -225,13 +225,13 @@ appId: vn.quickpos.app
     visible: "Miễn phí — một máy"
     timeout: 10000
 - takeScreenshot: "210-goi-mien-phi"
-- tapOn: "Dùng thử Pro 30 ngày"
+- tapOn: "Dùng thử Pro 3 tháng"
 - extendedWaitUntil:
-    visible: "Bắt đầu 30 ngày dùng thử Pro[?]"
+    visible: "Bắt đầu 3 tháng dùng thử Pro[?]"
     timeout: 5000
 - tapOn: "Bắt đầu dùng thử"
 - extendedWaitUntil:
-    visible: "Pro dùng thử — còn 30 ngày"
+    visible: "Pro dùng thử — còn 90 ngày"
     timeout: 10000
 - scrollUntilVisible:
     element: "Thêm máy nhân viên"

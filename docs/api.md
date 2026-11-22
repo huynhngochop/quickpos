@@ -213,7 +213,7 @@ chi tiết (chỉ còn tổng ngày).
 
 | Lời gọi | Ai | Tham số | Trả về | Lỗi |
 | --- | --- | --- | --- | --- |
-| `start_pro_trial_v1` | OWNER | `p_business_id` | `{ pro_trial_started_at, pro_license }` (dùng thử 30 ngày, một lần mỗi quán) | `QP_FORBIDDEN` |
+| `start_pro_trial_v1` | OWNER | `p_business_id` | `{ pro_trial_started_at, pro_license }` (dùng thử 90 ngày = 3 tháng, một lần mỗi quán) | `QP_FORBIDDEN` |
 | `set_pro_license_v1` | OWNER | `p_business_id`, `p_code` (mã `QP-…` ký Ed25519, gắn mã quán 8 ký tự) | như trên | `QP_FORBIDDEN`, `QP_LICENSE_INVALID`, `QP_LICENSE_OTHER_SHOP` |
 | `from('businesses').select('id, pro_trial_started_at, pro_license')` | thành viên | — | trạng thái gói tính ở `src/features/plan/license.ts` (giờ chống lùi: `planNow()`) | — |
 
@@ -227,6 +227,7 @@ Máy nhân viên không gọi được `start_pro_trial_v1`, `set_pro_license_v1
 | `QP_PRO_REQUIRED` | Gói Pro của quán đã hết hạn hoặc chưa bật. Nhờ chủ quán gia hạn gói Pro. |
 | `QP_PAIRING_EXPIRED` | Mã ghép máy đã hết hạn hoặc đã dùng (hoặc máy đã bị thu hồi). Nhờ chủ quán tạo mã mới. |
 | `QP_LICENSE_INVALID` / `QP_LICENSE_OTHER_SHOP` | Mã kích hoạt không đúng / của quán khác. |
+| `QP_ONE_SHOP` | Bản lưu trên máy: `create_business_v1` khi máy đã có một cửa hàng (mỗi máy một quán). |
 
 ## 10. Danh mục, nhà cung cấp, phiếu nhập, khuyến mãi, kiểm kê (migration 9, 08/11/2026)
 

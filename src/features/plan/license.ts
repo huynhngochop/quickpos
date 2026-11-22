@@ -1,7 +1,7 @@
 /**
  * Gói sử dụng (chốt 07/11/2026):
  *  - Miễn phí: một máy, chủ quán tự bán.
- *  - Pro: nhiều nhân viên, nhiều máy nối vào máy chủ quán qua Wi‑Fi. Dùng thử 30 ngày, sau đó trả theo năm
+ *  - Pro: nhiều nhân viên, nhiều máy nối vào máy chủ quán qua Wi‑Fi. Dùng thử 3 tháng (90 ngày), sau đó trả theo năm
  *    bằng mã kích hoạt (mua bằng chuyển khoản / ví / thẻ, người bán gửi mã).
  *  - Premium (sau này): đồng bộ qua máy chủ đám mây, dữ liệu lớn.
  *
@@ -13,7 +13,7 @@ import { fromB64, fromUtf8, toB64, utf8 } from '../../lib/b64';
 
 /** Khóa công khai kiểm tra mã kích hoạt (khóa bí mật do chủ sản phẩm giữ). */
 export const LICENSE_PUBLIC_KEY = 'nc/gsPOx4zchRWBD2o7jR2u9xu2cdiYCqPZGdkZAO6M=';
-export const TRIAL_DAYS = 30;
+export const TRIAL_DAYS = 90;
 const DAY = 86_400_000;
 
 /** Mã quán (8 ký tự) dùng để mua mã kích hoạt: lấy từ mã quán trong máy. */
@@ -79,7 +79,7 @@ const ymd = (t: number) => {
 
 /**
  * Trạng thái gói. now đã chống lùi giờ (lấy giờ lớn nhất từng thấy, xem planNow()).
- * Mã kích hoạt hợp lệ của đúng quán và còn hạn → PRO; còn trong 30 ngày dùng thử → PRO_TRIAL;
+ * Mã kích hoạt hợp lệ của đúng quán và còn hạn → PRO; còn trong thời gian dùng thử → PRO_TRIAL;
  * từng dùng thử / từng mua mà hết → PRO_EXPIRED; chưa dùng thử → FREE.
  */
 export function planStatus(p: {

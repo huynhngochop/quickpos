@@ -32,6 +32,7 @@ const ACTIONS: Record<ErrorCode, ErrorAction> = {
   QP_PAIRING_EXPIRED: 'none',
   QP_LICENSE_INVALID: 'none',
   QP_LICENSE_OTHER_SHOP: 'none',
+  QP_ONE_SHOP: 'none',
   QP_DUPLICATE_NAME: 'none',
   QP_COUNT_ALREADY_OPEN: 'none',
   QP_COUNT_CLOSED: 'none',

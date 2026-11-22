@@ -1555,6 +1555,8 @@ function rpcImpl(name: string, a: Row): Result {
       if (e) return e;
       const existing = db.businesses!.find((b) => b.id === a.p_business_id);
       if (existing) return existing.owner_id === user!.id ? ok(existing) : fail('QP_FORBIDDEN');
+      // Bản lưu trên máy: mỗi máy một quán (dữ liệu các quán không trộn lẫn; muốn đổi quán thì khôi phục từ file sao lưu)
+      if (!SAMPLE && db.businesses!.length > 0) return fail('QP_ONE_SHOP');
       if (!/^[0-9]{10}([0-9]{2}|-[0-9]{3})?$/.test(a.p_tax_code ?? '')) return fail('QP_INVALID_INPUT');
       const b = {
         id: a.p_business_id, owner_id: user!.id, business_name: String(a.p_business_name).trim(), tax_code: a.p_tax_code,
@@ -1572,7 +1574,7 @@ function rpcImpl(name: string, a: Row): Result {
       return ok(b);
     }
 
-    // Gói Pro (lưu trên máy): bắt đầu dùng thử 30 ngày — một lần cho mỗi quán
+    // Gói Pro (lưu trên máy): bắt đầu dùng thử 3 tháng — một lần cho mỗi quán
     case 'start_pro_trial_v1': {
       const m = member(a.p_business_id);
       if (!m || m.role !== 'OWNER') return fail('QP_FORBIDDEN');

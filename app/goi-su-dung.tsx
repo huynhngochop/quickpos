@@ -31,7 +31,7 @@ const mmss = (ms: number) => {
 };
 
 /**
- * Gói sử dụng (chủ quán, sau PIN): Miễn phí / Pro dùng thử 30 ngày / Pro theo năm (mã kích hoạt) / Premium sắp có.
+ * Gói sử dụng (chủ quán, sau PIN): Miễn phí / Pro dùng thử 3 tháng / Pro theo năm (mã kích hoạt) / Premium sắp có.
  * Pro: máy này làm máy chủ quán — thêm, xem, thu hồi máy nhân viên.
  */
 export default function GoiSuDung() {

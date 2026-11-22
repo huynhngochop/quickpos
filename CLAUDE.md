@@ -212,8 +212,9 @@ Tính theo chiều rộng/cao cửa sổ hiện tại (`useWindowDimensions`), k
 - Sao lưu / khôi phục bằng file qua bảng chia sẻ (Cài đặt → Sao lưu và khôi phục; bước tạo quán có liên kết khôi phục).
   Trang chính nhắc sao lưu khi chưa từng sao lưu hoặc quá 7 ngày.
 - KHÔNG đồng bộ nhiều máy qua mail (ghi đè nhau, mất đơn).
-- **Gói** (chốt 07/11/2026): Miễn phí = một máy, chủ tự bán. **Pro** = nhiều nhân viên, nhiều máy trong Wi‑Fi nối vào máy chủ
-  quán (`src/features/lan/`), dùng thử 30 ngày rồi trả theo năm bằng mã kích hoạt (`src/features/plan/license.ts`, ký Ed25519;
+- **Gói** (chốt 07/11/2026, cập nhật 22/11/2026): Miễn phí = một cửa hàng, một máy, chủ tự bán, có quảng cáo Google.
+  **Pro** 599.000 đ/năm = không quảng cáo, nhiều nhân viên, nhiều máy trong Wi‑Fi nối vào máy chủ
+  quán (`src/features/lan/`), dùng thử 3 tháng (`TRIAL_DAYS = 90`) rồi trả theo năm bằng mã kích hoạt (`src/features/plan/license.ts`, ký Ed25519;
   khóa bí mật chỉ người bán giữ, KHÔNG đưa vào repo; người bán cấp mã bằng `scripts/cap-ma-pro.ts` trên máy tính —
   app không có màn ẩn vì cửa hàng ứng dụng cấm chức năng ẩn). Hết hạn: máy nhân viên bị chặn, dữ liệu còn nguyên.
   **Premium** (sau) = đồng bộ qua máy chủ đám mây, dữ liệu lớn.
