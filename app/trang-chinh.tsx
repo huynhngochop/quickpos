@@ -15,6 +15,7 @@ import { lastBackupAt } from '../src/lib/localStore';
 import { isStaffDevice } from '../src/lib/supabase';
 import { usePlan } from '../src/features/plan/hooks';
 import { AdBanner } from '../src/features/ads/AdBanner';
+import { refreshStoreEntitlement, storeBillingEnabled } from '../src/features/plan/storeBilling';
 import { syncHost } from '../src/features/lan/hostRuntime';
 import { StaffBanner } from '../src/features/lan/StaffBanner';
 import { useSession, useBusinessId } from '../src/features/session/store';
@@ -59,6 +60,12 @@ export default function TrangChinh() {
       console.warn('[lan] syncHost', e);
     }
   }, [plan.data, businessId, name, staff]);
+  // Pro mua qua App Store / Google Play: mỗi lần mở trang chính hỏi lại cửa hàng (gia hạn, hủy) rồi cập nhật gói
+  const refetchPlan = plan.refetch;
+  useEffect(() => {
+    if (staff || !businessId || !storeBillingEnabled) return;
+    void refreshStoreEntitlement(businessId).then(() => refetchPlan());
+  }, [businessId, staff, refetchPlan]);
   const expiring = useExpiringLots(businessId);
   const products = useProducts(businessId);
   const expCount = expiring.data?.length ?? 0;

@@ -214,9 +214,16 @@ Tính theo chiều rộng/cao cửa sổ hiện tại (`useWindowDimensions`), k
 - KHÔNG đồng bộ nhiều máy qua mail (ghi đè nhau, mất đơn).
 - **Gói** (chốt 07/11/2026, cập nhật 22/11/2026): Miễn phí = một cửa hàng, một máy, chủ tự bán, có quảng cáo Google.
   **Pro** 599.000 đ/năm = không quảng cáo, nhiều nhân viên, nhiều máy trong Wi‑Fi nối vào máy chủ
-  quán (`src/features/lan/`), dùng thử 3 tháng (`TRIAL_DAYS = 90`) rồi trả theo năm bằng mã kích hoạt (`src/features/plan/license.ts`, ký Ed25519;
-  khóa bí mật chỉ người bán giữ, KHÔNG đưa vào repo; người bán cấp mã bằng `scripts/cap-ma-pro.ts` trên máy tính —
-  app không có màn ẩn vì cửa hàng ứng dụng cấm chức năng ẩn). Hết hạn: máy nhân viên bị chặn, dữ liệu còn nguyên.
+  quán (`src/features/lan/`).
+  - **Bản trên App Store / Google Play** (`EXPO_PUBLIC_BILLING=store`, mặc định, job `eas-store`): Pro là thuê bao năm
+    `quickpos_pro_year` mua qua cửa hàng (`src/features/plan/storeBilling.ts`, thư viện `expo-iap`), dùng thử 3 tháng là ưu đãi
+    miễn phí cấu hình trên cửa hàng. Chưa có máy chủ: app hỏi cửa hàng mỗi lần mở trang chính và nhớ hạn trên máy (iOS: ngày hết
+    hạn + 3 ngày; Android: +7 ngày từ lần hỏi được). Bản này KHÔNG có nút dùng thử trên máy, chuyển khoản hay ô nhập mã kích hoạt
+    (cửa hàng cấm mở khóa bằng thanh toán ngoài). Màn mua phải ghi giá, chu kỳ, tự gia hạn, cách hủy, link điều khoản + quyền riêng tư.
+  - **Bản APK cài ngoài** (`EXPO_PUBLIC_BILLING=code`, job `android-apk`, QA): dùng thử 3 tháng trên máy (`TRIAL_DAYS = 90`) rồi trả
+    theo năm bằng mã kích hoạt (`src/features/plan/license.ts`, ký Ed25519; khóa bí mật chỉ người bán giữ, KHÔNG đưa vào repo;
+    người bán cấp mã bằng `scripts/cap-ma-pro.ts` trên máy tính — app không có màn ẩn vì cửa hàng cấm chức năng ẩn).
+  - Hết hạn: máy nhân viên bị chặn, quảng cáo hiện lại, dữ liệu còn nguyên.
   **Premium** (sau) = đồng bộ qua máy chủ đám mây, dữ liệu lớn.
 - Máy chủ quán: một máy giữ dữ liệu, máy nhân viên chỉ gửi lệnh (không đồng bộ hai chiều). iOS không làm máy chủ quán được.
 - **Hiệu năng bộ máy trên máy** (đo 07/11/2026, 100.000 đơn): mỗi lần bán ghi 2–3 dòng SQLite (< 1 ms), không ghi lại cả kho

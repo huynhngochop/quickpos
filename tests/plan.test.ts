@@ -35,6 +35,19 @@ test('mã kích hoạt: ký, kiểm tra, sai quán, bị sửa', () => {
   assert.throws(() => signLicense(SECRET, 'abc', '2027-11-07'));
 });
 
+test('gói: thuê bao cửa hàng còn hạn → PRO; hết hạn → về như chưa mua', () => {
+  const t0 = at('2026-11-23T03:00:00Z');
+  const until = t0 + 10 * DAY;
+  const on = planStatus({ businessId: BIZ, storeProUntil: until, now: t0, publicKey: PUB });
+  assert.equal(on.kind, 'PRO');
+  assert.equal(on.active, true);
+  assert.equal(on.store, true);
+  assert.equal(on.daysLeft, 10);
+  const off = planStatus({ businessId: BIZ, storeProUntil: until, now: until + 1, publicKey: PUB });
+  assert.equal(off.kind, 'FREE');
+  assert.equal(off.active, false);
+});
+
 test('gói: miễn phí → dùng thử 3 tháng → hết hạn → mua năm → gia hạn', () => {
   const t0 = at('2026-11-07T03:00:00Z');
   assert.equal(planStatus({ businessId: BIZ, now: t0, publicKey: PUB }).kind, 'FREE');

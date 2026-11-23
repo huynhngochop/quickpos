@@ -46,6 +46,10 @@ jobs:
 
   android-apk:
     runs-on: ubuntu-latest
+    # APK cài ngoài cửa hàng (bản thử, link GitHub): không mua được qua Google Play → bán Pro bằng mã kích hoạt.
+    # Bản trên cửa hàng (job eas-store) mặc định mua qua App Store / Google Play.
+    env:
+      EXPO_PUBLIC_BILLING: code
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4

@@ -495,6 +495,22 @@ export const vi = {
     activate: 'Kích hoạt',
     activated: (until: string) => `Đã kích hoạt Pro tới hết ngày ${until}`,
     enterCode: 'Dán mã kích hoạt người bán gửi',
+    // Mua qua App Store / Google Play
+    storeTitle: 'Gói Pro theo năm',
+    storePrice: (p: string) => `${p} / năm`,
+    storeTerms: (store: string) =>
+      `Dùng thử miễn phí 3 tháng, sau đó ${store} tự thu tiền và gia hạn mỗi năm. Hủy bất cứ lúc nào trong cài đặt của ${store}, `
+      + 'chậm nhất 24 giờ trước ngày gia hạn để không bị thu tiền năm sau.',
+    storeBuy: 'Dùng thử miễn phí 3 tháng',
+    storeRestore: 'Đã mua trên máy khác? Khôi phục gói',
+    storeManage: 'Quản lý hoặc hủy gói',
+    storeActive: 'Gói Pro tự gia hạn mỗi năm qua cửa hàng ứng dụng.',
+    storeOk: 'Đã đăng ký gói Pro. Cảm ơn bạn!',
+    storeNotFound: 'Không thấy gói Pro đã mua với tài khoản cửa hàng trên máy này.',
+    storeFailed: 'Chưa mua được. Kiểm tra mạng rồi thử lại.',
+    storeUnavailable: 'Chưa kết nối được cửa hàng ứng dụng. Kiểm tra mạng rồi mở lại màn này.',
+    termsOfUse: 'Điều khoản sử dụng',
+    privacyPolicy: 'Chính sách quyền riêng tư',
     // Máy nhân viên (trên máy chủ quán)
     devicesTitle: 'Máy nhân viên',
     hostBody: 'Máy này là máy chủ quán: giữ toàn bộ dữ liệu. Máy nhân viên phải cùng mạng Wi‑Fi và máy này phải mở QuickPOS.',

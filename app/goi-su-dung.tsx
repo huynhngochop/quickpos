@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { Linking, Share, View } from 'react-native';
+import { Linking, Platform, Share, View } from 'react-native';
 import QRCode from 'react-native-qrcode-svg';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { Screen, Card } from '../src/components/Screen';
@@ -13,6 +13,7 @@ import { useBusinessId, useSession } from '../src/features/session/store';
 import { usePlan } from '../src/features/plan/hooks';
 import { activateLicense, startProTrial } from '../src/features/plan/api';
 import { formatShopKey, shopKey } from '../src/features/plan/license';
+import { buyPro, loadProOffer, openSubscriptionSettings, refreshStoreEntitlement, storeBillingEnabled } from '../src/features/plan/storeBilling';
 import { HOST_PORT, getHost, hostIdNow, hostIp, refreshKeepAwake, syncHost } from '../src/features/lan/hostRuntime';
 import { encodePairingQr, type LanRole } from '../src/features/lan/protocol';
 import { buildVietQr } from '../supabase/functions/_shared/vietqr';
@@ -31,7 +32,8 @@ const mmss = (ms: number) => {
 };
 
 /**
- * Gói sử dụng (chủ quán, sau PIN): Miễn phí / Pro dùng thử 3 tháng / Pro theo năm (mã kích hoạt) / Premium sắp có.
+ * Gói sử dụng (chủ quán, sau PIN): Miễn phí / Pro (dùng thử 3 tháng rồi 599.000 đ/năm) / Premium sắp có.
+ * Bản trên cửa hàng mua Pro bằng thuê bao App Store / Google Play (StoreBuyCard); bản APK cài ngoài dùng mã kích hoạt.
  * Pro: máy này làm máy chủ quán — thêm, xem, thu hồi máy nhân viên.
  */
 export default function GoiSuDung() {
@@ -92,7 +94,9 @@ export default function GoiSuDung() {
                   : vi.plan.expired}
           </Txt>
           <Txt tone="secondary">{st.kind === 'PRO_EXPIRED' ? vi.plan.expiredBody : st.kind === 'FREE' ? vi.plan.freeBody : vi.plan.hostBody}</Txt>
-          {st.kind === 'FREE' ? <Button big label={vi.plan.startTrial} onPress={() => setAskTrial(true)} /> : null}
+          {st.kind === 'FREE' && !storeBillingEnabled ? <Button big label={vi.plan.startTrial} onPress={() => setAskTrial(true)} /> : null}
+          {st.store ? <Txt tone="secondary">{vi.plan.storeActive}</Txt> : null}
+          {st.store ? <Button kind="secondary" label={vi.plan.storeManage} onPress={() => void openSubscriptionSettings()} /> : null}
         </Card>
       ) : null}
 
@@ -104,7 +108,11 @@ export default function GoiSuDung() {
 
       {st?.active ? <Devices businessId={businessId} shopName={shopName} /> : null}
 
-      {st && st.kind !== 'FREE' ? (
+      {st && storeBillingEnabled && !st.store ? (
+        <StoreBuyCard businessId={businessId} onBought={() => void plan.refetch().then((r) => r.data && refresh(r.data))} />
+      ) : null}
+
+      {st && !storeBillingEnabled && st.kind !== 'FREE' ? (
         <Card style={{ gap: space.md }}>
           <Txt variant="title">{vi.plan.buyTitle}</Txt>
           <Txt variant="bodyStrong">{ENV.proPriceYear ? vi.plan.price(formatVND(ENV.proPriceYear)) : vi.plan.priceAsk}</Txt>
@@ -157,6 +165,51 @@ export default function GoiSuDung() {
         onNo={() => setAskTrial(false)}
       />
     </Screen>
+  );
+}
+
+const APPLE_EULA = 'https://www.apple.com/legal/internet-services/itunes/dev/stdeula/';
+
+/** Mua / khôi phục gói Pro qua App Store / Google Play (giá lấy từ cửa hàng, có ghi điều khoản gia hạn theo quy định cửa hàng) */
+function StoreBuyCard({ businessId, onBought }: { businessId: string; onBought: () => void }) {
+  const storeName = Platform.OS === 'ios' ? 'App Store' : 'Google Play';
+  const offer = useQuery({ queryKey: ['pro-offer'], queryFn: loadProOffer, staleTime: 3_600_000 });
+  const [result, setResult] = useState<'ok' | 'notFound' | 'failed' | null>(null);
+  const buy = useMutation({
+    mutationFn: () => buyPro(businessId, offer.data ?? null),
+    onSuccess: (r) => {
+      setResult(r === 'ok' ? 'ok' : r === 'failed' ? 'failed' : null);
+      if (r === 'ok') onBought();
+    },
+  });
+  const restore = useMutation({
+    mutationFn: () => refreshStoreEntitlement(businessId),
+    onSuccess: (until) => {
+      setResult(until ? 'ok' : 'notFound');
+      if (until) onBought();
+    },
+  });
+  const price = offer.data?.price ?? formatVND(ENV.proPriceYear);
+  return (
+    <Card style={{ gap: space.md }}>
+      <Txt variant="title">{vi.plan.storeTitle}</Txt>
+      <Txt variant="bodyStrong">{vi.plan.storePrice(price)}</Txt>
+      <Txt tone="secondary">{vi.plan.storeTerms(storeName)}</Txt>
+      {offer.isFetched && !offer.data ? <Txt tone="warn">{vi.plan.storeUnavailable}</Txt> : null}
+      {result === 'ok' ? <Txt tone="success" variant="bodyStrong">{`✓ ${vi.plan.storeOk}`}</Txt> : null}
+      {result === 'notFound' ? <Txt tone="warn">{vi.plan.storeNotFound}</Txt> : null}
+      {result === 'failed' ? <Txt tone="warn">{vi.plan.storeFailed}</Txt> : null}
+      <Button big label={vi.plan.storeBuy} onPress={() => buy.mutate()} busy={buy.isPending} testID="store-buy" />
+      <Button kind="link" label={vi.plan.storeRestore} onPress={() => restore.mutate()} busy={restore.isPending} />
+      <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: space.md }}>
+        <Button
+          kind="link"
+          label={vi.plan.termsOfUse}
+          onPress={() => void Linking.openURL(Platform.OS === 'ios' ? APPLE_EULA : 'https://play.google.com/about/play-terms/')}
+        />
+        {ENV.policyUrl ? <Button kind="link" label={vi.plan.privacyPolicy} onPress={() => void Linking.openURL(ENV.policyUrl)} /> : null}
+      </View>
+    </Card>
   );
 }
 

@@ -16,7 +16,14 @@ export const ENV = {
   supabaseUrl: url || 'https://not-configured.invalid',
   supabaseAnonKey: anonKey || 'not-configured',
   supportPhone: process.env.EXPO_PUBLIC_SUPPORT_PHONE ?? '',
-  /** Gói Pro: giá một năm (đồng) và tài khoản nhận tiền của người bán (để khách chuyển khoản mua mã kích hoạt) */
+  /**
+   * Cách bán gói Pro: 'store' = thuê bao qua App Store / Google Play (bản trên cửa hàng, mặc định);
+   * 'code' = chuyển khoản rồi nhập mã kích hoạt (chỉ bản APK cài ngoài cửa hàng — cửa hàng cấm cách này).
+   */
+  billing: (process.env.EXPO_PUBLIC_BILLING === 'code' ? 'code' : 'store') as 'store' | 'code',
+  /** Mã sản phẩm thuê bao năm trên App Store Connect / Google Play Console */
+  proStoreSku: process.env.EXPO_PUBLIC_PRO_STORE_SKU ?? 'quickpos_pro_year',
+  /** Gói Pro: giá một năm (đồng) và tài khoản nhận tiền của người bán (bản dùng mã kích hoạt) */
   proPriceYear: Number(process.env.EXPO_PUBLIC_PRO_PRICE_YEAR ?? 599000) || 599000,
   vendorBankBin: process.env.EXPO_PUBLIC_VENDOR_BANK_BIN ?? '',
   vendorAccountNo: process.env.EXPO_PUBLIC_VENDOR_ACCOUNT_NO ?? '',

@@ -69,6 +69,8 @@ export interface PlanStatus {
   daysLeft: number;
   /** Ngày cuối được dùng (yyyy-mm-dd) */
   until: string | null;
+  /** Pro đang chạy theo thuê bao App Store / Google Play (tự gia hạn; quản lý trong cài đặt cửa hàng) */
+  store?: boolean;
 }
 
 const ymd = (t: number) => {
@@ -79,18 +81,24 @@ const ymd = (t: number) => {
 
 /**
  * Trạng thái gói. now đã chống lùi giờ (lấy giờ lớn nhất từng thấy, xem planNow()).
- * Mã kích hoạt hợp lệ của đúng quán và còn hạn → PRO; còn trong thời gian dùng thử → PRO_TRIAL;
+ * Thuê bao cửa hàng còn hiệu lực, hoặc mã kích hoạt hợp lệ của đúng quán và còn hạn → PRO;
+ * còn trong thời gian dùng thử → PRO_TRIAL;
  * từng dùng thử / từng mua mà hết → PRO_EXPIRED; chưa dùng thử → FREE.
  */
 export function planStatus(p: {
   businessId: string;
   trialStartedAt?: string | null;
   licenseCode?: string | null;
+  /** Hạn thuê bao Pro mua qua App Store / Google Play (ms) */
+  storeProUntil?: number | null;
   now: number;
   /** Chỉ cho test */
   publicKey?: string;
 }): PlanStatus {
   const today = ymd(p.now);
+  if (p.storeProUntil && p.storeProUntil > p.now) {
+    return { kind: 'PRO', active: true, daysLeft: Math.max(1, Math.ceil((p.storeProUntil - p.now) / DAY)), until: ymd(p.storeProUntil - 1), store: true };
+  }
   const lic = p.licenseCode ? readLicense(p.licenseCode, p.publicKey) : null;
   const validLic = lic && lic.shop === shopKey(p.businessId) ? lic : null;
   if (validLic && validLic.expiresOn >= today) {
